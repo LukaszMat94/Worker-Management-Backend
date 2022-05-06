@@ -53,8 +53,16 @@ namespace WorkerManagementAPI.Entities
             .HasMaxLength(35);
 
             modelBuilder.Entity<Worker>()
+            .HasIndex(c => c.Email)
+            .IsUnique();
+
+            modelBuilder.Entity<Worker>()
             .Property(c => c.Login)
             .HasMaxLength(60);
+
+            modelBuilder.Entity<Worker>()
+            .HasIndex(c => c.Login)
+            .IsUnique();
 
             modelBuilder.Entity<Worker>()
             .Property(c => c.Password)
