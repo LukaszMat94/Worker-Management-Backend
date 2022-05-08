@@ -23,7 +23,13 @@ namespace WorkerManagementAPI.Middlewares
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(exception.Message);
             }
-            catch(Exception exception)
+            catch (DataDuplicateException exception)
+            {
+                _logger.LogError(exception, exception.Message);
+                context.Response.StatusCode = 409;
+                await context.Response.WriteAsync(exception.Message);
+            }
+            catch (Exception exception)
             {
                 _logger.LogError(exception, exception.Message);
                 context.Response.StatusCode = 500;

@@ -1,5 +1,4 @@
-
-
+using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 using WorkerManagementAPI;
 using WorkerManagementAPI.Entities;
@@ -19,7 +18,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<WorkersManagementDBContext>();
+builder.Services.AddDbContext<WorkersManagementDBContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDatabase")));
 
 builder.Services.AddScoped<WorkerSeeder>();
 

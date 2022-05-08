@@ -9,6 +9,6 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         Task<Technology> GetTechnologyByIdAsync(long id);
         Task<Technology> CreateTechnologyAsync(Technology technology);
         Task<Technology> UpdateTechnologyAsync(TechnologyDto technologyDto);
-        Task DeleteTechnologyAsync(long id);
+        Task<bool> DeleteTechnologyAsync(long id);
     }
 }

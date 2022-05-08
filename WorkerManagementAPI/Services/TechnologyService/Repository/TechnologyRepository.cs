@@ -16,17 +16,27 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
 
         public async Task<Technology> CreateTechnologyAsync(Technology technology)
         {
+            bool existTechnology = await _dbContext.Technologies
+                .AnyAsync(c => technology.Name == c.Name && technology.TechnologyLevel == c.TechnologyLevel);
+
+            if (existTechnology)
+            {
+                throw new DataDuplicateException("Technology already exist");
+            }
+
             await _dbContext.Technologies.AddAsync(technology);
             await _dbContext.SaveChangesAsync();
             return technology;
+
         }
 
-        public async Task DeleteTechnologyAsync(long id)
+        public async Task<bool> DeleteTechnologyAsync(long id)
         {
             Technology technology = await GetTechnologyByIdAsync(id);
 
             _dbContext.Technologies.Remove(technology);
             await _dbContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<Technology>> GetAllTechnologiesAsync()
@@ -45,7 +55,15 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
 
         public async Task<Technology> UpdateTechnologyAsync(TechnologyDto technologyDto)
         {
-            Technology technology = await GetTechnologyByIdAsync(technologyDto.Id);
+            bool existAnotherTechnology = await _dbContext.Technologies.AnyAsync(c => 
+            c.Name == technologyDto.Name && c.TechnologyLevel == technologyDto.TechnologyLevel && c.Id != technologyDto.Id);
+
+            if (existAnotherTechnology)
+            {
+                throw new DataDuplicateException("You cannot update this technology because another one exist just in db!");
+            }
+
+            Technology technology = await GetTechnologyByIdAsync(technologyDto.Id);            
 
             technology.Name = technologyDto.Name;
             technology.TechnologyLevel = technologyDto.TechnologyLevel;

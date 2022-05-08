@@ -4,17 +4,16 @@ namespace WorkerManagementAPI.Entities
 {
     public class WorkersManagementDBContext : DbContext
     {
-        private string connectionString = "Server=LucasPC\\SQLEXPRESS;Database=WorkerManagementDB;User=admin;Password=admin1";
+        public WorkersManagementDBContext(DbContextOptions options) : base(options)
+        {
+        }
+
         public DbSet<Company> Companies => Set<Company>();
         public DbSet<Worker> Workers => Set<Worker>();
 
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<Technology> Technologies => Set<Technology>();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(connectionString);
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region  Company
