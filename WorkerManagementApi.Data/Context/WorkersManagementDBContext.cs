@@ -82,7 +82,8 @@ namespace WorkerManagementAPI.Entities
             modelBuilder.Entity<Technology>()
                 .Property(c => c.TechnologyLevel)
                 .HasConversion<string>()
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Technology>()
             .HasMany(c => c.Workers)

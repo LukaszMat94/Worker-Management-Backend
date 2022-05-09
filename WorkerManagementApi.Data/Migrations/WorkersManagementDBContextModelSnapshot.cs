@@ -102,7 +102,8 @@ namespace WorkerManagementAPI.Migrations
 
                     b.Property<string>("TechnologyLevel")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
