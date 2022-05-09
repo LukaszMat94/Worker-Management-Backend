@@ -9,6 +9,6 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         Task<Project> GetProjectByIdAsync(long id);
         Task<Project> CreateProjectAsync(Project project);
         Task<Project> UpdateProjectAsync(ProjectDto project);
-        Task DeleteProjectAsync(long id);
+        Task<bool> DeleteProjectAsync(long id);
     }
 }

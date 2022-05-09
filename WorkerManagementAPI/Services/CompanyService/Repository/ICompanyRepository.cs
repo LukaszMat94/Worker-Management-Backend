@@ -9,6 +9,6 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         Task<Company> GetCompanyByIdAsync(long id);
         Task<Company> CreateCompanyAsync(Company company);
         Task<Company> UpdateCompanyAsync(UpdateCompanyDto updatedCompanyDto);
-        Task DeleteCompanyAsync(long id);
+        Task<bool> DeleteCompanyAsync(long id);
     }
 }

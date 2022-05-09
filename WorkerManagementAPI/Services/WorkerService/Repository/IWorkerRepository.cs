@@ -9,6 +9,6 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         Task<Worker> GetWorkerByIdAsync(long id);
         Task<Worker> CreateWorkerAsync(Worker worker);
         Task<Worker> UpdateWorkerAsync(UpdateWorkerDto updateWorkerDto);
-        Task DeleteWorkerAsync(long id);
+        Task<bool> DeleteWorkerAsync(long id);
     }
 }

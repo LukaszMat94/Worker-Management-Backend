@@ -8,22 +8,23 @@ using WorkerManagementAPI.Models.TechnologyDto;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
 using Xunit;
 
-namespace WorkerManagementAPI.Tests
+namespace WorkerManagementAPI.Tests.Unit.TechnologyRepositoryTest
 {
     public class TechnologyRepositoryTest
     {
-        private readonly WorkersManagementDBContext context;
-        private readonly ITechnologyRepository technologyRepository;
+        private readonly WorkersManagementDBContext _context;
+        private readonly ITechnologyRepository _technologyRepository;
+        private List<Technology> technologies = new List<Technology>();
 
         public TechnologyRepositoryTest()
         {
             DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString());
 
-            context = new WorkersManagementDBContext(dbOptions.Options);
-            technologyRepository = new TechnologyRepository(context);
+            _context = new WorkersManagementDBContext(dbOptions.Options);
+            _technologyRepository = new TechnologyRepository(_context);
 
-            SeedData(context);
+            SeedData(_context);
         }
 
         #region Test Get Action
@@ -34,7 +35,7 @@ namespace WorkerManagementAPI.Tests
         [InlineData(3)]
         public async Task GetWithValidDataTest(long id)
         {
-            Technology technology = await technologyRepository.GetTechnologyByIdAsync(id);
+            Technology technology = await _technologyRepository.GetTechnologyByIdAsync(id);
             Assert.NotNull(technology);
         }
 
@@ -44,7 +45,7 @@ namespace WorkerManagementAPI.Tests
         [InlineData(999)]
         public async Task GetWithNonExistDataTest(long id)
         {
-            Func<Task> action = async () => await technologyRepository.GetTechnologyByIdAsync(id);
+            Func<Task> action = async () => await _technologyRepository.GetTechnologyByIdAsync(id);
             await Assert.ThrowsAsync<NotFoundException>(action);
         }
 
@@ -63,7 +64,7 @@ namespace WorkerManagementAPI.Tests
         [MemberData(nameof(CreateValidData))]
         public async Task CreateWithValidDataTest(Technology technology)
         {
-            Technology createdTechnology = await technologyRepository.CreateTechnologyAsync(technology);
+            Technology createdTechnology = await _technologyRepository.CreateTechnologyAsync(technology);
 
             Assert.Equal(new { technology.Name, technology.TechnologyLevel }, 
                 new { createdTechnology.Name, createdTechnology.TechnologyLevel}
@@ -81,9 +82,7 @@ namespace WorkerManagementAPI.Tests
         [MemberData(nameof(CreateDuplicateData))]
         public async Task CreateWithDuplicateDataTest(Technology technology)
         {
-            ITechnologyRepository technologyRepository = new TechnologyRepository(context);
-
-            Func<Task> action = async () => await technologyRepository.CreateTechnologyAsync(technology);
+            Func<Task> action = async () => await _technologyRepository.CreateTechnologyAsync(technology);
 
             await Assert.ThrowsAsync<DataDuplicateException>(action);
         }
@@ -103,7 +102,7 @@ namespace WorkerManagementAPI.Tests
         [MemberData(nameof(UpdateValidData))]
         public async Task UpdateWithValidDataTest(TechnologyDto technologyDto)
         {
-            Technology updatedTechnology = await technologyRepository.UpdateTechnologyAsync(technologyDto);
+            Technology updatedTechnology = await _technologyRepository.UpdateTechnologyAsync(technologyDto);
 
             Assert.Equal(technologyDto.Name, updatedTechnology.Name);
         }
@@ -119,7 +118,7 @@ namespace WorkerManagementAPI.Tests
         [MemberData(nameof(UpdateDuplicateData))]
         public async Task UpdateWithDuplicateDataTest(TechnologyDto technologyDto)
         {
-            Func<Task> action = async () => await technologyRepository.UpdateTechnologyAsync(technologyDto);
+            Func<Task> action = async () => await _technologyRepository.UpdateTechnologyAsync(technologyDto);
 
             await Assert.ThrowsAsync<DataDuplicateException>(action);
         }
@@ -134,7 +133,7 @@ namespace WorkerManagementAPI.Tests
         [InlineData(20)]
         public async Task DeleteWithNonExistDataTest(long id)
         {
-            Func<Task> action = async () => await technologyRepository.DeleteTechnologyAsync(id);
+            Func<Task> action = async () => await _technologyRepository.DeleteTechnologyAsync(id);
 
             await Assert.ThrowsAsync<NotFoundException>(action);
         }
@@ -145,16 +144,37 @@ namespace WorkerManagementAPI.Tests
         [InlineData(10)]
         public async Task DeleteWithValidDataTest(long id)
         {
-            bool value = await technologyRepository.DeleteTechnologyAsync(id);
+            bool existValue = await _technologyRepository.DeleteTechnologyAsync(id);
 
-            Assert.True(value);
+            Assert.True(existValue);
+        }
+
+        #endregion
+
+        #region Test GetList Action
+
+        [Fact]
+        public async Task GetExistListDataTest()
+        {
+            List<Technology> listTechnologies = await _technologyRepository.GetAllTechnologiesAsync();
+            Assert.Equal(technologies, listTechnologies);
+        }
+
+        [Fact]
+        public async Task GetEmptyListDataTest()
+        {
+            _context.Technologies.RemoveRange(_context.Technologies);
+            _context.SaveChanges();
+
+            Func<Task> action = async () => await _technologyRepository.GetAllTechnologiesAsync();
+            await Assert.ThrowsAsync<NotFoundException>(action);
         }
 
         #endregion
 
         private void SeedData(WorkersManagementDBContext context)
         {
-            List<Technology> technologies = new()
+            technologies = new()
             {
                 new Technology { Id = 1, Name = "Java", TechnologyLevel = TechnologyLevelEnum.Basic },
                 new Technology { Id = 2, Name = "C#", TechnologyLevel = TechnologyLevelEnum.Advanced },

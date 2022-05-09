@@ -15,6 +15,13 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
 
         public async Task<Worker> CreateWorkerAsync(Worker worker)
         {
+            bool exist = await _dbContext.Workers.AnyAsync(w => w.Email.Equals(worker.Email) || w.Login.Equals(worker.Login));
+
+            if (exist)
+            {
+                throw new DataDuplicateException("Worker already exist with given email/login");
+            }
+
             await _dbContext.Workers.AddAsync(worker);
 
             await _dbContext.SaveChangesAsync();
@@ -22,17 +29,24 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
             return worker;
         }
 
-        public async Task DeleteWorkerAsync(long id)
+        public async Task<bool> DeleteWorkerAsync(long id)
         {
             Worker worker = await GetWorkerByIdAsync(id);
 
             _dbContext.Workers.Remove(worker);
             await _dbContext.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<List<Worker>> GetAllWorkersAsync()
         {
             List<Worker> workers = await _dbContext.Workers.ToListAsync();
+
+            if(workers.Count == 0)
+            {
+                throw new NotFoundException("List is empty");
+            }
 
             return workers;
         }

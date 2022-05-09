@@ -43,6 +43,11 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         {
             List<Technology> technologies = await _dbContext.Technologies.ToListAsync();
 
+            if(technologies.Count == 0)
+            {
+                throw new NotFoundException("List is empty");
+            }
+
             return technologies;
         }
 

@@ -22,17 +22,23 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
             return project;
         }
 
-        public async Task DeleteProjectAsync(long id)
+        public async Task<bool> DeleteProjectAsync(long id)
         {
             Project project = await GetProjectByIdAsync(id);
 
             _dbContext.Projects.Remove(project);
             await _dbContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<Project>> GetAllProjectsAsync()
         {
             List<Project> projects = await _dbContext.Projects.ToListAsync();
+
+            if(projects.Count == 0)
+            {
+                throw new NotFoundException("List is empty");
+            }
 
             return projects;
         }
