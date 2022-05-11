@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.CompanyDto;
+using WorkerManagementAPI.Models.CompanyDtos;
 
 namespace WorkerManagementAPI.Services.CompanyService.Repository
 {
@@ -12,6 +13,22 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         public CompanyRepository(WorkersManagementDBContext dBContext)
         {
             _dbContext = dBContext;
+        }
+
+        public async Task<Company> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        {
+            Company company = await _dbContext.Companies
+                .FirstOrDefaultAsync(c => c.Id.Equals(patchCompanyWorkerDto.IdCompany)) 
+                ?? throw new NotFoundException("Company not found");
+
+            Worker worker = await _dbContext.Workers
+                .FirstOrDefaultAsync(w => w.Id.Equals(patchCompanyWorkerDto.IdWorker)) 
+                ?? throw new NotFoundException("Worker not found");
+
+            worker.CompanyId = patchCompanyWorkerDto.IdCompany;
+            await _dbContext.SaveChangesAsync();
+
+            return company;
         }
 
         public async Task<Company> CreateCompanyAsync(Company company)
@@ -41,7 +58,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
 
         public async Task<List<Company>> GetAllCompaniesAsync()
         {
-            List<Company> companies = await _dbContext.Companies.ToListAsync();
+            List<Company> companies = await _dbContext.Companies.Include(c => c.Workers).ToListAsync();
 
             if(companies.Count == 0)
             {

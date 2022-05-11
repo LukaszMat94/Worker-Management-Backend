@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.WorkerDto;
+using WorkerManagementAPI.Models.WorkerDtos;
 using WorkerManagementAPI.Services.WorkerService.Repository;
 using Xunit;
 
@@ -54,9 +54,9 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
 
         public static IEnumerable<object[]> CreateValidData()
         {
-            yield return new object[] { new Worker { Id = 15, Name = "Jan", Surname = "Jankowski", Email = "janjankowski@gmail.com", Login = "jan", Password = "jankowski" } };
-            yield return new object[] { new Worker { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "karolinakarolin@gmail.com", Login = "karolina", Password = "karolin" } };
-            yield return new object[] { new Worker { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "mateuszmat@gmail.com", Login = "mateusz", Password = "mat" } };
+            yield return new object[] { new Worker { Id = 15, Name = "Jan", Surname = "Jankowski", Email = "janjankowski@gmail.com", Password = "jankowski" } };
+            yield return new object[] { new Worker { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "karolinakarolin@gmail.com", Password = "karolin" } };
+            yield return new object[] { new Worker { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "mateuszmat@gmail.com", Password = "mat" } };
         }
 
         [Theory]
@@ -69,9 +69,9 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
 
         public static IEnumerable<object[]> CreateDuplicateData()
         {
-            yield return new object[] { new Worker { Id = 15, Name = "Jan", Surname = "Jankowski", Email = "karolbrzoza@onet.pl", Login = "jan", Password = "jankowski" } };
-            yield return new object[] { new Worker { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "karolinakarolin@gmail.com", Login = "beata", Password = "karolin" } };
-            yield return new object[] { new Worker { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "rafalgwiazda@yahoo.com", Login = "mateusz", Password = "mat" } };
+            yield return new object[] { new Worker { Id = 15, Name = "Jan", Surname = "Jankowski", Email = "karolbrzoza@onet.pl", Password = "jankowski" } };
+            yield return new object[] { new Worker { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "karolinakarolin@gmail.com", Password = "karolin" } };
+            yield return new object[] { new Worker { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "rafalgwiazda@yahoo.com", Password = "mat" } };
         }
 
         [Theory]
@@ -169,11 +169,11 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
         {
             workers = new()
             {
-                new Worker { Id = 1, Name = "Michał", Surname = "Kowalski", Email = "michalkowalski@gmail.com", Login = "michal", Password = "kowalski" },
-                new Worker { Id = 2, Name = "Joanna", Surname = "Adamczyk", Email = "joannaadamczyk@wp.pl", Login = "joanna", Password = "adamczyk" },
-                new Worker { Id = 3, Name = "Karol", Surname = "Brzoza", Email = "karolbrzoza@onet.pl", Login = "karol", Password = "brzoza" },
-                new Worker { Id = 4, Name = "Beata", Surname = "Nowak", Email = "beatanowak@o2.pl", Login = "beata", Password = "nowak" },
-                new Worker { Id = 5, Name = "Rafał", Surname = "Gwiazda", Email = "rafalgwiazda@yahoo.com", Login = "rafal", Password = "gwiazda" },
+                new Worker { Id = 1, Name = "Michał", Surname = "Kowalski", Email = "michalkowalski@gmail.com", Password = "kowalski" },
+                new Worker { Id = 2, Name = "Joanna", Surname = "Adamczyk", Email = "joannaadamczyk@wp.pl", Password = "adamczyk" },
+                new Worker { Id = 3, Name = "Karol", Surname = "Brzoza", Email = "karolbrzoza@onet.pl", Password = "brzoza" },
+                new Worker { Id = 4, Name = "Beata", Surname = "Nowak", Email = "beatanowak@o2.pl", Password = "nowak" },
+                new Worker { Id = 5, Name = "Rafał", Surname = "Gwiazda", Email = "rafalgwiazda@yahoo.com", Password = "gwiazda" },
             };
             _context.Workers.AddRange(workers);
             _context.SaveChanges();

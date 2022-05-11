@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.CompanyDto;
+using WorkerManagementAPI.Models.CompanyDtos;
+using WorkerManagementAPI.Models.WorkerDtos;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using Xunit;
 
@@ -15,6 +17,7 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
         private readonly WorkersManagementDBContext _context;
         private readonly ICompanyRepository _companyRepository;
         private List<Company> companies = new List<Company>();
+        private List<Worker> workers = new List<Worker>();
 
         public CompanyRepositoryTest()
         {
@@ -23,12 +26,14 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
 
             _context = new WorkersManagementDBContext(optionsDbBuiler.Options);
             _companyRepository = new CompanyRepository(_context);
-            SeedData(_context);
+            SeedCompaniesData(_context);
+            SeedWorkersData(_context);
         }
 
         #region Test Get Action
 
         [Theory]
+
         [InlineData(1)]
         [InlineData(2)]
         [InlineData(3)]
@@ -54,7 +59,7 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
 
         public static IEnumerable<object[]> CreateValidData()
         {
-            yield return new object[] { new Company { Id = 15, Name = "Hochland"} };
+            yield return new object[] { new Company { Id = 15, Name = "Hochland" } };
             yield return new object[] { new Company { Id = 16, Name = "Mullermilch" } };
             yield return new object[] { new Company { Id = 17, Name = "Mlekovita" } };
         }
@@ -145,7 +150,7 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
         #region Test GetList Action
 
         [Fact]
-        public async Task GetExisListDataTest()
+        public async Task GetExistListDataTest()
         {
             List<Company> listCompanies = await _companyRepository.GetAllCompaniesAsync();
             Assert.Equal(companies, listCompanies);
@@ -163,7 +168,26 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
 
         #endregion
 
-        private void SeedData(WorkersManagementDBContext context)
+        #region Test Patch Worker To Company Action
+
+        public static IEnumerable<object[]> PatchWorkerToCompanyData()
+        {
+            yield return new object[] { new PatchCompanyWorkerDto { IdCompany = 1, IdWorker = 5 } };
+            yield return new object[] { new PatchCompanyWorkerDto { IdCompany = 2, IdWorker = 2 } };
+            yield return new object[] { new PatchCompanyWorkerDto { IdCompany = 5, IdWorker = 1 } };
+        }
+
+        [Theory]
+        [MemberData(nameof(PatchWorkerToCompanyData))]
+        public async Task PatchWorkerToCompanyValidTest(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        {
+            Company company = await _companyRepository.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);
+            Assert.Equal(workers.Find(w => w.Id == patchCompanyWorkerDto.IdWorker).Name, company.Workers.Find(w => w.Id == patchCompanyWorkerDto.IdWorker).Name);
+        }
+
+        #endregion
+
+        private void SeedCompaniesData(WorkersManagementDBContext context)
         {
             companies = new()
             {
@@ -177,5 +201,21 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
             _context.Companies.AddRange(companies);
             _context.SaveChanges();
         }
+
+        private void SeedWorkersData(WorkersManagementDBContext context)
+        {
+            workers = new()
+            {
+                new Worker { Id = 1, Name = "Michal", Surname = "Wojcik"},
+                new Worker { Id = 2, Name = "Marian", Surname = "Kanapa"},
+                new Worker { Id = 3, Name = "Mieczyslaw", Surname = "Kolos"},
+                new Worker { Id = 4, Name = "Katarzyna", Surname = "Mieczyk"},
+                new Worker { Id = 5, Name = "Iwona", Surname = "Mikolajczyk"}
+            };
+
+            _context.Workers.AddRange(workers);
+            _context.SaveChanges();
+        }
+
     }
 }

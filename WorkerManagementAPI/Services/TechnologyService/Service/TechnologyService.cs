@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.TechnologyDto;
+using WorkerManagementAPI.Models.TechnologyDtos;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
 
 namespace WorkerManagementAPI.Services.TechnologyService.Service

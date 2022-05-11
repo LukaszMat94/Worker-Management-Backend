@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
+using WorkerManagementApi.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.CompanyDto;
-using WorkerManagementAPI.Models.ProjectDto;
-using WorkerManagementAPI.Models.TechnologyDto;
-using WorkerManagementAPI.Models.WorkerDto;
+using WorkerManagementAPI.Models.CompanyDtos;
+using WorkerManagementAPI.Models.ProjectDtos;
+using WorkerManagementAPI.Models.TechnologyDtos;
+using WorkerManagementAPI.Models.WorkerDtos;
 
 namespace WorkerManagementAPI.AutoMapper
 {
@@ -24,6 +25,9 @@ namespace WorkerManagementAPI.AutoMapper
             CreateMap<Worker, WorkerDto>();
             CreateMap<CreateWorkerDto, Worker>();
             CreateMap<UpdateWorkerDto, Worker>();
+            CreateMap<Worker, UpdateWorkerTechnologyDto>()
+                .ForMember(updateWorker => updateWorker.TechnologyLevelDto, 
+                action => action.MapFrom(worker => worker.Technologies.First()));
 
             #endregion
 

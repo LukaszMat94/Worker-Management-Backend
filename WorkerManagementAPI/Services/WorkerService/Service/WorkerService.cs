@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using WorkerManagementApi.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.WorkerDto;
+using WorkerManagementAPI.Models.WorkerDtos;
 using WorkerManagementAPI.Services.WorkerService.Repository;
 
 namespace WorkerManagementAPI.Services.WorkerService.Service
@@ -15,6 +16,15 @@ namespace WorkerManagementAPI.Services.WorkerService.Service
         {
             _workerRepository = workerRepository;
             _mapper = mapper;
+        }
+
+        public async Task<UpdateWorkerTechnologyDto> AssignTechnologyToWorker(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
+        {
+            Worker worker = await _workerRepository.AssignTechnologyToWorker(patchWorkerTechnologyDto);
+
+            UpdateWorkerTechnologyDto updateWorkerTechnologyDto = _mapper.Map<UpdateWorkerTechnologyDto>(worker);
+
+            return updateWorkerTechnologyDto;
         }
 
         public async Task<WorkerDto> CreateWorkerAsync(CreateWorkerDto createWorkerDto)

@@ -37,35 +37,27 @@ namespace WorkerManagementAPI.Entities
                 .HasKey(w => w.Id);
 
             modelBuilder.Entity<Worker>()
-            .Property(c => c.Name)
-            .IsRequired()
-            .HasMaxLength(50);
+                .Property(c => c.Name)
+                .IsRequired()
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Worker>()
-            .Property(c => c.Surname)
-            .IsRequired()
-            .HasMaxLength(40);
+                .Property(c => c.Surname)
+                .IsRequired()
+                .HasMaxLength(40);
 
             modelBuilder.Entity<Worker>()
-            .Property(c => c.Email)
-            .IsRequired()
-            .HasMaxLength(35);
+                .Property(c => c.Email)
+                .IsRequired()
+                .HasMaxLength(35);
 
             modelBuilder.Entity<Worker>()
-            .HasIndex(c => c.Email)
-            .IsUnique();
+                .HasIndex(c => c.Email)
+                .IsUnique();
 
             modelBuilder.Entity<Worker>()
-            .Property(c => c.Login)
-            .HasMaxLength(60);
-
-            modelBuilder.Entity<Worker>()
-            .HasIndex(c => c.Login)
-            .IsUnique();
-
-            modelBuilder.Entity<Worker>()
-            .Property(c => c.Password)
-            .HasMaxLength(70);
+                .Property(c => c.Password)
+                .HasMaxLength(70);
 
             #endregion
 
@@ -86,17 +78,17 @@ namespace WorkerManagementAPI.Entities
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Technology>()
-            .HasMany(c => c.Workers)
-            .WithMany(c => c.Technologies)
-            .UsingEntity<Dictionary<string, object>>("WorkersTechnologies",
-                b => b.HasOne<Worker>()
-                .WithMany()
-                .HasForeignKey("WorkerId")
-                .OnDelete(DeleteBehavior.Restrict),
-                b => b.HasOne<Technology>()
-                .WithMany()
-                .HasForeignKey("TechnologyId")
-                .OnDelete(DeleteBehavior.Restrict));
+                .HasMany(c => c.Workers)
+                .WithMany(c => c.Technologies)
+                    .UsingEntity<Dictionary<string, object>>("WorkersTechnologies",
+                        b => b.HasOne<Worker>()
+                            .WithMany()
+                            .HasForeignKey("WorkerId")
+                            .OnDelete(DeleteBehavior.Restrict),
+                        b => b.HasOne<Technology>()
+                            .WithMany()
+                            .HasForeignKey("TechnologyId")
+                            .OnDelete(DeleteBehavior.Restrict));
 
             #endregion
 
@@ -114,16 +106,27 @@ namespace WorkerManagementAPI.Entities
                 .HasMany(p => p.Members)
                 .WithMany(p => p.Projects)
                 .UsingEntity<Dictionary<string, object>>("ProjectsMembers",
-                mp => mp.HasOne<Worker>().WithMany().HasForeignKey("WorkerId").OnDelete(DeleteBehavior.Restrict),
-                mp => mp.HasOne<Project>().WithMany().HasForeignKey("ProjectId").OnDelete(DeleteBehavior.Restrict));
+                    mp => mp.HasOne<Worker>()
+                        .WithMany()
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Restrict),
+                    mp => mp
+                        .HasOne<Project>()
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict));
 
             modelBuilder.Entity<Project>()
                 .HasMany(p => p.Technologies)
                 .WithMany(p => p.Projects)
                 .UsingEntity<Dictionary<string, object>>("ProjectsTechnologies",
-                mp => mp.HasOne<Technology>().WithMany().HasForeignKey("TechnologyId"),
-                mp => mp.HasOne<Project>().WithMany().HasForeignKey("ProjectId"));
- 
+                    mp => mp.HasOne<Technology>()
+                        .WithMany()
+                        .HasForeignKey("TechnologyId"),
+                    mp => mp.HasOne<Project>()
+                        .WithMany()
+                        .HasForeignKey("ProjectId"));
+
             #endregion
         }
     }

@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WorkerManagementApi.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.WorkerDto;
+using WorkerManagementAPI.Models.WorkerDtos;
 
 namespace WorkerManagementAPI.Services.WorkerService.Repository
 {
@@ -13,13 +14,38 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
             _dbContext = dbContext;
         }
 
+        public async Task<Worker> AssignTechnologyToWorker(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
+        {
+            Technology technology = await _dbContext.Technologies
+                .FirstOrDefaultAsync(t => t.Id.Equals(patchWorkerTechnologyDto.IdTechnology))
+                ?? throw new NotFoundException("Technology not found");
+
+            bool existValue = await _dbContext.Workers
+                .Where(w => w.Id.Equals(patchWorkerTechnologyDto.IdWorker))
+                .AnyAsync(w => w.Technologies.Contains(technology));
+                
+            if (existValue)
+            {
+                throw new DataDuplicateException("Technology is already assigned to this worker!");
+            }
+
+            Worker worker = await _dbContext.Workers
+                .FirstOrDefaultAsync(w => w.Id.Equals(patchWorkerTechnologyDto.IdWorker))
+                ?? throw new NotFoundException("Worker not found");
+
+            worker.Technologies.Add(technology);
+            await _dbContext.SaveChangesAsync();
+
+            return worker;
+        }
+
         public async Task<Worker> CreateWorkerAsync(Worker worker)
         {
-            bool exist = await _dbContext.Workers.AnyAsync(w => w.Email.Equals(worker.Email) || w.Login.Equals(worker.Login));
+            bool exist = await _dbContext.Workers.AnyAsync(w => w.Email.Equals(worker.Email));
 
             if (exist)
             {
-                throw new DataDuplicateException("Worker already exist with given email/login");
+                throw new DataDuplicateException("Worker already exist with given email");
             }
 
             await _dbContext.Workers.AddAsync(worker);
@@ -43,7 +69,7 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         {
             List<Worker> workers = await _dbContext.Workers.ToListAsync();
 
-            if(workers.Count == 0)
+            if (workers.Count == 0)
             {
                 throw new NotFoundException("List is empty");
             }

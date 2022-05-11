@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
 using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.CompanyDto;
+using WorkerManagementAPI.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 
 namespace WorkerManagementAPI.Services.CompanyService.Service
@@ -16,6 +17,15 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             _companyRepository = companyRepository;
             _mapper = mapper;
+        }
+
+        public async Task<CompanyDto> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        {
+            Company company = await _companyRepository.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);
+
+            CompanyDto companyDto = _mapper.Map<CompanyDto>(company);
+
+            return companyDto;
         }
 
         public async Task<CompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto)

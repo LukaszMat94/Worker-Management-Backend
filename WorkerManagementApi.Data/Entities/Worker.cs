@@ -1,11 +1,12 @@
-﻿namespace WorkerManagementAPI.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace WorkerManagementAPI.Entities
 {
     public class Worker : BaseEntity
     {
         public string Name { get; set; } = String.Empty;
         public string Surname { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
-        public string? Login { get; set; }
         public string? Password { get; set; }
 
         public long CompanyId { get; set; }

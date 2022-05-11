@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkerManagementAPI.Models.WorkerDto;
+using WorkerManagementApi.Data.Models.WorkerDtos;
+using WorkerManagementAPI.Models.WorkerDtos;
 using WorkerManagementAPI.Services.WorkerService.Service;
 
 namespace WorkerManagementAPI.Controllers
@@ -48,6 +49,13 @@ namespace WorkerManagementAPI.Controllers
         {
             await _workerService.DeleteWorkerAsync(id);
             return NoContent();
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> AssignTechnologyToWorker([FromBody] PatchWorkerTechnologyDto patchWorkerTechnologyDto)
+        {
+            UpdateWorkerTechnologyDto updateWorkerTechnologyDto = await _workerService.AssignTechnologyToWorker(patchWorkerTechnologyDto);
+            return Ok(updateWorkerTechnologyDto);
         }
     }
 }

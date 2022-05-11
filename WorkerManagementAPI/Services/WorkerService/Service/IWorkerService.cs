@@ -1,4 +1,5 @@
-﻿using WorkerManagementAPI.Models.WorkerDto;
+﻿using WorkerManagementApi.Data.Models.WorkerDtos;
+using WorkerManagementAPI.Models.WorkerDtos;
 
 namespace WorkerManagementAPI.Services.WorkerService.Service
 {
@@ -9,5 +10,6 @@ namespace WorkerManagementAPI.Services.WorkerService.Service
         Task<WorkerDto> CreateWorkerAsync(CreateWorkerDto worker);
         Task<WorkerDto> UpdateWorkerAsync(UpdateWorkerDto updateWorkerDto);
         Task DeleteWorkerAsync(long id);
+        Task<UpdateWorkerTechnologyDto> AssignTechnologyToWorker(PatchWorkerTechnologyDto patchWorkerTechnologyDto);
     }
 }

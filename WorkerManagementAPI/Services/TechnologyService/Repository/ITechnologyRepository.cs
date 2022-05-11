@@ -1,5 +1,5 @@
 ﻿using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.TechnologyDto;
+using WorkerManagementAPI.Models.TechnologyDtos;
 
 namespace WorkerManagementAPI.Services.TechnologyService.Repository
 {

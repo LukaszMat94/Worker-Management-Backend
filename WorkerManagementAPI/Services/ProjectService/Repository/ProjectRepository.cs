@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.ProjectDto;
+using WorkerManagementAPI.Models.ProjectDtos;
 
 namespace WorkerManagementAPI.Services.ProjectService.Repository
 {

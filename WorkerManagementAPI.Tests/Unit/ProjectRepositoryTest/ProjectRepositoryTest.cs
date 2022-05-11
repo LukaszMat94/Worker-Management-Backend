@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.ProjectDto;
+using WorkerManagementAPI.Models.ProjectDtos;
 using WorkerManagementAPI.Services.ProjectService.Repository;
 using Xunit;
 

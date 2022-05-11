@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace WorkerManagementAPI.Models.TechnologyDto
+namespace WorkerManagementAPI.Models.TechnologyDtos
 {
     public class TechnologyDto
     {

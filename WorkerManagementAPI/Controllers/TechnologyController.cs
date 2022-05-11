@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkerManagementAPI.Models.TechnologyDto;
+using WorkerManagementAPI.Models.TechnologyDtos;
 using WorkerManagementAPI.Services.TechnologyService.Service;
 
 namespace WorkerManagementAPI.Controllers

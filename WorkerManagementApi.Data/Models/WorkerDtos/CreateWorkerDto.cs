@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkerManagementAPI.Models.WorkerDto
+namespace WorkerManagementAPI.Models.WorkerDtos
 {
     public class CreateWorkerDto
     { 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.TechnologyDto;
+using WorkerManagementAPI.Models.TechnologyDtos;
 
 namespace WorkerManagementAPI.Services.TechnologyService.Repository
 {

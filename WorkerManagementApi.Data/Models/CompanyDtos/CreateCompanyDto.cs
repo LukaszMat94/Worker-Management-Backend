@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkerManagementAPI.Models.CompanyDto
+namespace WorkerManagementAPI.Models.CompanyDtos
 {
     public class CreateCompanyDto
     {   

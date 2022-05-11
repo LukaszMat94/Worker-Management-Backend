@@ -1,5 +1,6 @@
-﻿using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.WorkerDto;
+﻿using WorkerManagementApi.Data.Models.WorkerDtos;
+using WorkerManagementAPI.Entities;
+using WorkerManagementAPI.Models.WorkerDtos;
 
 namespace WorkerManagementAPI.Services.WorkerService.Repository
 {
@@ -10,5 +11,6 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         Task<Worker> CreateWorkerAsync(Worker worker);
         Task<Worker> UpdateWorkerAsync(UpdateWorkerDto updateWorkerDto);
         Task<bool> DeleteWorkerAsync(long id);
+        Task<Worker> AssignTechnologyToWorker(PatchWorkerTechnologyDto patchWorkerTechnologyDto);
     }
 }

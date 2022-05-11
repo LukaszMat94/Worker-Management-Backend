@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.ProjectDto;
+using WorkerManagementAPI.Models.ProjectDtos;
 using WorkerManagementAPI.Services.ProjectService.Repository;
 
 namespace WorkerManagementAPI.Services.ProjectService.Service

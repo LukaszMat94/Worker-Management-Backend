@@ -1,4 +1,4 @@
-﻿using WorkerManagementAPI.Models.ProjectDto;
+﻿using WorkerManagementAPI.Models.ProjectDtos;
 
 namespace WorkerManagementAPI.Services.ProjectService.Service
 {

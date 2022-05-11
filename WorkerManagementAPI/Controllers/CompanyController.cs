@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkerManagementAPI.Models.CompanyDto;
+using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
+using WorkerManagementAPI.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Service;
 
 namespace WorkerManagementAPI.Controllers
@@ -48,6 +49,13 @@ namespace WorkerManagementAPI.Controllers
         {
             await _companyService.DeleteCompanyAsync(id);
             return NoContent();
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> AssignWorkerToCompany([FromBody] PatchCompanyWorkerDto patchCompanyWorkerDto)
+        {
+            CompanyDto companyDto = await _companyService.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);
+            return Ok(companyDto);
         }
     }
 }

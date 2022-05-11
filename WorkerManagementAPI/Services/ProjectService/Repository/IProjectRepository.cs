@@ -1,5 +1,5 @@
 ﻿using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.ProjectDto;
+using WorkerManagementAPI.Models.ProjectDtos;
 
 namespace WorkerManagementAPI.Services.ProjectService.Repository
 {

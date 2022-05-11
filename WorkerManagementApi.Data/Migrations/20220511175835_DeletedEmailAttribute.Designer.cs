@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkerManagementAPI.Entities;
 
@@ -10,9 +11,10 @@ using WorkerManagementAPI.Entities;
 namespace WorkerManagementAPI.Migrations
 {
     [DbContext(typeof(WorkersManagementDBContext))]
-    partial class WorkersManagementDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220511175835_DeletedEmailAttribute")]
+    partial class DeletedEmailAttribute
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

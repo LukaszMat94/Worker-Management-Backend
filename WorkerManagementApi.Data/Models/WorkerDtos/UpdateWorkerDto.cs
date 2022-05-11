@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkerManagementAPI.Models.WorkerDto
+namespace WorkerManagementAPI.Models.WorkerDtos
 {
-    public class WorkerDto
+    public class UpdateWorkerDto
     {
-        public long Id { set; get; }
+        public long Id { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -13,10 +13,5 @@ namespace WorkerManagementAPI.Models.WorkerDto
         [Required]
         [MaxLength(40)]
         public string Surname { get; set; } = String.Empty;
-
-        [Required]
-        [MaxLength(35)]
-        public string Email { get; set; } = String.Empty;
-
     }
 }
