@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using WorkerManagementApi.Data.Models.ProjectDtos;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Models.ProjectDtos;
 using WorkerManagementAPI.Services.ProjectService.Repository;
@@ -15,6 +16,15 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         {
             _projectRepository = projectRepository;
             _mapper = mapper;
+        }
+
+        public async Task<UpdateProjectWorkerDto> AssignWorkerToProject(PatchProjectWorkerDto patchProjectWorkerDto)
+        {
+            Project project = await _projectRepository.AssignWorkerToProject(patchProjectWorkerDto);
+
+            UpdateProjectWorkerDto updateProjectWorkerDto = _mapper.Map<UpdateProjectWorkerDto>(project);
+
+            return updateProjectWorkerDto;
         }
 
         public async Task<ProjectDto> CreateProjectAsync(CreateProjectDto createProjectDto)

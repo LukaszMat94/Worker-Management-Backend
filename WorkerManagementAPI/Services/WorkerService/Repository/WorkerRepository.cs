@@ -20,6 +20,10 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
                 .FirstOrDefaultAsync(t => t.Id.Equals(patchWorkerTechnologyDto.IdTechnology))
                 ?? throw new NotFoundException("Technology not found");
 
+            Worker worker = await _dbContext.Workers
+                .FirstOrDefaultAsync(w => w.Id.Equals(patchWorkerTechnologyDto.IdWorker))
+                ?? throw new NotFoundException("Worker not found");
+
             bool existValue = await _dbContext.Workers
                 .Where(w => w.Id.Equals(patchWorkerTechnologyDto.IdWorker))
                 .AnyAsync(w => w.Technologies.Contains(technology));
@@ -28,10 +32,6 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
             {
                 throw new DataDuplicateException("Technology is already assigned to this worker!");
             }
-
-            Worker worker = await _dbContext.Workers
-                .FirstOrDefaultAsync(w => w.Id.Equals(patchWorkerTechnologyDto.IdWorker))
-                ?? throw new NotFoundException("Worker not found");
 
             worker.Technologies.Add(technology);
             await _dbContext.SaveChangesAsync();

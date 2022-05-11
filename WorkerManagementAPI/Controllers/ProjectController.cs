@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WorkerManagementApi.Data.Models.ProjectDtos;
 using WorkerManagementAPI.Models.ProjectDtos;
 using WorkerManagementAPI.Services.ProjectService.Service;
 
@@ -48,6 +49,13 @@ namespace WorkerManagementAPI.Controllers
         {
             await _projectService.DeleteProjectAsync(id);
             return NoContent();
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> PatchWorkerToProject([FromBody] PatchProjectWorkerDto patchProjectWorkerDto)
+        {
+            UpdateProjectWorkerDto updateProjectWorkerDto = await _projectService.AssignWorkerToProject(patchProjectWorkerDto);
+            return Ok(updateProjectWorkerDto);
         }
     }
 }

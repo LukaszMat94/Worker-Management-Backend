@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WorkerManagementApi.Data.Models.ProjectDtos;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Models.ProjectDtos;
@@ -12,6 +13,31 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         public ProjectRepository(WorkersManagementDBContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        public async Task<Project> AssignWorkerToProject(PatchProjectWorkerDto patchProjectWorkerDto)
+        {
+            Project project = await _dbContext.Projects
+                .FirstOrDefaultAsync(p => p.Id.Equals(patchProjectWorkerDto.IdProject))
+                ?? throw new NotFoundException("Project not found");
+
+            Worker worker = await _dbContext.Workers
+                .FirstOrDefaultAsync(w => w.Id.Equals(patchProjectWorkerDto.IdWorker))
+                ?? throw new NotFoundException("Worker not found");
+
+            bool existValue = await _dbContext.Workers
+                .Where(w => w.Id.Equals(patchProjectWorkerDto.IdWorker))
+                .AnyAsync(w => w.Projects.Contains(project));
+
+            if (existValue)
+            {
+                throw new DataDuplicateException("Project is already assigned to this worker!");
+            }
+
+            project.Members.Add(worker);
+            await _dbContext.SaveChangesAsync();
+
+            return project;
         }
 
         public async Task<Project> CreateProjectAsync(Project project)
