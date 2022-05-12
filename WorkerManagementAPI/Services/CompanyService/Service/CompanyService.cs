@@ -19,31 +19,6 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
             _mapper = mapper;
         }
 
-        public async Task<CompanyDto> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
-        {
-            Company company = await _companyRepository.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);
-
-            CompanyDto companyDto = _mapper.Map<CompanyDto>(company);
-
-            return companyDto;
-        }
-
-        public async Task<CompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto)
-        {
-            Company createdCompany = _mapper.Map<Company>(companyDto);
-            
-            Company company = await _companyRepository.CreateCompanyAsync(createdCompany);
-
-            CompanyDto createdCompanyDto = _mapper.Map<CompanyDto>(company);
-
-            return createdCompanyDto;
-        }
-
-        public async Task DeleteCompanyAsync(long id)
-        {
-            await _companyRepository.DeleteCompanyAsync(id);
-        }
-
         public async Task<List<CompanyDto>> GetAllCompaniesAsync()
         {
             List<Company> companies = await _companyRepository.GetAllCompaniesAsync();
@@ -58,10 +33,35 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
             return companyDto;
         }
 
+        public async Task<CompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto)
+        {
+            Company createdCompany = _mapper.Map<Company>(companyDto);
+
+            Company company = await _companyRepository.CreateCompanyAsync(createdCompany);
+
+            CompanyDto createdCompanyDto = _mapper.Map<CompanyDto>(company);
+
+            return createdCompanyDto;
+        }
+
         public async Task<CompanyDto> UpdateCompanyAsync(UpdateCompanyDto updateCompanyDto)
         {
             Company company = await _companyRepository.UpdateCompanyAsync(updateCompanyDto);
             CompanyDto companyDto = _mapper.Map<CompanyDto>(company);
+            return companyDto;
+        }
+
+        public async Task DeleteCompanyAsync(long id)
+        {
+            await _companyRepository.DeleteCompanyAsync(id);
+        }
+
+        public async Task<CompanyDto> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        {
+            Company company = await _companyRepository.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);
+
+            CompanyDto companyDto = _mapper.Map<CompanyDto>(company);
+
             return companyDto;
         }
     }

@@ -51,11 +51,11 @@ namespace WorkerManagementAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch]
-        public async Task<IActionResult> PatchWorkerToProject([FromBody] PatchProjectWorkerDto patchProjectWorkerDto)
+        [HttpPatch("assignTechnology")]
+        public async Task<IActionResult> AssignWorkerToProject([FromBody] PatchProjectTechnologyDto patchProjectTechnologyDto)
         {
-            UpdateProjectWorkerDto updateProjectWorkerDto = await _projectService.AssignWorkerToProject(patchProjectWorkerDto);
-            return Ok(updateProjectWorkerDto);
+            UpdateProjectTechnologyDto updateProjectTechnologyDto = await _projectService.AssignTechnologyToProject(patchProjectTechnologyDto);
+            return Ok(updateProjectTechnologyDto);
         }
     }
 }

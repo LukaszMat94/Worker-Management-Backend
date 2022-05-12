@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WorkerManagementAPI.Context;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Models.ProjectDtos;
@@ -23,7 +24,7 @@ namespace WorkerManagementAPI.Tests.Unit.ProjectRepositoryTest
 
             _context = new WorkersManagementDBContext(dbOptions.Options);
             _projectRepository = new ProjectRepository(_context);
-            SeedData(_context);
+            SeedProjectData(_context);
         }
 
         #region Test Get Action
@@ -135,7 +136,7 @@ namespace WorkerManagementAPI.Tests.Unit.ProjectRepositoryTest
 
         #endregion
 
-        private void SeedData(WorkersManagementDBContext context)
+        private void SeedProjectData(WorkersManagementDBContext context)
         {
             projects = new()
             {

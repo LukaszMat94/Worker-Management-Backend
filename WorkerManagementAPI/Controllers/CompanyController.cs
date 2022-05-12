@@ -51,7 +51,7 @@ namespace WorkerManagementAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch]
+        [HttpPatch("assignWorker")]
         public async Task<IActionResult> AssignWorkerToCompany([FromBody] PatchCompanyWorkerDto patchCompanyWorkerDto)
         {
             CompanyDto companyDto = await _companyService.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);

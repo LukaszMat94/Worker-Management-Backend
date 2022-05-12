@@ -18,31 +18,6 @@ namespace WorkerManagementAPI.Services.WorkerService.Service
             _mapper = mapper;
         }
 
-        public async Task<UpdateWorkerTechnologyDto> AssignTechnologyToWorker(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
-        {
-            Worker worker = await _workerRepository.AssignTechnologyToWorker(patchWorkerTechnologyDto);
-
-            UpdateWorkerTechnologyDto updateWorkerTechnologyDto = _mapper.Map<UpdateWorkerTechnologyDto>(worker);
-
-            return updateWorkerTechnologyDto;
-        }
-
-        public async Task<WorkerDto> CreateWorkerAsync(CreateWorkerDto createWorkerDto)
-        {
-            Worker createWorker = _mapper.Map<Worker>(createWorkerDto);
-
-            Worker worker = await _workerRepository.CreateWorkerAsync(createWorker);
-
-            WorkerDto workerDto = _mapper.Map<WorkerDto>(worker);
-
-            return workerDto;
-        }
-
-        public async Task DeleteWorkerAsync(long id)
-        {
-            await _workerRepository.DeleteWorkerAsync(id);
-        }
-
         public async Task<List<WorkerDto>> GetAllWorkersAsync()
         {
             List<Worker> workers = await _workerRepository.GetAllWorkersAsync();
@@ -61,6 +36,17 @@ namespace WorkerManagementAPI.Services.WorkerService.Service
             return workerDto;
         }
 
+        public async Task<WorkerDto> CreateWorkerAsync(CreateWorkerDto createWorkerDto)
+        {
+            Worker createWorker = _mapper.Map<Worker>(createWorkerDto);
+
+            Worker worker = await _workerRepository.CreateWorkerAsync(createWorker);
+
+            WorkerDto workerDto = _mapper.Map<WorkerDto>(worker);
+
+            return workerDto;
+        }
+
         public async Task<WorkerDto> UpdateWorkerAsync(UpdateWorkerDto updateWorkerDto)
         {
             Worker worker = await _workerRepository.UpdateWorkerAsync(updateWorkerDto);
@@ -68,6 +54,29 @@ namespace WorkerManagementAPI.Services.WorkerService.Service
             WorkerDto workerDto = _mapper.Map<WorkerDto>(worker);
 
             return workerDto;
+        }
+
+        public async Task DeleteWorkerAsync(long id)
+        {
+            await _workerRepository.DeleteWorkerAsync(id);
+        }
+
+        public async Task<UpdateWorkerProjectDto> AssignProjectToWorker(PatchWorkerProjectDto patchWorkerProjectDto)
+        {
+            Worker worker = await _workerRepository.AssignProjectToWorker(patchWorkerProjectDto);
+
+            UpdateWorkerProjectDto updateWorkerProjectDto = _mapper.Map<UpdateWorkerProjectDto>(worker);
+
+            return updateWorkerProjectDto;
+        }
+
+        public async Task<UpdateWorkerTechnologyDto> AssignTechnologyToWorker(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
+        {
+            Worker worker = await _workerRepository.AssignTechnologyToWorker(patchWorkerTechnologyDto);
+
+            UpdateWorkerTechnologyDto updateWorkerTechnologyDto = _mapper.Map<UpdateWorkerTechnologyDto>(worker);
+
+            return updateWorkerTechnologyDto;
         }
     }
 }

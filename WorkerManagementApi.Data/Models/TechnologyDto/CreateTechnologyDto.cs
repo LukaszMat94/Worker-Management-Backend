@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using WorkerManagementAPI.Entities.Enums;
 
 namespace WorkerManagementAPI.Models.TechnologyDtos
 {

@@ -1,4 +1,5 @@
 ﻿using WorkerManagementAPI.Models.TechnologyDtos;
+
 namespace WorkerManagementAPI.Services.TechnologyService.Service
 {
     public interface ITechnologyService

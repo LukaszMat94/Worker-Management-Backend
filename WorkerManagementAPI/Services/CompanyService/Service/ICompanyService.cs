@@ -10,7 +10,6 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         Task<CompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto);
         Task<CompanyDto> UpdateCompanyAsync(UpdateCompanyDto updateCompanyDto);
         Task DeleteCompanyAsync(long id);
-
         Task<CompanyDto> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
     }
 }

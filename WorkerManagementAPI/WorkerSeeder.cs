@@ -1,4 +1,6 @@
-﻿using WorkerManagementAPI.Entities;
+﻿using WorkerManagementAPI.Context;
+using WorkerManagementAPI.Entities;
+using WorkerManagementAPI.Entities.Enums;
 
 namespace WorkerManagementAPI
 {

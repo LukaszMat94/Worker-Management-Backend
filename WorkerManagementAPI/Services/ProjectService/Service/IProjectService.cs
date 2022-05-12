@@ -10,6 +10,6 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         Task<ProjectDto> CreateProjectAsync(CreateProjectDto createProjectDto);
         Task<ProjectDto> UpdateProjectAsync(ProjectDto projectDto);
         Task DeleteProjectAsync(long id);
-        Task<UpdateProjectWorkerDto> AssignWorkerToProject(PatchProjectWorkerDto patchProjectWorkerDto);
+        Task<UpdateProjectTechnologyDto> AssignTechnologyToProject(PatchProjectTechnologyDto patchProjectTechnologyDto);
     }
 }

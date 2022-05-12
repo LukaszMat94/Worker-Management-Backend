@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
+using WorkerManagementAPI.Context;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Models.CompanyDtos;
-using WorkerManagementAPI.Models.WorkerDtos;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using Xunit;
 
@@ -206,11 +206,11 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
         {
             workers = new()
             {
-                new Worker { Id = 1, Name = "Michal", Surname = "Wojcik"},
-                new Worker { Id = 2, Name = "Marian", Surname = "Kanapa"},
-                new Worker { Id = 3, Name = "Mieczyslaw", Surname = "Kolos"},
-                new Worker { Id = 4, Name = "Katarzyna", Surname = "Mieczyk"},
-                new Worker { Id = 5, Name = "Iwona", Surname = "Mikolajczyk"}
+                new Worker { Id = 1, Name = "Michal", Surname = "Wojcik", Company = null},
+                new Worker { Id = 2, Name = "Marian", Surname = "Kanapa", Company = null },
+                new Worker { Id = 3, Name = "Mieczyslaw", Surname = "Kolos", Company = null },
+                new Worker { Id = 4, Name = "Katarzyna", Surname = "Mieczyk", Company = null },
+                new Worker { Id = 5, Name = "Iwona", Surname = "Mikolajczyk", Company = null }
             };
 
             _context.Workers.AddRange(workers);

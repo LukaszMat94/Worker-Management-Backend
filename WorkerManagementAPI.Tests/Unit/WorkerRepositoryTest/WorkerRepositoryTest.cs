@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WorkerManagementAPI.Context;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Models.WorkerDtos;
@@ -23,7 +24,7 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
 
             _context = new WorkersManagementDBContext(dbOptions.Options);
             _workerRepository = new WorkerRepository(_context);
-            SeedData(_context);
+            SeedWorkerData(_context);
         }
 
         #region Test Get Action
@@ -70,8 +71,8 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
         public static IEnumerable<object[]> CreateDuplicateData()
         {
             yield return new object[] { new Worker { Id = 15, Name = "Jan", Surname = "Jankowski", Email = "karolbrzoza@onet.pl", Password = "jankowski" } };
-            yield return new object[] { new Worker { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "karolinakarolin@gmail.com", Password = "karolin" } };
-            yield return new object[] { new Worker { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "rafalgwiazda@yahoo.com", Password = "mat" } };
+            yield return new object[] { new Worker { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "joannaadamczyk@wp.pl", Password = "karolin" } };
+            yield return new object[] { new Worker { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "michalkowalski@gmail.com", Password = "mat" } };
         }
 
         [Theory]
@@ -98,7 +99,7 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
         public async Task UpdateWithNonExistDataTest(UpdateWorkerDto updateWorkerDto)
         {
             Func<Task> action = async () => await _workerRepository.UpdateWorkerAsync(updateWorkerDto);
-            await Assert.ThrowsAsync<NotFoundException>(action);       
+            await Assert.ThrowsAsync<NotFoundException>(action);
         }
 
         public static IEnumerable<object[]> UpdateValidData()
@@ -165,16 +166,15 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
 
         #endregion
 
-        private void SeedData(WorkersManagementDBContext context)
+        private void SeedWorkerData(WorkersManagementDBContext context)
         {
             workers = new()
             {
                 new Worker { Id = 1, Name = "Michał", Surname = "Kowalski", Email = "michalkowalski@gmail.com", Password = "kowalski" },
                 new Worker { Id = 2, Name = "Joanna", Surname = "Adamczyk", Email = "joannaadamczyk@wp.pl", Password = "adamczyk" },
-                new Worker { Id = 3, Name = "Karol", Surname = "Brzoza", Email = "karolbrzoza@onet.pl", Password = "brzoza" },
-                new Worker { Id = 4, Name = "Beata", Surname = "Nowak", Email = "beatanowak@o2.pl", Password = "nowak" },
-                new Worker { Id = 5, Name = "Rafał", Surname = "Gwiazda", Email = "rafalgwiazda@yahoo.com", Password = "gwiazda" },
+                new Worker { Id = 3, Name = "Karol", Surname = "Brzoza", Email = "karolbrzoza@onet.pl", Password = "brzoza" }
             };
+
             _context.Workers.AddRange(workers);
             _context.SaveChanges();
         }

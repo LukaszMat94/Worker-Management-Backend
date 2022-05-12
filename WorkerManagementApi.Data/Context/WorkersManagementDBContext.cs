@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WorkerManagementAPI.Entities;
 
-namespace WorkerManagementAPI.Entities
+namespace WorkerManagementAPI.Context
 {
     public class WorkersManagementDBContext : DbContext
     {

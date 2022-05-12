@@ -12,5 +12,6 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         Task<Worker> UpdateWorkerAsync(UpdateWorkerDto updateWorkerDto);
         Task<bool> DeleteWorkerAsync(long id);
         Task<Worker> AssignTechnologyToWorker(PatchWorkerTechnologyDto patchWorkerTechnologyDto);
+        Task<Worker> AssignProjectToWorker(PatchWorkerProjectDto patchWorkerProjectDto);
     }
 }

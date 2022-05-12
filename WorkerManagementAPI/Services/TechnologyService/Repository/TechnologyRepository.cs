@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WorkerManagementAPI.Context;
 using WorkerManagementAPI.Entities;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Models.TechnologyDtos;
@@ -12,31 +13,6 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         public TechnologyRepository(WorkersManagementDBContext dbContext)
         {
             _dbContext = dbContext;
-        }
-
-        public async Task<Technology> CreateTechnologyAsync(Technology technology)
-        {
-            bool existTechnology = await _dbContext.Technologies
-                .AnyAsync(c => technology.Name == c.Name && technology.TechnologyLevel == c.TechnologyLevel);
-
-            if (existTechnology)
-            {
-                throw new DataDuplicateException("Technology already exist");
-            }
-
-            await _dbContext.Technologies.AddAsync(technology);
-            await _dbContext.SaveChangesAsync();
-            return technology;
-
-        }
-
-        public async Task<bool> DeleteTechnologyAsync(long id)
-        {
-            Technology technology = await GetTechnologyByIdAsync(id);
-
-            _dbContext.Technologies.Remove(technology);
-            await _dbContext.SaveChangesAsync();
-            return true;
         }
 
         public async Task<List<Technology>> GetAllTechnologiesAsync()
@@ -58,6 +34,22 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
             return technology;
         }
 
+        public async Task<Technology> CreateTechnologyAsync(Technology technology)
+        {
+            bool existTechnology = await _dbContext.Technologies
+                .AnyAsync(c => technology.Name == c.Name && technology.TechnologyLevel == c.TechnologyLevel);
+
+            if (existTechnology)
+            {
+                throw new DataDuplicateException("Technology already exist");
+            }
+
+            await _dbContext.Technologies.AddAsync(technology);
+            await _dbContext.SaveChangesAsync();
+            return technology;
+
+        }
+
         public async Task<Technology> UpdateTechnologyAsync(TechnologyDto technologyDto)
         {
             bool existAnotherTechnology = await _dbContext.Technologies.AnyAsync(c => 
@@ -77,5 +69,13 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
             return technology;
         }
 
+        public async Task<bool> DeleteTechnologyAsync(long id)
+        {
+            Technology technology = await GetTechnologyByIdAsync(id);
+
+            _dbContext.Technologies.Remove(technology);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

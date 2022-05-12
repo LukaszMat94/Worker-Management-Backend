@@ -1,4 +1,6 @@
-﻿namespace WorkerManagementAPI.Entities
+﻿using WorkerManagementAPI.Entities.Enums;
+
+namespace WorkerManagementAPI.Entities
 {
     public class Technology
     {

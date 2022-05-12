@@ -29,6 +29,9 @@ namespace WorkerManagementAPI.AutoMapper
             CreateMap<Worker, UpdateWorkerTechnologyDto>()
                 .ForMember(updateWorker => updateWorker.TechnologyLevelDto, 
                 action => action.MapFrom(worker => worker.Technologies.First()));
+            CreateMap<Worker, UpdateWorkerProjectDto>()
+                .ForMember(updateWorker => updateWorker.ProjectDto,
+                action => action.MapFrom(worker => worker.Projects.First()));
 
             #endregion
 
@@ -37,9 +40,9 @@ namespace WorkerManagementAPI.AutoMapper
             CreateMap<Project, ProjectDto>();
             CreateMap<ProjectDto, Project>();
             CreateMap<CreateProjectDto, Project>();
-            CreateMap<Project, UpdateProjectWorkerDto>()
-                .ForMember(updateProject => updateProject.Worker,
-                action => action.MapFrom(project => project.Members.First()));
+            CreateMap<Project, UpdateProjectTechnologyDto>()
+                .ForMember(updateProject => updateProject.Technology,
+                action => action.MapFrom(project => project.Technologies.First()));
 
             #endregion
 
