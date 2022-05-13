@@ -64,5 +64,10 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
 
             return companyDto;
         }
+
+        public async Task DetachWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        {
+            await _companyRepository.DetachWorkerFromCompanyAsync(patchCompanyWorkerDto);
+        }
     }
 }

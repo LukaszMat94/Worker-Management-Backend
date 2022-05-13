@@ -11,7 +11,6 @@ namespace WorkerManagementAPI.Models.TechnologyDtos
         public string Name { get; set; } = String.Empty;
 
         [Required]
-        [MaxLength(50)]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TechnologyLevelEnum TechnologyLevel { get; set; } = TechnologyLevelEnum.None;
     }

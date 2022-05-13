@@ -23,14 +23,13 @@ namespace WorkerManagementAPI.Context
 
             modelBuilder.Entity<Company>()
                 .Property(c => c.Name)
-                .IsRequired()
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Company>()
                 .HasMany(c => c.Workers)
                 .WithOne(w => w.Company)
                 .HasForeignKey(w => w.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
             #endregion
 
             #region Worker
@@ -55,6 +54,9 @@ namespace WorkerManagementAPI.Context
             modelBuilder.Entity<Worker>()
                 .HasIndex(c => c.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<Worker>()
+                .HasCheckConstraint("CK_Worker_Email", "[Email] LIKE '%_@_%._%'");
 
             modelBuilder.Entity<Worker>()
                 .Property(c => c.Password)

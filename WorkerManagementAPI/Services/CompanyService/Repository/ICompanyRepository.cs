@@ -12,5 +12,6 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         Task<Company> UpdateCompanyAsync(UpdateCompanyDto updatedCompanyDto);
         Task<bool> DeleteCompanyAsync(long id);
         Task<Company> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
+        Task<bool> DetachWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
     }
 }

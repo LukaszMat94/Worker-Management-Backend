@@ -8,10 +8,6 @@ namespace WorkerManagementAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_Companies_Name",
-                table: "Companies");
-
             migrationBuilder.CreateIndex(
                 name: "IX_Workers_Email",
                 table: "Workers",

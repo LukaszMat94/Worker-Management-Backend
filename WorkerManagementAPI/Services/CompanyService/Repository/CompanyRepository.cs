@@ -89,5 +89,19 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
 
             return company;
         }
+
+        public async Task<bool> DetachWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        {
+            Company company = await GetCompanyByIdAsync(patchCompanyWorkerDto.IdCompany);
+
+            Worker worker = await _dbContext.Workers
+                .FirstOrDefaultAsync(w => w.Id.Equals(patchCompanyWorkerDto.IdWorker))
+                ?? throw new NotFoundException("Worker not found");
+
+            company.Workers.Remove(worker);
+            await _dbContext.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

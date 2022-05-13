@@ -14,6 +14,7 @@ namespace WorkerManagementAPI.Models.WorkerDtos
 
         [Required]
         [MaxLength(35)]
+        [EmailAddress(ErrorMessage = "Invalid email")]
         public string Email { get; set; } = String.Empty;
 
     }

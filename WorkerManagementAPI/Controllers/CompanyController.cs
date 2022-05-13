@@ -57,5 +57,12 @@ namespace WorkerManagementAPI.Controllers
             CompanyDto companyDto = await _companyService.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);
             return Ok(companyDto);
         }
+
+        [HttpPatch("detachWorker")]
+        public async Task<IActionResult> DetachWorkerFromCompany([FromBody] PatchCompanyWorkerDto patchCompanyWorkerDto)
+        {
+            await _companyService.DetachWorkerFromCompanyAsync(patchCompanyWorkerDto);
+            return NoContent();
+        }
     }
 }
