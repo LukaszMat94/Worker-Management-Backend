@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WorkerManagementAPI.Context;
-using WorkerManagementAPI.Entities;
+using WorkerManagementAPI.Data.Context;
+using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.ProjectDtos;
+using WorkerManagementAPI.Data.Models.ProjectDtos;
 using WorkerManagementAPI.Services.ProjectService.Repository;
 using Xunit;
 
@@ -92,27 +92,6 @@ namespace WorkerManagementAPI.Tests.Unit.ProjectRepositoryTest
         #endregion
 
         #region Test Delete Action
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(3)]
-        public async Task DeleteWithValidDataTest(long id)
-        {
-            bool existValue = await _projectRepository.DeleteProjectAsync(id);
-            Assert.True(existValue);
-        }
-
-        [Theory]
-        [InlineData(15)]
-        [InlineData(16)]
-        [InlineData(17)]
-        public async Task DeleteWithNonExistDataTest(long id)
-        {
-            Func<Task> action = async () => await _projectRepository.DeleteProjectAsync(id);
-
-            await Assert.ThrowsAsync<NotFoundException>(action);
-        }
 
         #endregion
 

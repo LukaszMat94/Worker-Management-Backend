@@ -1,5 +1,5 @@
-﻿using WorkerManagementApi.Data.Models.ProjectDtos;
-using WorkerManagementAPI.Models.ProjectDtos;
+﻿using WorkerManagementAPI.Data.Models.ProjectDtos;
+using WorkerManagementAPI.Data.Models.WorkerDtos;
 
 namespace WorkerManagementAPI.Services.ProjectService.Service
 {
@@ -11,5 +11,8 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         Task<ProjectDto> UpdateProjectAsync(ProjectDto projectDto);
         Task DeleteProjectAsync(long id);
         Task<UpdateProjectTechnologyDto> AssignTechnologyToProject(PatchProjectTechnologyDto patchProjectTechnologyDto);
+        Task UnassignTechnologyFromProjectAsync(PatchProjectTechnologyDto patchProjectTechnologyDto);
+        Task<UpdateProjectWorkerDto> AssignWorkerToProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto);
+        Task UnassignWorkerFromProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto);
     }
 }

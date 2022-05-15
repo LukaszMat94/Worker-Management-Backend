@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using WorkerManagementApi.Data.Models.WorkerDtos;
-using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.WorkerDtos;
+using WorkerManagementAPI.Data.Models.WorkerDtos;
+using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Services.WorkerService.Repository;
 
 namespace WorkerManagementAPI.Services.WorkerService.Service
@@ -61,22 +60,18 @@ namespace WorkerManagementAPI.Services.WorkerService.Service
             await _workerRepository.DeleteWorkerAsync(id);
         }
 
-        public async Task<UpdateWorkerProjectDto> AssignProjectToWorker(PatchWorkerProjectDto patchWorkerProjectDto)
-        {
-            Worker worker = await _workerRepository.AssignProjectToWorker(patchWorkerProjectDto);
-
-            UpdateWorkerProjectDto updateWorkerProjectDto = _mapper.Map<UpdateWorkerProjectDto>(worker);
-
-            return updateWorkerProjectDto;
-        }
-
-        public async Task<UpdateWorkerTechnologyDto> AssignTechnologyToWorker(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
-        {
-            Worker worker = await _workerRepository.AssignTechnologyToWorker(patchWorkerTechnologyDto);
+        public async Task<UpdateWorkerTechnologyDto> AssignTechnologyToWorkerAsync(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
+        { 
+            Worker worker = await _workerRepository.AssignTechnologyToWorkerAsync(patchWorkerTechnologyDto);
 
             UpdateWorkerTechnologyDto updateWorkerTechnologyDto = _mapper.Map<UpdateWorkerTechnologyDto>(worker);
 
             return updateWorkerTechnologyDto;
+        }
+
+        public async Task UnassignTechnologyFromWorkerAsync(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
+        {
+            await _workerRepository.UnassignTechnologyFromWorkerAsync(patchWorkerTechnologyDto);
         }
     }
 }

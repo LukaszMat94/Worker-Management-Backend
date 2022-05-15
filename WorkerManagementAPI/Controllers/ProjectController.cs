@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkerManagementApi.Data.Models.ProjectDtos;
-using WorkerManagementAPI.Models.ProjectDtos;
+using WorkerManagementAPI.Data.Models.ProjectDtos;
+using WorkerManagementAPI.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Services.ProjectService.Service;
 
 namespace WorkerManagementAPI.Controllers
@@ -52,10 +52,31 @@ namespace WorkerManagementAPI.Controllers
         }
 
         [HttpPatch("assignTechnology")]
-        public async Task<IActionResult> AssignWorkerToProject([FromBody] PatchProjectTechnologyDto patchProjectTechnologyDto)
+        public async Task<IActionResult> AssignTechnologyToProject([FromBody] PatchProjectTechnologyDto patchProjectTechnologyDto)
         {
             UpdateProjectTechnologyDto updateProjectTechnologyDto = await _projectService.AssignTechnologyToProject(patchProjectTechnologyDto);
             return Ok(updateProjectTechnologyDto);
+        }
+
+        [HttpPatch("unassignTechnology")]
+        public async Task<IActionResult> UnassignTechnologyFromProject([FromBody] PatchProjectTechnologyDto patchProjectTechnologyDto)
+        {
+            await _projectService.UnassignTechnologyFromProjectAsync(patchProjectTechnologyDto);
+            return NoContent();
+        }
+
+        [HttpPatch("assignWorker")]
+        public async Task<IActionResult> AssignWorkerToProject([FromBody] PatchProjectWorkerDto patchProjectWorkerDto)
+        {
+            UpdateProjectWorkerDto updateProjectWorkerDto = await _projectService.AssignWorkerToProjectAsync(patchProjectWorkerDto);
+            return Ok(updateProjectWorkerDto);
+        }
+
+        [HttpPatch("unassignWorker")]
+        public async Task<IActionResult> UnassignWorkerFromProject([FromBody] PatchProjectWorkerDto patchProjectWorkerDto)
+        {
+            await _projectService.UnassignWorkerFromProjectAsync(patchProjectWorkerDto);
+            return NoContent();
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
-using WorkerManagementAPI.Context;
-using WorkerManagementAPI.Entities;
+using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
+using WorkerManagementAPI.Data.Context;
+using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.CompanyDtos;
+using WorkerManagementAPI.Data.Models.CompanyDtos;
 
 namespace WorkerManagementAPI.Services.CompanyService.Repository
 {
@@ -11,9 +11,9 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
     {
         private readonly WorkersManagementDBContext _dbContext;
 
-        public CompanyRepository(WorkersManagementDBContext dBContext)
+        public CompanyRepository(WorkersManagementDBContext dbContext)
         {
-            _dbContext = dBContext;
+            _dbContext = dbContext;
         }
 
         public async Task<List<Company>> GetAllCompaniesAsync()
@@ -30,7 +30,8 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
 
         public async Task<Company> GetCompanyByIdAsync(long id)
         {
-            Company company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == id) ?? throw new NotFoundException("Company not found");
+            Company company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == id) 
+                ?? throw new NotFoundException("Company not found");
 
             return company;
         }
@@ -66,14 +67,12 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
             return company;
         }
 
-        public async Task<bool> DeleteCompanyAsync(long id)
+        public async Task DeleteCompanyAsync(long id)
         {
             Company company = await GetCompanyByIdAsync(id);
 
             _dbContext.Companies.Remove(company);
             await _dbContext.SaveChangesAsync();
-
-            return true;
         }
 
         public async Task<Company> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
@@ -90,7 +89,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
             return company;
         }
 
-        public async Task<bool> DetachWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        public async Task UnassignWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
         {
             Company company = await GetCompanyByIdAsync(patchCompanyWorkerDto.IdCompany);
 
@@ -100,8 +99,6 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
 
             company.Workers.Remove(worker);
             await _dbContext.SaveChangesAsync();
-
-            return true;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using WorkerManagementApi.Data.Models.ProjectDtos;
-using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.ProjectDtos;
+using WorkerManagementAPI.Data.Models.ProjectDtos;
+using WorkerManagementAPI.Data.Models.WorkerDtos;
+using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Services.ProjectService.Repository;
 
 namespace WorkerManagementAPI.Services.ProjectService.Service
@@ -68,6 +68,25 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
             UpdateProjectTechnologyDto updateProjectTechnologyDto = _mapper.Map<UpdateProjectTechnologyDto>(project);
 
             return updateProjectTechnologyDto;
+        }
+
+        public async Task UnassignTechnologyFromProjectAsync(PatchProjectTechnologyDto patchProjectTechnologyDto)
+        {
+            await _projectRepository.UnassignTechnologyFromProjectAsync(patchProjectTechnologyDto);
+        }
+
+        public async Task<UpdateProjectWorkerDto> AssignWorkerToProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto)
+        {
+            Project project = await _projectRepository.AssignWorkerToProjectAsync(patchProjectWorkerDto);
+
+            UpdateProjectWorkerDto updateProjectWorkerDto = _mapper.Map<UpdateProjectWorkerDto>(project);
+
+            return updateProjectWorkerDto;
+        }
+
+        public async Task UnassignWorkerFromProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto)
+        {
+            await _projectRepository.UnassignWorkerFromProjectAsync(patchProjectWorkerDto);
         }
     }
 }

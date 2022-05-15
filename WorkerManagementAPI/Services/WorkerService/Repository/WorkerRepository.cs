@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkerManagementApi.Data.Models.WorkerDtos;
-using WorkerManagementAPI.Context;
-using WorkerManagementAPI.Entities;
+using WorkerManagementAPI.Data.Context;
+using WorkerManagementAPI.Data.Models.WorkerDtos;
+using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.WorkerDtos;
 
 namespace WorkerManagementAPI.Services.WorkerService.Repository
 {
@@ -29,7 +28,8 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
 
         public async Task<Worker> GetWorkerByIdAsync(long id)
         {
-            Worker worker = await _dbContext.Workers.FirstOrDefaultAsync(w => w.Id == id) ?? throw new NotFoundException("Worker not found");
+            Worker worker = await _dbContext.Workers.FirstOrDefaultAsync(w => w.Id == id) 
+                ?? throw new NotFoundException("Worker not found");
 
             return worker;
         }
@@ -61,40 +61,15 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
             return worker;
         }
 
-        public async Task<bool> DeleteWorkerAsync(long id)
+        public async Task DeleteWorkerAsync(long id)
         {
             Worker worker = await GetWorkerByIdAsync(id);
 
             _dbContext.Workers.Remove(worker);
             await _dbContext.SaveChangesAsync();
-
-            return true;
         }
 
-        public async Task<Worker> AssignProjectToWorker(PatchWorkerProjectDto patchWorkerProjectDto)
-        {
-            Worker worker = await GetWorkerByIdAsync(patchWorkerProjectDto.IdWorker);
-
-            Project project = await _dbContext.Projects
-                .FirstOrDefaultAsync(p => p.Id.Equals(patchWorkerProjectDto.IdProject))
-                ?? throw new NotFoundException("Project not found");
-
-            bool existValue = await _dbContext.Workers
-                .Where(w => w.Id.Equals(patchWorkerProjectDto.IdWorker))
-                .AnyAsync(w => w.Projects.Contains(project));
-
-            if (existValue)
-            {
-                throw new DataDuplicateException("Project is already assigned to this worker!");
-            }
-
-            worker.Projects.Add(project);
-            await _dbContext.SaveChangesAsync();
-
-            return worker;
-        }
-
-        public async Task<Worker> AssignTechnologyToWorker(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
+        public async Task<Worker> AssignTechnologyToWorkerAsync(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
         {
             Worker worker = await GetWorkerByIdAsync(patchWorkerTechnologyDto.IdWorker);
 
@@ -116,5 +91,28 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
 
             return worker;
         }
+
+        public async Task UnassignTechnologyFromWorkerAsync(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
+        {
+            Worker worker = await _dbContext.Workers
+                .Include(w => w.Technologies)
+                .FirstOrDefaultAsync(w => w.Id == patchWorkerTechnologyDto.IdWorker)
+                ?? throw new NotFoundException("Worker not found");
+
+            Technology technology = await _dbContext.Technologies
+                .FirstOrDefaultAsync(t => t.Id.Equals(patchWorkerTechnologyDto.IdTechnology))
+                ?? throw new NotFoundException("Technology not found");
+
+            bool existWorkerWithTechnology = !worker.Technologies.Contains(technology);
+
+            if (!existWorkerWithTechnology)
+            {
+                throw new NotFoundException("Relation not found");
+            }
+
+            worker.Technologies.Remove(technology);
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

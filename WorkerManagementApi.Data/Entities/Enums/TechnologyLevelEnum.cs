@@ -1,4 +1,4 @@
-﻿namespace WorkerManagementAPI.Entities.Enums
+﻿namespace WorkerManagementAPI.Data.Entities.Enums
 {
     public enum TechnologyLevelEnum
     {

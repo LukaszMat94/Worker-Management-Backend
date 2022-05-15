@@ -1,5 +1,5 @@
-﻿using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.TechnologyDtos;
+﻿using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.Models.TechnologyDtos;
 
 namespace WorkerManagementAPI.Services.TechnologyService.Repository
 {
@@ -9,6 +9,6 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         Task<Technology> GetTechnologyByIdAsync(long id);
         Task<Technology> CreateTechnologyAsync(Technology technology);
         Task<Technology> UpdateTechnologyAsync(TechnologyDto technologyDto);
-        Task<bool> DeleteTechnologyAsync(long id);
+        Task DeleteTechnologyAsync(long id);
     }
 }

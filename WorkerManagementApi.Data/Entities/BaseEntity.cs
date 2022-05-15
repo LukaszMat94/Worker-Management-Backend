@@ -1,4 +1,4 @@
-﻿namespace WorkerManagementAPI.Entities
+﻿namespace WorkerManagementAPI.Data.Entities
 {
     public class BaseEntity
     {

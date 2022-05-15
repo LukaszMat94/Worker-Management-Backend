@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
-using WorkerManagementAPI.Models.CompanyDtos;
+using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
+using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Service;
 
 namespace WorkerManagementAPI.Controllers
@@ -58,10 +58,10 @@ namespace WorkerManagementAPI.Controllers
             return Ok(companyDto);
         }
 
-        [HttpPatch("detachWorker")]
-        public async Task<IActionResult> DetachWorkerFromCompany([FromBody] PatchCompanyWorkerDto patchCompanyWorkerDto)
+        [HttpPatch("unassignWorker")]
+        public async Task<IActionResult> UnassingWorkerFromCompany([FromBody] PatchCompanyWorkerDto patchCompanyWorkerDto)
         {
-            await _companyService.DetachWorkerFromCompanyAsync(patchCompanyWorkerDto);
+            await _companyService.UnassignWorkerFromCompanyAsync(patchCompanyWorkerDto);
             return NoContent();
         }
     }

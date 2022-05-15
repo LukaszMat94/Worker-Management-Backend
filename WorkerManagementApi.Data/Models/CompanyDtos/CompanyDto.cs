@@ -1,7 +1,6 @@
-﻿using WorkerManagementAPI.Models.WorkerDtos;
+﻿using WorkerManagementAPI.Data.Models.WorkerDtos;
 
-namespace WorkerManagementAPI.Models.CompanyDtos
-
+namespace WorkerManagementAPI.Data.Models.CompanyDtos
 {
     public class CompanyDto
     {

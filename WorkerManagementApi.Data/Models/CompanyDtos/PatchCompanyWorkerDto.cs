@@ -1,4 +1,4 @@
-﻿namespace WorkerManagementApi.Data.Models.CompanyWorkerDtos
+﻿namespace WorkerManagementAPI.Data.Models.CompanyWorkerDtos
 {
     public class PatchCompanyWorkerDto
     {

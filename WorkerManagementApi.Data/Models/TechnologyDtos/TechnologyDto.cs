@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using WorkerManagementAPI.Entities.Enums;
+using WorkerManagementAPI.Data.Entities.Enums;
 
-namespace WorkerManagementAPI.Models.TechnologyDtos
+namespace WorkerManagementAPI.Data.Models.TechnologyDtos
 {
-    public class CreateTechnologyDto
+    public class TechnologyDto
     {
+        public long Id { get; set; }
+
         [Required]
         [MaxLength(50)]
         public string Name { get; set; } = String.Empty;

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerManagementAPI", "Work
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerManagementAPI.Tests", "WorkerManagementAPI.Tests\WorkerManagementAPI.Tests.csproj", "{E71C6F4B-2034-4740-8D4D-7D6B00911EA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerManagementApi.Data", "WorkerManagementApi.Data\WorkerManagementApi.Data.csproj", "{DDAF36FF-150A-4D79-A42C-0D4E4BD9031F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerManagementAPI.Data", "WorkerManagementApi.Data\WorkerManagementAPI.Data.csproj", "{DDAF36FF-150A-4D79-A42C-0D4E4BD9031F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

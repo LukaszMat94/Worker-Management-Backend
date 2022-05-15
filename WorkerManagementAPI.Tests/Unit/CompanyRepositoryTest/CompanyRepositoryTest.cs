@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
-using WorkerManagementAPI.Context;
-using WorkerManagementAPI.Entities;
+using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
+using WorkerManagementAPI.Data.Context;
+using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.CompanyDtos;
+using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using Xunit;
 
@@ -124,26 +124,6 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
         #endregion
 
         #region Test Delete Action
-
-        [Theory]
-        [InlineData(45)]
-        [InlineData(46)]
-        [InlineData(47)]
-        public async Task DeleteWithNonExistDataTest(long id)
-        {
-            Func<Task> action = async () => await _companyRepository.DeleteCompanyAsync(id);
-            await Assert.ThrowsAsync<NotFoundException>(action);
-        }
-
-        [Theory]
-        [InlineData(3)]
-        [InlineData(4)]
-        [InlineData(5)]
-        public async Task DeleteWithValidDataTest(long id)
-        {
-            bool existValue = await _companyRepository.DeleteCompanyAsync(id);
-            Assert.True(existValue);
-        }
 
         #endregion
 

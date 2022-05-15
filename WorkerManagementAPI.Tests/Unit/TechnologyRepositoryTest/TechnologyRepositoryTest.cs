@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WorkerManagementAPI.Context;
-using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Entities.Enums;
+using WorkerManagementAPI.Data.Context;
+using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.Entities.Enums;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.TechnologyDtos;
+using WorkerManagementAPI.Data.Models.TechnologyDtos;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
 using Xunit;
 
@@ -128,28 +128,6 @@ namespace WorkerManagementAPI.Tests.Unit.TechnologyRepositoryTest
         #endregion
 
         #region Test Delete Action
-
-        [Theory]
-        [InlineData(18)]
-        [InlineData(19)]
-        [InlineData(20)]
-        public async Task DeleteWithNonExistDataTest(long id)
-        {
-            Func<Task> action = async () => await _technologyRepository.DeleteTechnologyAsync(id);
-
-            await Assert.ThrowsAsync<NotFoundException>(action);
-        }
-
-        [Theory]
-        [InlineData(8)]
-        [InlineData(9)]
-        [InlineData(10)]
-        public async Task DeleteWithValidDataTest(long id)
-        {
-            bool existValue = await _technologyRepository.DeleteTechnologyAsync(id);
-
-            Assert.True(existValue);
-        }
 
         #endregion
 

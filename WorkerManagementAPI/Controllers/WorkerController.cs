@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkerManagementApi.Data.Models.WorkerDtos;
-using WorkerManagementAPI.Models.WorkerDtos;
+using WorkerManagementAPI.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Services.WorkerService.Service;
 
 namespace WorkerManagementAPI.Controllers
@@ -54,15 +53,15 @@ namespace WorkerManagementAPI.Controllers
         [HttpPatch("assignTechnology")]
         public async Task<IActionResult> AssignTechnologyToWorker([FromBody] PatchWorkerTechnologyDto patchWorkerTechnologyDto)
         {
-            UpdateWorkerTechnologyDto updateWorkerTechnologyDto = await _workerService.AssignTechnologyToWorker(patchWorkerTechnologyDto);
+            UpdateWorkerTechnologyDto updateWorkerTechnologyDto = await _workerService.AssignTechnologyToWorkerAsync(patchWorkerTechnologyDto);
             return Ok(updateWorkerTechnologyDto);
         }
 
-        [HttpPatch("assignProject")]
-        public async Task<IActionResult> AssignProjectToWorker([FromBody] PatchWorkerProjectDto patchWorkerProjectDto)
+        [HttpPatch("unassignTechnology")]
+        public async Task<IActionResult> UnassignTechnologyFromWorker([FromBody] PatchWorkerTechnologyDto patchWorkerTechnologyDto)
         {
-            UpdateWorkerProjectDto updateWorkerProjectDto = await _workerService.AssignProjectToWorker(patchWorkerProjectDto);
-            return Ok(updateWorkerProjectDto);
+            await _workerService.UnassignTechnologyFromWorkerAsync(patchWorkerTechnologyDto);
+            return NoContent();
         }
     }
 }

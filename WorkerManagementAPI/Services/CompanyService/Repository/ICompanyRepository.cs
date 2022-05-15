@@ -1,6 +1,6 @@
-﻿using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
-using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.CompanyDtos;
+﻿using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
+using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.Models.CompanyDtos;
 
 namespace WorkerManagementAPI.Services.CompanyService.Repository
 {
@@ -10,8 +10,8 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         Task<Company> GetCompanyByIdAsync(long id);
         Task<Company> CreateCompanyAsync(Company company);
         Task<Company> UpdateCompanyAsync(UpdateCompanyDto updatedCompanyDto);
-        Task<bool> DeleteCompanyAsync(long id);
+        Task DeleteCompanyAsync(long id);
         Task<Company> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
-        Task<bool> DetachWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
+        Task UnassignWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
     }
 }

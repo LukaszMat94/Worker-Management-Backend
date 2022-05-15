@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WorkerManagementAPI.Models.TechnologyDtos;
+using WorkerManagementAPI.Data.Models.TechnologyDtos;
 
-namespace WorkerManagementApi.Data.Models.WorkerDtos
+namespace WorkerManagementAPI.Data.Models.WorkerDtos
 {
     public class UpdateWorkerTechnologyDto
     {

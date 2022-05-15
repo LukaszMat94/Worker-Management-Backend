@@ -1,4 +1,4 @@
-﻿using WorkerManagementAPI.Models.TechnologyDtos;
+﻿using WorkerManagementAPI.Data.Models.TechnologyDtos;
 
 namespace WorkerManagementAPI.Services.TechnologyService.Service
 {

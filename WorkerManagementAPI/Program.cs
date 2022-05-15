@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 using WorkerManagementAPI;
-using WorkerManagementAPI.Context;
+using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Middlewares;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using WorkerManagementAPI.Services.CompanyService.Service;

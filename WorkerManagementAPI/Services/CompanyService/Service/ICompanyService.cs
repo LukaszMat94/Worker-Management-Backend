@@ -1,5 +1,5 @@
-﻿using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
-using WorkerManagementAPI.Models.CompanyDtos;
+﻿using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
+using WorkerManagementAPI.Data.Models.CompanyDtos;
 
 namespace WorkerManagementAPI.Services.CompanyService.Service
 {
@@ -11,6 +11,6 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         Task<CompanyDto> UpdateCompanyAsync(UpdateCompanyDto updateCompanyDto);
         Task DeleteCompanyAsync(long id);
         Task<CompanyDto> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
-        Task DetachWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
+        Task UnassignWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
     }
 }

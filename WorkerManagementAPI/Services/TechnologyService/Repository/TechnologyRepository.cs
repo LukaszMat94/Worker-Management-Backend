@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkerManagementAPI.Context;
-using WorkerManagementAPI.Entities;
+using WorkerManagementAPI.Data.Context;
+using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Models.TechnologyDtos;
+using WorkerManagementAPI.Data.Models.TechnologyDtos;
 
 namespace WorkerManagementAPI.Services.TechnologyService.Repository
 {
@@ -69,13 +69,12 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
             return technology;
         }
 
-        public async Task<bool> DeleteTechnologyAsync(long id)
+        public async Task DeleteTechnologyAsync(long id)
         {
             Technology technology = await GetTechnologyByIdAsync(id);
 
             _dbContext.Technologies.Remove(technology);
             await _dbContext.SaveChangesAsync();
-            return true;
         }
     }
 }

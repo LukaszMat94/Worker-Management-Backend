@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkerManagementAPI.Entities;
+using WorkerManagementAPI.Data.Entities;
 
-namespace WorkerManagementAPI.Context
+namespace WorkerManagementAPI.Data.Context
 {
     public class WorkersManagementDBContext : DbContext
     {
@@ -18,6 +18,7 @@ namespace WorkerManagementAPI.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region  Company
+
             modelBuilder.Entity<Company>()
                 .HasKey(c => c.Id);
 
@@ -30,9 +31,11 @@ namespace WorkerManagementAPI.Context
                 .WithOne(w => w.Company)
                 .HasForeignKey(w => w.CompanyId)
                 .OnDelete(DeleteBehavior.SetNull);
+
             #endregion
 
             #region Worker
+
             modelBuilder.Entity<Worker>()
                 .HasKey(w => w.Id);
 
@@ -80,19 +83,6 @@ namespace WorkerManagementAPI.Context
                 .IsRequired()
                 .HasMaxLength(50);
 
-            modelBuilder.Entity<Technology>()
-                .HasMany(c => c.Workers)
-                .WithMany(c => c.Technologies)
-                    .UsingEntity<Dictionary<string, object>>("WorkersTechnologies",
-                        b => b.HasOne<Worker>()
-                            .WithMany()
-                            .HasForeignKey("WorkerId")
-                            .OnDelete(DeleteBehavior.Restrict),
-                        b => b.HasOne<Technology>()
-                            .WithMany()
-                            .HasForeignKey("TechnologyId")
-                            .OnDelete(DeleteBehavior.Restrict));
-
             #endregion
 
             #region Project
@@ -104,31 +94,6 @@ namespace WorkerManagementAPI.Context
                 .Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(50);
-
-            modelBuilder.Entity<Project>()
-                .HasMany(p => p.Members)
-                .WithMany(p => p.Projects)
-                .UsingEntity<Dictionary<string, object>>("ProjectsMembers",
-                    mp => mp.HasOne<Worker>()
-                        .WithMany()
-                        .HasForeignKey("WorkerId")
-                        .OnDelete(DeleteBehavior.Restrict),
-                    mp => mp
-                        .HasOne<Project>()
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict));
-
-            modelBuilder.Entity<Project>()
-                .HasMany(p => p.Technologies)
-                .WithMany(p => p.Projects)
-                .UsingEntity<Dictionary<string, object>>("ProjectsTechnologies",
-                    mp => mp.HasOne<Technology>()
-                        .WithMany()
-                        .HasForeignKey("TechnologyId"),
-                    mp => mp.HasOne<Project>()
-                        .WithMany()
-                        .HasForeignKey("ProjectId"));
 
             #endregion
         }

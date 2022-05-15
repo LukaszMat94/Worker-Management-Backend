@@ -1,4 +1,4 @@
-﻿namespace WorkerManagementApi.Data.Models.ProjectDtos
+﻿namespace WorkerManagementAPI.Data.Models.ProjectDtos
 {
     public class PatchProjectTechnologyDto
     {

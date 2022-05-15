@@ -1,6 +1,6 @@
-﻿using WorkerManagementAPI.Context;
-using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Entities.Enums;
+﻿using WorkerManagementAPI.Data.Context;
+using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.Entities.Enums;
 
 namespace WorkerManagementAPI
 {
@@ -94,35 +94,48 @@ namespace WorkerManagementAPI
                 Name = "Service create"
             };
 
+            apiProject.Technologies = new List<Technology>();
             apiProject.Technologies.Add(javaTechnology);
             apiProject.Technologies.Add(csharpTechnology);
 
+            webPageProject.Technologies = new List<Technology>();
             webPageProject.Technologies.Add(reactTechnology);
 
+            serviceProject.Technologies = new List<Technology>();
             serviceProject.Technologies.Add(javaTechnology);
 
             #region Workers
-
+            firstBraveWorker.Technologies = new List<Technology>();
             firstBraveWorker.Technologies.Add(reactTechnology);
             firstBraveWorker.Technologies.Add(javaTechnology);
+
+            firstBraveWorker.Projects = new List<Project>();
             firstBraveWorker.Projects.Add(apiProject);
             firstBraveWorker.Projects.Add(serviceProject);
 
+            secondBraveWorker.Technologies = new List<Technology>();
             secondBraveWorker.Technologies.Add(csharpTechnology);
+
+            secondBraveWorker.Projects = new List<Project>();
             secondBraveWorker.Projects.Add(apiProject);
 
+            firstTeslaWorker.Technologies = new List<Technology>();
             firstTeslaWorker.Technologies.Add(javaTechnology);
             firstTeslaWorker.Technologies.Add(csharpTechnology);
             firstTeslaWorker.Technologies.Add(reactTechnology);
+
+            firstTeslaWorker.Projects = new List<Project>();
             firstTeslaWorker.Projects.Add(serviceProject);
             firstTeslaWorker.Projects.Add(apiProject);
             firstTeslaWorker.Projects.Add(webPageProject);
 
             #endregion
 
+            braveCompany.Workers = new List<Worker>();
             braveCompany.Workers.Add(firstBraveWorker);
             braveCompany.Workers.Add(secondBraveWorker);
 
+            teslaCompany.Workers = new List<Worker>();
             teslaCompany.Workers.Add(firstTeslaWorker);
 
             companies.Add(braveCompany);

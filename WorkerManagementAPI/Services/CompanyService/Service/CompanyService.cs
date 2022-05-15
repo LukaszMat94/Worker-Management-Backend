@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using WorkerManagementApi.Data.Models.CompanyWorkerDtos;
-using WorkerManagementAPI.Entities;
-using WorkerManagementAPI.Models.CompanyDtos;
+using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
+using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 
 namespace WorkerManagementAPI.Services.CompanyService.Service
@@ -65,9 +65,9 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
             return companyDto;
         }
 
-        public async Task DetachWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        public async Task UnassignWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
         {
-            await _companyRepository.DetachWorkerFromCompanyAsync(patchCompanyWorkerDto);
+            await _companyRepository.UnassignWorkerFromCompanyAsync(patchCompanyWorkerDto);
         }
     }
 }
