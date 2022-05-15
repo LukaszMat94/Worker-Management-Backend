@@ -19,30 +19,23 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         {
             List<Technology> technologies = await _dbContext.Technologies.ToListAsync();
 
-            if(technologies.Count == 0)
-            {
-                throw new NotFoundException("List is empty");
-            }
+            CheckIfListIsEmpty(technologies);
 
             return technologies;
         }
 
         public async Task<Technology> GetTechnologyByIdAsync(long id)
         {
-            Technology technology = await _dbContext.Technologies.FirstOrDefaultAsync(x => x.Id == id) ?? throw new NotFoundException("Technology not found");
+            Technology technology = await _dbContext.Technologies
+                .FirstOrDefaultAsync(x => x.Id == id) 
+                ?? throw new NotFoundException("Technology not found");
 
             return technology;
         }
 
         public async Task<Technology> CreateTechnologyAsync(Technology technology)
         {
-            bool existTechnology = await _dbContext.Technologies
-                .AnyAsync(c => technology.Name == c.Name && technology.TechnologyLevel == c.TechnologyLevel);
-
-            if (existTechnology)
-            {
-                throw new DataDuplicateException("Technology already exist");
-            }
+            await CheckIfTechnologyExistAsync(technology);
 
             await _dbContext.Technologies.AddAsync(technology);
             await _dbContext.SaveChangesAsync();
@@ -52,18 +45,11 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
 
         public async Task<Technology> UpdateTechnologyAsync(TechnologyDto technologyDto)
         {
-            bool existAnotherTechnology = await _dbContext.Technologies.AnyAsync(c => 
-            c.Name == technologyDto.Name && c.TechnologyLevel == technologyDto.TechnologyLevel && c.Id != technologyDto.Id);
+            await CheckIfTechnologyExistWithOtherIdAsync(technologyDto);
 
-            if (existAnotherTechnology)
-            {
-                throw new DataDuplicateException("You cannot update this technology because another one exist just in db!");
-            }
+            Technology technology = await GetTechnologyByIdAsync(technologyDto.Id);
 
-            Technology technology = await GetTechnologyByIdAsync(technologyDto.Id);            
-
-            technology.Name = technologyDto.Name;
-            technology.TechnologyLevel = technologyDto.TechnologyLevel;
+            UpdateTechnology(technology, technologyDto);
             await _dbContext.SaveChangesAsync();
 
             return technology;
@@ -75,6 +61,45 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
 
             _dbContext.Technologies.Remove(technology);
             await _dbContext.SaveChangesAsync();
+        }
+
+        private void CheckIfListIsEmpty(List<Technology> technologies)
+        {
+            if (technologies.Count == 0)
+            {
+                throw new NotFoundException("List is empty");
+            }
+        }
+
+        private async Task CheckIfTechnologyExistAsync(Technology technology)
+        {
+            bool existTechnology = await _dbContext.Technologies
+               .AnyAsync(c => technology.Name == c.Name && 
+               technology.TechnologyLevel == c.TechnologyLevel);
+
+            if (existTechnology)
+            {
+                throw new DataDuplicateException("Technology already exist");
+            }
+        }
+
+        private async Task CheckIfTechnologyExistWithOtherIdAsync(TechnologyDto technologyDto)
+        {
+            bool existAnotherTechnology = await _dbContext.Technologies.AnyAsync(c =>
+                c.Name == technologyDto.Name && 
+                c.TechnologyLevel == technologyDto.TechnologyLevel && 
+                c.Id != technologyDto.Id);
+
+            if (existAnotherTechnology)
+            {
+                throw new DataDuplicateException("You cannot update this technology because another one exist just in db!");
+            }
+        }
+
+        private void UpdateTechnology(Technology technology, TechnologyDto technologyDto)
+        {
+            technology.Name = technologyDto.Name;
+            technology.TechnologyLevel = technologyDto.TechnologyLevel;
         }
     }
 }

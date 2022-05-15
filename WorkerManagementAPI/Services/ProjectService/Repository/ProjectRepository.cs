@@ -20,17 +20,16 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         {
             List<Project> projects = await _dbContext.Projects.ToListAsync();
 
-            if(projects.Count == 0)
-            {
-                throw new NotFoundException("List is empty");
-            }
+            CheckIfListIsEmpty(projects);
 
             return projects;
         }
 
         public async Task<Project> GetProjectByIdAsync(long id)
         {
-            Project project = await _dbContext.Projects.FirstOrDefaultAsync(p => p.Id == id) ?? throw new NotFoundException("Project not found");
+            Project project = await _dbContext.Projects.
+                FirstOrDefaultAsync(p => p.Id == id)
+                ?? throw new NotFoundException("Project not found");
 
             return project;
         }
@@ -47,7 +46,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         {
             Project project = await GetProjectByIdAsync(updateProjectDto.Id);
 
-            project.Name = updateProjectDto.Name;
+            UpdateProjectProperties(project, updateProjectDto);
             await _dbContext.SaveChangesAsync();
 
             return project;
@@ -65,18 +64,9 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         {
             Project project = await GetProjectByIdAsync(patchProjectTechnologyDto.IdProject);
 
-            Technology technology = await _dbContext.Technologies
-                .FirstOrDefaultAsync(p => p.Id.Equals(patchProjectTechnologyDto.IdTechnology))
-                ?? throw new NotFoundException("Technology not found");
+            Technology technology = await GetTechnologyByIdAsync(patchProjectTechnologyDto.IdTechnology);
 
-            bool existValue = await _dbContext.Projects
-                .Where(p => p.Id.Equals(patchProjectTechnologyDto.IdProject))
-                .AnyAsync(p => p.Technologies.Contains(technology));
-
-            if (existValue)
-            {
-                throw new DataDuplicateException("Technology is already assigned to this project");
-            }
+            await CheckIfTechnologyIsAssignedToProjectAsync(patchProjectTechnologyDto.IdProject, technology);
 
             project.Technologies.Add(technology);
             await _dbContext.SaveChangesAsync();
@@ -86,19 +76,11 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
 
         public async Task UnassignTechnologyFromProjectAsync(PatchProjectTechnologyDto patchProjectTechnologyDto)
         {
-            Project project = await _dbContext.Projects
-                .Include(p => p.Technologies)
-                .FirstOrDefaultAsync(p => p.Id == patchProjectTechnologyDto.IdProject)
-                ?? throw new NotFoundException("Project not found");
+            Project project = await GetProjectByIdWithTechnologiesAsync(patchProjectTechnologyDto.IdProject);
 
-            Technology technology = await _dbContext.Technologies
-                .FirstOrDefaultAsync(t => t.Id.Equals(patchProjectTechnologyDto.IdTechnology))
-                ?? throw new NotFoundException("Technology not found");
+            Technology technology = await GetTechnologyByIdAsync(patchProjectTechnologyDto.IdTechnology);
 
-            if (!project.Technologies.Contains(technology))
-            {
-                throw new NotFoundException("Relation not found");
-            }
+            CheckIfProjectContainTechnology(project, technology);
 
             project.Technologies.Remove(technology);
             await _dbContext.SaveChangesAsync();
@@ -108,18 +90,9 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         {
             Project project = await GetProjectByIdAsync(patchProjectWorkerDto.IdProject);
 
-            Worker worker = await _dbContext.Workers
-                .FirstOrDefaultAsync(w => w.Id.Equals(patchProjectWorkerDto.IdWorker))
-                ?? throw new NotFoundException("Worker not found");
+            Worker worker = await GetWorkerByIdAsync(patchProjectWorkerDto.IdWorker);
 
-            bool existValue = await _dbContext.Projects
-                .Where(p => p.Id.Equals(patchProjectWorkerDto.IdProject))
-                .AnyAsync(w => w.Members.Contains(worker));
-
-            if (existValue)
-            {
-                throw new DataDuplicateException("Worker is already assigned to this project!");
-            }
+            await CheckIfProjectHasMemberAsync(patchProjectWorkerDto.IdProject, worker);
 
             project.Members.Add(worker);
             await _dbContext.SaveChangesAsync();
@@ -129,23 +102,104 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
 
         public async Task UnassignWorkerFromProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto)
         {
+            Project project = await GetProjectWithWorkersByIdAsync(patchProjectWorkerDto.IdProject);
+
+            Worker worker = await GetWorkerByIdAsync(patchProjectWorkerDto.IdWorker);
+
+            CheckIfProjectContainsMember(project, worker);
+
+            project.Members.Remove(worker);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private void CheckIfListIsEmpty(List<Project> projects)
+        {
+            if (projects.Count == 0)
+            {
+                throw new NotFoundException("List is empty");
+            }
+        }
+
+        private void UpdateProjectProperties(Project project, ProjectDto updateProjectDto)
+        {
+            project.Name = updateProjectDto.Name;
+        }
+
+        private async Task<Project> GetProjectByIdWithTechnologiesAsync(long idProject)
+        {
             Project project = await _dbContext.Projects
-                .Include(p => p.Members)
-                .FirstOrDefaultAsync(p => p.Id == patchProjectWorkerDto.IdProject)
+                .Include(p => p.Technologies)
+                .FirstOrDefaultAsync(p => p.Id.Equals(idProject))
                 ?? throw new NotFoundException("Project not found");
 
+            return project;
+        }
 
+        private async Task<Technology> GetTechnologyByIdAsync(long idTechnology)
+        {
+            Technology technology = await _dbContext.Technologies
+                .FirstOrDefaultAsync(p => p.Id.Equals(idTechnology))
+                ?? throw new NotFoundException("Technology not found");
+
+            return technology;
+        }
+
+        private void CheckIfProjectContainTechnology(Project project, Technology technology){
+            if (!project.Technologies.Contains(technology))
+            {
+                throw new NotFoundException("Relation not found");
+            }
+        }
+
+        private async Task CheckIfTechnologyIsAssignedToProjectAsync(long idProject, Technology technology)
+        {
+            bool existValue = await _dbContext.Projects
+                .Where(p => p.Id.Equals(idProject))
+                .AnyAsync(p => p.Technologies.Contains(technology));
+
+            if (existValue)
+            {
+                throw new DataDuplicateException("Technology is already assigned to this project");
+            }
+        }
+
+        private async Task<Project> GetProjectWithWorkersByIdAsync(long idProject)
+        {
+            Project project = await _dbContext.Projects
+                .Include(p => p.Members)
+                .FirstOrDefaultAsync(p => p.Id.Equals(idProject))
+                ?? throw new NotFoundException("Project not found");
+
+            return project;
+        }
+
+        private async Task<Worker> GetWorkerByIdAsync(long idWorker)
+        {
             Worker worker = await _dbContext.Workers
-                .FirstOrDefaultAsync(w => w.Id.Equals(patchProjectWorkerDto.IdWorker))
+                .FirstOrDefaultAsync(w => w.Id.Equals(idWorker))
                 ?? throw new NotFoundException("Worker not found");
 
+            return worker;
+        }
+
+        private async Task CheckIfProjectHasMemberAsync(long idProject, Worker worker)
+        {
+            bool existValue = await _dbContext.Projects
+                .Where(p => p.Id.Equals(idProject))
+                .AnyAsync(w => w.Members.Contains(worker));
+
+            if (existValue)
+            {
+                throw new DataDuplicateException("Worker is already assigned to this project!");
+            }
+        }
+
+        private void CheckIfProjectContainsMember(Project project, Worker worker)
+        {
             if (!project.Members.Contains(worker))
             {
                 throw new NotFoundException("Relation not found");
             }
-
-            project.Members.Remove(worker);
-            await _dbContext.SaveChangesAsync();
         }
     }
 }

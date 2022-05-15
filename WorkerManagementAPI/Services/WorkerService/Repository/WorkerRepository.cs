@@ -18,10 +18,7 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         {
             List<Worker> workers = await _dbContext.Workers.ToListAsync();
 
-            if (workers.Count == 0)
-            {
-                throw new NotFoundException("List is empty");
-            }
+            CheckIfListIsEmpty(workers);
 
             return workers;
         }
@@ -36,15 +33,9 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
 
         public async Task<Worker> CreateWorkerAsync(Worker worker)
         {
-            bool exist = await _dbContext.Workers.AnyAsync(w => w.Email.Equals(worker.Email));
-
-            if (exist)
-            {
-                throw new DataDuplicateException("Worker already exist with given email");
-            }
+            await CheckIfEmailIsTakenAsync(worker);
 
             await _dbContext.Workers.AddAsync(worker);
-
             await _dbContext.SaveChangesAsync();
 
             return worker;
@@ -54,8 +45,7 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         {
             Worker worker = await GetWorkerByIdAsync(updateWorkerDto.Id);
 
-            worker.Name = updateWorkerDto.Name;
-            worker.Surname = updateWorkerDto.Surname;
+            UpdateWorkerProperties(worker, updateWorkerDto);
             await _dbContext.SaveChangesAsync();
 
             return worker;
@@ -73,18 +63,9 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         {
             Worker worker = await GetWorkerByIdAsync(patchWorkerTechnologyDto.IdWorker);
 
-            Technology technology = await _dbContext.Technologies
-                .FirstOrDefaultAsync(t => t.Id.Equals(patchWorkerTechnologyDto.IdTechnology))
-                ?? throw new NotFoundException("Technology not found");
+            Technology technology = await GetTechnologyAsync(patchWorkerTechnologyDto.IdTechnology);
 
-            bool existValue = await _dbContext.Workers
-                .Where(w => w.Id.Equals(patchWorkerTechnologyDto.IdWorker))
-                .AnyAsync(w => w.Technologies.Contains(technology));
-
-            if (existValue)
-            {
-                throw new DataDuplicateException("Technology is already assigned to this worker!");
-            }
+            await CheckIfTechnologyIsAssignedAsync(patchWorkerTechnologyDto.IdWorker, technology);
 
             worker.Technologies.Add(technology);
             await _dbContext.SaveChangesAsync();
@@ -94,25 +75,79 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
 
         public async Task UnassignTechnologyFromWorkerAsync(PatchWorkerTechnologyDto patchWorkerTechnologyDto)
         {
+            Worker worker = await GetWorkerWithTechnologiesAsync(patchWorkerTechnologyDto.IdWorker);
+
+            Technology technology = await GetTechnologyAsync(patchWorkerTechnologyDto.IdTechnology);
+
+            CheckIfExistRelation(worker, technology);
+
+            worker.Technologies.Remove(technology);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private void CheckIfListIsEmpty(List<Worker> workers)
+        {
+            if (workers.Count == 0)
+                {
+                    throw new NotFoundException("List is empty");
+                }
+        }
+
+        private async Task CheckIfEmailIsTakenAsync(Worker worker)
+        {
+            bool exist = await _dbContext.Workers.AnyAsync(w => w.Email.Equals(worker.Email));
+
+            if (exist)
+            {
+                throw new DataDuplicateException("Worker already exist with given email");
+            }
+        }
+
+        private void UpdateWorkerProperties(Worker worker, UpdateWorkerDto updateWorkerDto)
+        {
+            worker.Name = updateWorkerDto.Name;
+            worker.Surname = updateWorkerDto.Surname;
+        }
+
+        private async Task<Worker> GetWorkerWithTechnologiesAsync(long idWorker)
+        {
             Worker worker = await _dbContext.Workers
                 .Include(w => w.Technologies)
-                .FirstOrDefaultAsync(w => w.Id == patchWorkerTechnologyDto.IdWorker)
+                .FirstOrDefaultAsync(w => w.Id == idWorker) 
                 ?? throw new NotFoundException("Worker not found");
 
+            return worker;
+        }
+
+        private async Task<Technology> GetTechnologyAsync(long idTechnology)
+        {
             Technology technology = await _dbContext.Technologies
-                .FirstOrDefaultAsync(t => t.Id.Equals(patchWorkerTechnologyDto.IdTechnology))
+                .FirstOrDefaultAsync(t => t.Id.Equals(idTechnology)) 
                 ?? throw new NotFoundException("Technology not found");
 
+            return technology;
+        }
+
+        private void CheckIfExistRelation(Worker worker, Technology technology)
+        {
             bool existWorkerWithTechnology = !worker.Technologies.Contains(technology);
 
             if (!existWorkerWithTechnology)
             {
                 throw new NotFoundException("Relation not found");
             }
-
-            worker.Technologies.Remove(technology);
-            await _dbContext.SaveChangesAsync();
         }
 
+        private async Task CheckIfTechnologyIsAssignedAsync(long idWorker, Technology technology)
+        {
+            bool existValue = await _dbContext.Workers
+                .Where(w => w.Id.Equals(idWorker))
+                .AnyAsync(w => w.Technologies.Contains(technology));
+
+            if (existValue)
+            {
+                throw new DataDuplicateException("Technology is already assigned to this worker!");
+            }
+        }
     }
 }

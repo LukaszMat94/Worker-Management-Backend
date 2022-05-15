@@ -20,17 +20,15 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         {
             List<Company> companies = await _dbContext.Companies.Include(c => c.Workers).ToListAsync();
 
-            if(companies.Count == 0)
-            {
-                throw new NotFoundException("List is empty");
-            }
+            CheckIfListIsEmpty(companies);
 
             return companies;
         }
 
         public async Task<Company> GetCompanyByIdAsync(long id)
         {
-            Company company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == id) 
+            Company company = await _dbContext.Companies
+                .FirstOrDefaultAsync(c => c.Id.Equals(id)) 
                 ?? throw new NotFoundException("Company not found");
 
             return company;
@@ -38,12 +36,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
 
         public async Task<Company> CreateCompanyAsync(Company company)
         {
-            bool existValue = await _dbContext.Companies.AnyAsync(c => c.Name.Equals(company.Name));
-
-            if (existValue)
-            {
-                throw new DataDuplicateException("Company with this name is already registered");
-            }
+            await CheckIfCompanyAlreadyExistAsync(company);
 
             await _dbContext.Companies.AddAsync(company);
             await _dbContext.SaveChangesAsync();
@@ -53,15 +46,11 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
 
         public async Task<Company> UpdateCompanyAsync(UpdateCompanyDto updatedCompany)
         {
-            bool existValue = await _dbContext.Companies.AnyAsync(c => c.Name.Equals(updatedCompany.Name) && c.Id != updatedCompany.Id);
-
-            if (existValue)
-            {
-                throw new DataDuplicateException("Company already exist with registered name");
-            }
+            await CheckIfCompanyAlreadyExistWithOtherIdAsync(updatedCompany);
 
             Company company = await GetCompanyByIdAsync(updatedCompany.Id);
-            company.Name = updatedCompany.Name;
+
+            UpdateCompanyProperties(company, updatedCompany);
             await _dbContext.SaveChangesAsync();
 
             return company;
@@ -79,9 +68,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         {
             Company company = await GetCompanyByIdAsync(patchCompanyWorkerDto.IdCompany);
 
-            Worker worker = await _dbContext.Workers
-                .FirstOrDefaultAsync(w => w.Id.Equals(patchCompanyWorkerDto.IdWorker))
-                ?? throw new NotFoundException("Worker not found");
+            Worker worker = await GetWorkerByIdAsync(patchCompanyWorkerDto.IdWorker);
 
             worker.CompanyId = patchCompanyWorkerDto.IdCompany;
             await _dbContext.SaveChangesAsync();
@@ -93,12 +80,53 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         {
             Company company = await GetCompanyByIdAsync(patchCompanyWorkerDto.IdCompany);
 
-            Worker worker = await _dbContext.Workers
-                .FirstOrDefaultAsync(w => w.Id.Equals(patchCompanyWorkerDto.IdWorker))
-                ?? throw new NotFoundException("Worker not found");
+            Worker worker = await GetWorkerByIdAsync(patchCompanyWorkerDto.IdWorker);
 
             company.Workers.Remove(worker);
             await _dbContext.SaveChangesAsync();
+        }
+
+        private void CheckIfListIsEmpty(List<Company> companies)
+        {
+            if (companies.Count == 0)
+            {
+                throw new NotFoundException("List is empty");
+            }
+        }
+
+        private async Task CheckIfCompanyAlreadyExistAsync(Company company)
+        {
+            bool existValue = await _dbContext.Companies.AnyAsync(c => c.Name.Equals(company.Name));
+
+            if (existValue)
+            {
+                throw new DataDuplicateException("Company with this name is already registered");
+            }
+        }
+
+        private async Task CheckIfCompanyAlreadyExistWithOtherIdAsync(UpdateCompanyDto updatedCompany)
+        {
+            bool existValue = await _dbContext.Companies
+                .AnyAsync(c => c.Name.Equals(updatedCompany.Name) && c.Id != updatedCompany.Id);
+
+            if (existValue)
+            {
+                throw new DataDuplicateException("Company already exist with registered name");
+            }
+        }
+
+        private void UpdateCompanyProperties(Company company, UpdateCompanyDto updatedCompany)
+        {
+            company.Name = updatedCompany.Name;
+        }
+
+        private async Task<Worker> GetWorkerByIdAsync(long idWorker)
+        {
+            Worker worker = await _dbContext.Workers
+                .FirstOrDefaultAsync(w => w.Id.Equals(idWorker))
+                ?? throw new NotFoundException("Worker not found");
+
+            return worker;
         }
     }
 }
