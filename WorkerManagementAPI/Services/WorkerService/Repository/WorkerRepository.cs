@@ -26,7 +26,7 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         public async Task<Worker> GetWorkerByIdAsync(long id)
         {
             Worker worker = await _dbContext.Workers.FirstOrDefaultAsync(w => w.Id == id) 
-                ?? throw new NotFoundException("Worker not found");
+                ?? throw new NotFoundException($"Worker with id: {id} not found");
 
             return worker;
         }
@@ -89,7 +89,7 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         {
             if (workers.Count == 0)
                 {
-                    throw new NotFoundException("List is empty");
+                    throw new NotFoundException("List workers is empty");
                 }
         }
 
@@ -114,7 +114,7 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
             Worker worker = await _dbContext.Workers
                 .Include(w => w.Technologies)
                 .FirstOrDefaultAsync(w => w.Id == idWorker) 
-                ?? throw new NotFoundException("Worker not found");
+                ?? throw new NotFoundException($"Worker with id: {idWorker} not found");
 
             return worker;
         }
@@ -123,7 +123,7 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
         {
             Technology technology = await _dbContext.Technologies
                 .FirstOrDefaultAsync(t => t.Id.Equals(idTechnology)) 
-                ?? throw new NotFoundException("Technology not found");
+                ?? throw new NotFoundException($"Technology with id: {idTechnology} not found");
 
             return technology;
         }
@@ -134,7 +134,7 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
 
             if (!existWorkerWithTechnology)
             {
-                throw new NotFoundException("Relation not found");
+                throw new NotFoundException("Relation worker <-> technology not found");
             }
         }
 

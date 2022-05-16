@@ -1,4 +1,5 @@
 ﻿using WorkerManagementAPI.Exceptions;
+using WorkerManagementAPI.ExceptionsTemplate;
 
 namespace WorkerManagementAPI.Middlewares
 {
@@ -20,20 +21,41 @@ namespace WorkerManagementAPI.Middlewares
             catch(NotFoundException exception)
             {
                 _logger.LogError(exception, exception.Message);
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsync(exception.Message);
+
+                ExceptionDetails exceptionDetails = new ExceptionDetails
+                {
+                    Message = exception.Message,
+                    Status = context.Response.StatusCode = 404,
+                    DateTime = DateTime.Now
+                };
+
+                await context.Response.WriteAsync(exceptionDetails.ToString());
             }
             catch (DataDuplicateException exception)
             {
                 _logger.LogError(exception, exception.Message);
-                context.Response.StatusCode = 409;
-                await context.Response.WriteAsync(exception.Message);
+
+                ExceptionDetails exceptionDetails = new ExceptionDetails
+                {
+                    Message = exception.Message,
+                    Status = context.Response.StatusCode = 409,
+                    DateTime = DateTime.Now
+                };
+
+                await context.Response.WriteAsync(exceptionDetails.ToString());
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, exception.Message);
-                context.Response.StatusCode = 500;
-                await context.Response.WriteAsync("Something went wrong");
+
+                ExceptionDetails exceptionDetails = new ExceptionDetails
+                {
+                    Message = "Something went wrong",
+                    Status = context.Response.StatusCode = 500,
+                    DateTime = DateTime.Now
+                };
+
+                await context.Response.WriteAsync(exceptionDetails.ToString());
             }
         }
     }

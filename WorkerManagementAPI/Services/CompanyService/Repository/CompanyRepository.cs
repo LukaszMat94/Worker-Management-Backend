@@ -29,7 +29,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         {
             Company company = await _dbContext.Companies
                 .FirstOrDefaultAsync(c => c.Id.Equals(id)) 
-                ?? throw new NotFoundException("Company not found");
+                ?? throw new NotFoundException($"Company with id: {id} not found");
 
             return company;
         }
@@ -124,7 +124,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         {
             Worker worker = await _dbContext.Workers
                 .FirstOrDefaultAsync(w => w.Id.Equals(idWorker))
-                ?? throw new NotFoundException("Worker not found");
+                ?? throw new NotFoundException($"Worker with id: {idWorker} not found");
 
             return worker;
         }

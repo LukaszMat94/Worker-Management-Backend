@@ -130,7 +130,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
             Project project = await _dbContext.Projects
                 .Include(p => p.Technologies)
                 .FirstOrDefaultAsync(p => p.Id.Equals(idProject))
-                ?? throw new NotFoundException("Project not found");
+                ?? throw new NotFoundException($"Project with id: {idProject} not found");
 
             return project;
         }
@@ -139,7 +139,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         {
             Technology technology = await _dbContext.Technologies
                 .FirstOrDefaultAsync(p => p.Id.Equals(idTechnology))
-                ?? throw new NotFoundException("Technology not found");
+                ?? throw new NotFoundException($"Technology with id: {idTechnology} not found");
 
             return technology;
         }
@@ -147,7 +147,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         private void CheckIfProjectContainTechnology(Project project, Technology technology){
             if (!project.Technologies.Contains(technology))
             {
-                throw new NotFoundException("Relation not found");
+                throw new NotFoundException("Relation project <-> technology not found");
             }
         }
 
@@ -168,7 +168,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
             Project project = await _dbContext.Projects
                 .Include(p => p.Members)
                 .FirstOrDefaultAsync(p => p.Id.Equals(idProject))
-                ?? throw new NotFoundException("Project not found");
+                ?? throw new NotFoundException($"Project with id: {idProject} not found");
 
             return project;
         }
@@ -177,7 +177,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         {
             Worker worker = await _dbContext.Workers
                 .FirstOrDefaultAsync(w => w.Id.Equals(idWorker))
-                ?? throw new NotFoundException("Worker not found");
+                ?? throw new NotFoundException($"Worker with id: {idWorker} not found");
 
             return worker;
         }
@@ -198,7 +198,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
         {
             if (!project.Members.Contains(worker))
             {
-                throw new NotFoundException("Relation not found");
+                throw new NotFoundException("Relation project <-> worker not found");
             }
         }
     }

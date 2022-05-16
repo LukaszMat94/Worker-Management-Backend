@@ -28,7 +28,7 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         {
             Technology technology = await _dbContext.Technologies
                 .FirstOrDefaultAsync(x => x.Id == id) 
-                ?? throw new NotFoundException("Technology not found");
+                ?? throw new NotFoundException($"Technology with id: {id} not found");
 
             return technology;
         }
@@ -67,7 +67,7 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         {
             if (technologies.Count == 0)
             {
-                throw new NotFoundException("List is empty");
+                throw new NotFoundException("List technologies is empty");
             }
         }
 
@@ -92,7 +92,7 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
 
             if (existAnotherTechnology)
             {
-                throw new DataDuplicateException("You cannot update this technology because another one exist just in db!");
+                throw new DataDuplicateException("Technology already exist in database");
             }
         }
 
