@@ -17,39 +17,27 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
 
         public async Task<List<Technology>> GetAllTechnologiesAsync()
         {
-            List<Technology> technologies = await _dbContext.Technologies.ToListAsync();
-
-            CheckIfListIsEmpty(technologies);
-
-            return technologies;
+            return await _dbContext.Technologies.ToListAsync();
         }
 
         public async Task<Technology> GetTechnologyByIdAsync(long id)
         {
-            Technology technology = await _dbContext.Technologies
-                .FirstOrDefaultAsync(x => x.Id == id) 
-                ?? throw new NotFoundException($"Technology with id: {id} not found");
-
-            return technology;
+            return await _dbContext.Technologies
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<Technology> CreateTechnologyAsync(Technology technology)
         {
-            await CheckIfTechnologyExistAsync(technology);
-
             await _dbContext.Technologies.AddAsync(technology);
             await _dbContext.SaveChangesAsync();
-            return technology;
 
+            return technology;
         }
 
-        public async Task<Technology> UpdateTechnologyAsync(TechnologyDto technologyDto)
+        public async Task<Technology> UpdateTechnologyAsync(Technology technology)
         {
-            await CheckIfTechnologyExistWithOtherIdAsync(technologyDto);
-
-            Technology technology = await GetTechnologyByIdAsync(technologyDto.Id);
-
-            UpdateTechnology(technology, technologyDto);
+            _dbContext.Entry(technology).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
 
             return technology;
@@ -63,43 +51,24 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-        private void CheckIfListIsEmpty(List<Technology> technologies)
-        {
-            if (technologies.Count == 0)
-            {
-                throw new NotFoundException("List technologies is empty");
-            }
-        }
-
-        private async Task CheckIfTechnologyExistAsync(Technology technology)
+        public async Task<bool> FindIfTechnologyExistAsync(Technology technology)
         {
             bool existTechnology = await _dbContext.Technologies
-               .AnyAsync(c => technology.Name == c.Name && 
-               technology.TechnologyLevel == c.TechnologyLevel);
+               .AnyAsync(t => technology.Name == t.Name &&
+               technology.TechnologyLevel == t.TechnologyLevel);
 
-            if (existTechnology)
-            {
-                throw new DataDuplicateException("Technology already exist");
-            }
+            return existTechnology;
         }
 
-        private async Task CheckIfTechnologyExistWithOtherIdAsync(TechnologyDto technologyDto)
+        public async Task<bool> FindIfTechnologyExistWithOtherIdAsync(TechnologyDto technologyDto)
         {
-            bool existAnotherTechnology = await _dbContext.Technologies.AnyAsync(c =>
-                c.Name == technologyDto.Name && 
-                c.TechnologyLevel == technologyDto.TechnologyLevel && 
-                c.Id != technologyDto.Id);
+            bool existTechnology = await _dbContext.Technologies.AnyAsync(t =>
+                t.Name == technologyDto.Name &&
+                t.TechnologyLevel == technologyDto.TechnologyLevel && 
+                t.Id != technologyDto.Id);
 
-            if (existAnotherTechnology)
-            {
-                throw new DataDuplicateException("Technology already exist in database");
-            }
+            return existTechnology;
         }
 
-        private void UpdateTechnology(Technology technology, TechnologyDto technologyDto)
-        {
-            technology.Name = technologyDto.Name;
-            technology.TechnologyLevel = technologyDto.TechnologyLevel;
-        }
     }
 }
