@@ -29,7 +29,6 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         public async Task<Technology> CreateTechnologyAsync(Technology technology)
         {
             await _dbContext.Technologies.AddAsync(technology);
-            await _dbContext.SaveChangesAsync();
 
             return technology;
         }
@@ -37,7 +36,6 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         public async Task<Technology> UpdateTechnologyAsync(Technology technology)
         {
             _dbContext.Entry(technology).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
 
             return technology;
         }
@@ -47,6 +45,10 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
             Technology technology = await GetTechnologyByIdAsync(id);
 
             _dbContext.Technologies.Remove(technology);
+        }
+
+        public async Task SaveChangesAsync()
+        {
             await _dbContext.SaveChangesAsync();
         }
 

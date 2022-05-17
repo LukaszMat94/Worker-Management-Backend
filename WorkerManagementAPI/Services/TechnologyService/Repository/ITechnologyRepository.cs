@@ -12,5 +12,6 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         Task DeleteTechnologyAsync(long id);
         Task<bool> FindIfTechnologyExistAsync(Technology technology);
         Task<bool> FindIfTechnologyExistWithOtherIdAsync(TechnologyDto technologyDto);
+        Task SaveChangesAsync();
     }
 }

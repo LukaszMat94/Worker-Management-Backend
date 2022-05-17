@@ -48,6 +48,8 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
 
             Technology addedTechnology = await _technologyRepository.CreateTechnologyAsync(createTechnology);
 
+            await _technologyRepository.SaveChangesAsync();
+
             TechnologyDto addedTechnologyDto = _mapper.Map<TechnologyDto>(addedTechnology);
 
             return addedTechnologyDto;
@@ -65,6 +67,8 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
 
             Technology updatedTechnology = await _technologyRepository.UpdateTechnologyAsync(technologyToUpdate);
 
+            await _technologyRepository.SaveChangesAsync();
+
             TechnologyDto updatedTechnologyDto = _mapper.Map<TechnologyDto>(updatedTechnology);
 
             return updatedTechnologyDto;
@@ -77,6 +81,8 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
             CheckIfEntityIsNull(technology);
 
             await _technologyRepository.DeleteTechnologyAsync(id);
+
+            await _technologyRepository.SaveChangesAsync();
         }
 
         private void CheckIfListIsEmpty(List<Technology> technologies)
