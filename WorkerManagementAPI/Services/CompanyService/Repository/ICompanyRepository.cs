@@ -1,5 +1,4 @@
-﻿using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
-using WorkerManagementAPI.Data.Entities;
+﻿using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Models.CompanyDtos;
 
 namespace WorkerManagementAPI.Services.CompanyService.Repository
@@ -9,9 +8,12 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         Task<List<Company>> GetAllCompaniesAsync();
         Task<Company> GetCompanyByIdAsync(long id);
         Task<Company> CreateCompanyAsync(Company company);
-        Task<Company> UpdateCompanyAsync(UpdateCompanyDto updatedCompanyDto);
-        Task DeleteCompanyAsync(long id);
-        Task<Company> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
-        Task UnassignWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
+        Company UpdateCompany(Company company);
+        void DeleteCompany(Company company);
+        Task SaveChangesAsync();
+        Task<bool> FindIfCompanyExistAsync(Company company);
+        Task<bool> FindIfAnotherCompanyExistAsync(UpdateCompanyDto updateCompanyDto);
+        void AssignWorkerToCompany(Company company, Worker worker);
+        void UnassignWorkerFromCompany(Company company, Worker worker);
     }
 }

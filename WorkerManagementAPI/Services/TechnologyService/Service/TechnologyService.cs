@@ -65,7 +65,7 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
 
             Technology technologyToUpdate = _mapper.Map<Technology>(technologyDto);
 
-            Technology updatedTechnology = await _technologyRepository.UpdateTechnologyAsync(technologyToUpdate);
+            Technology updatedTechnology = _technologyRepository.UpdateTechnology(technologyToUpdate);
 
             await _technologyRepository.SaveChangesAsync();
 
@@ -80,7 +80,7 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
 
             CheckIfEntityIsNull(technology);
 
-            await _technologyRepository.DeleteTechnologyAsync(id);
+            _technologyRepository.DeleteTechnology(technology);
 
             await _technologyRepository.SaveChangesAsync();
         }

@@ -33,17 +33,15 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
             return technology;
         }
 
-        public async Task<Technology> UpdateTechnologyAsync(Technology technology)
+        public Technology UpdateTechnology(Technology technology)
         {
             _dbContext.Entry(technology).State = EntityState.Modified;
 
             return technology;
         }
 
-        public async Task DeleteTechnologyAsync(long id)
+        public void DeleteTechnology(Technology technology)
         {
-            Technology technology = await GetTechnologyByIdAsync(id);
-
             _dbContext.Technologies.Remove(technology);
         }
 

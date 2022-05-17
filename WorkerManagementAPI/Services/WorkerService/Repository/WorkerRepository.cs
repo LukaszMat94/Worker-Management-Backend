@@ -25,7 +25,8 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
 
         public async Task<Worker> GetWorkerByIdAsync(long id)
         {
-            Worker worker = await _dbContext.Workers.FirstOrDefaultAsync(w => w.Id == id) 
+            Worker worker = await _dbContext.Workers
+                .FirstOrDefaultAsync(w => w.Id == id) 
                 ?? throw new NotFoundException($"Worker with id: {id} not found");
 
             return worker;
