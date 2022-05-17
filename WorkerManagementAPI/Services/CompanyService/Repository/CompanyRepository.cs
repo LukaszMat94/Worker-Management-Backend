@@ -18,7 +18,8 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
 
         public async Task<List<Company>> GetAllCompaniesAsync()
         {
-            List<Company> companies = await _dbContext.Companies.Include(c => c.Workers).ToListAsync();
+            List<Company> companies = await _dbContext.Companies
+                .Include(c => c.Workers).ToListAsync();
 
             CheckIfListIsEmpty(companies);
 
@@ -28,6 +29,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         public async Task<Company> GetCompanyByIdAsync(long id)
         {
             Company company = await _dbContext.Companies
+                .Include(c => c.Workers)
                 .FirstOrDefaultAsync(c => c.Id.Equals(id)) 
                 ?? throw new NotFoundException($"Company with id: {id} not found");
 
@@ -81,6 +83,11 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
             Company company = await GetCompanyByIdAsync(patchCompanyWorkerDto.IdCompany);
 
             Worker worker = await GetWorkerByIdAsync(patchCompanyWorkerDto.IdWorker);
+
+            if (!company.Workers.Contains(worker))
+            {
+                throw new NotFoundException("Relation not found");
+            }
 
             company.Workers.Remove(worker);
             await _dbContext.SaveChangesAsync();

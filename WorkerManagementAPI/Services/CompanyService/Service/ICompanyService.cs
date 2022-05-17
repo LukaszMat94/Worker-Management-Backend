@@ -7,8 +7,8 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
     {
         Task<List<CompanyDto>> GetAllCompaniesAsync();
         Task<CompanyDto> GetCompanyByIdAsync(long id);
-        Task<CompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto);
-        Task<CompanyDto> UpdateCompanyAsync(UpdateCompanyDto updateCompanyDto);
+        Task<ReturnCompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto);
+        Task<ReturnCompanyDto> UpdateCompanyAsync(UpdateCompanyDto updateCompanyDto);
         Task DeleteCompanyAsync(long id);
         Task<CompanyDto> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);
         Task UnassignWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto);

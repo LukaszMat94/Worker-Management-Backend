@@ -33,14 +33,14 @@ namespace WorkerManagementAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyDto createdCompanyDto)
         {
-            CompanyDto companyDto = await _companyService.CreateCompanyAsync(createdCompanyDto);
+            ReturnCompanyDto companyDto = await _companyService.CreateCompanyAsync(createdCompanyDto);
             return StatusCode(201, companyDto);
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateCompany([FromBody] UpdateCompanyDto updateCompanyDto)
         {
-            CompanyDto companyDto = await _companyService.UpdateCompanyAsync(updateCompanyDto);
+            ReturnCompanyDto companyDto = await _companyService.UpdateCompanyAsync(updateCompanyDto);
             return Ok(companyDto);
         }
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Data.Entities;
-using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Data.Models.TechnologyDtos;
 
 namespace WorkerManagementAPI.Services.TechnologyService.Repository
@@ -54,18 +53,20 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         public async Task<bool> FindIfTechnologyExistAsync(Technology technology)
         {
             bool existTechnology = await _dbContext.Technologies
-               .AnyAsync(t => technology.Name == t.Name &&
-               technology.TechnologyLevel == t.TechnologyLevel);
+                .AnyAsync(t => 
+                    technology.Name == t.Name &&
+                    technology.TechnologyLevel == t.TechnologyLevel);
 
             return existTechnology;
         }
 
         public async Task<bool> FindIfTechnologyExistWithOtherIdAsync(TechnologyDto technologyDto)
         {
-            bool existTechnology = await _dbContext.Technologies.AnyAsync(t =>
-                t.Name == technologyDto.Name &&
-                t.TechnologyLevel == technologyDto.TechnologyLevel && 
-                t.Id != technologyDto.Id);
+            bool existTechnology = await _dbContext.Technologies
+                .AnyAsync(t =>
+                    t.Name == technologyDto.Name &&
+                    t.TechnologyLevel == technologyDto.TechnologyLevel && 
+                    t.Id != technologyDto.Id);
 
             return existTechnology;
         }

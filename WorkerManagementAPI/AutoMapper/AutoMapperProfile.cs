@@ -14,6 +14,7 @@ namespace WorkerManagementAPI.AutoMapper
             #region Company
 
             CreateMap<Company, CompanyDto>();
+            CreateMap<Company, ReturnCompanyDto>();
             CreateMap<CreateCompanyDto, Company>();
             CreateMap<UpdateCompanyDto, Company>();
 

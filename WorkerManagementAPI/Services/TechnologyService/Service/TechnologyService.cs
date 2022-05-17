@@ -29,14 +29,6 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
             return technologiesDto;
         }
 
-        private void CheckIfListIsEmpty(List<Technology> technologies)
-        {
-            if (technologies.Count == 0)
-            {
-                throw new NotFoundException("List technologies is empty");
-            }
-        }
-
         public async Task<TechnologyDto> GetTechnologyByIdAsync(long id)
         {
             Technology technology = await _technologyRepository.GetTechnologyByIdAsync(id);
@@ -50,26 +42,26 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
 
         public async Task<TechnologyDto> CreateTechnologyAsync(CreateTechnologyDto createTechnologyDto)
         {
-            Technology technology = _mapper.Map<Technology>(createTechnologyDto);
+            Technology createTechnology = _mapper.Map<Technology>(createTechnologyDto);
 
-            await CheckIfTechnologyExistAsync(technology);
+            await CheckIfTechnologyExistAsync(createTechnology);
 
-            Technology createdTechnology = await _technologyRepository.CreateTechnologyAsync(technology);
+            Technology addedTechnology = await _technologyRepository.CreateTechnologyAsync(createTechnology);
 
-            TechnologyDto createdTechnologyDto = _mapper.Map<TechnologyDto>(createdTechnology);
+            TechnologyDto addedTechnologyDto = _mapper.Map<TechnologyDto>(addedTechnology);
 
-            return createdTechnologyDto;
+            return addedTechnologyDto;
         }
 
         public async Task<TechnologyDto> UpdateTechnologyAsync(TechnologyDto technologyDto)
         {
             Technology technologyFromDB = await _technologyRepository.GetTechnologyByIdAsync(technologyDto.Id);
 
-            Technology technologyToUpdate = _mapper.Map<Technology>(technologyDto);
-
             CheckIfEntityIsNull(technologyFromDB);
 
             await CheckIfAnotherTechnologyExistAsync(technologyDto);
+
+            Technology technologyToUpdate = _mapper.Map<Technology>(technologyDto);
 
             Technology updatedTechnology = await _technologyRepository.UpdateTechnologyAsync(technologyToUpdate);
 
@@ -87,11 +79,19 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
             await _technologyRepository.DeleteTechnologyAsync(id);
         }
 
+        private void CheckIfListIsEmpty(List<Technology> technologies)
+        {
+            if (technologies.Count == 0)
+            {
+                throw new NotFoundException("List technologies is empty");
+            }
+        }
+
         private void CheckIfEntityIsNull(Technology technology)
         {
             if (technology == null)
             {
-                throw new NotFoundException($"Technology not found");
+                throw new NotFoundException("Technology not found");
             }
         }
 

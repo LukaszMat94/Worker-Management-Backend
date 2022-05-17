@@ -33,21 +33,23 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
             return companyDto;
         }
 
-        public async Task<CompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto)
+        public async Task<ReturnCompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto)
         {
             Company createdCompany = _mapper.Map<Company>(companyDto);
 
             Company company = await _companyRepository.CreateCompanyAsync(createdCompany);
 
-            CompanyDto createdCompanyDto = _mapper.Map<CompanyDto>(company);
+            ReturnCompanyDto createdCompanyDto = _mapper.Map<ReturnCompanyDto>(company);
 
             return createdCompanyDto;
         }
 
-        public async Task<CompanyDto> UpdateCompanyAsync(UpdateCompanyDto updateCompanyDto)
+        public async Task<ReturnCompanyDto> UpdateCompanyAsync(UpdateCompanyDto updateCompanyDto)
         {
             Company company = await _companyRepository.UpdateCompanyAsync(updateCompanyDto);
-            CompanyDto companyDto = _mapper.Map<CompanyDto>(company);
+
+            ReturnCompanyDto companyDto = _mapper.Map<ReturnCompanyDto>(company);
+
             return companyDto;
         }
 
