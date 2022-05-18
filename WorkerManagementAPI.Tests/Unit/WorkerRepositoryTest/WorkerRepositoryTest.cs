@@ -85,42 +85,6 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
 
         #endregion
 
-        #region Test Update Action
-
-        public static IEnumerable<object[]> UpdateNonExistData()
-        {
-            yield return new object[] { new UpdateWorkerDto { Id = 8, Name = "Tomasz", Surname = "Tomaszewski" } };
-            yield return new object[] { new UpdateWorkerDto { Id = 15, Name = "Ania", Surname = "Aniołek" } };
-            yield return new object[] { new UpdateWorkerDto { Id = 24, Name = "Marek", Surname = "Marecki" } };
-        }
-
-        [Theory]
-        [MemberData(nameof(UpdateNonExistData))]
-        public async Task UpdateWithNonExistDataTest(UpdateWorkerDto updateWorkerDto)
-        {
-            Func<Task> action = async () => await _workerRepository.UpdateWorkerAsync(updateWorkerDto);
-            await Assert.ThrowsAsync<NotFoundException>(action);
-        }
-
-        public static IEnumerable<object[]> UpdateValidData()
-        {
-            yield return new object[] { new UpdateWorkerDto { Id = 1, Name = "Tomasz", Surname = "Tomaszewski" } };
-            yield return new object[] { new UpdateWorkerDto { Id = 2, Name = "Ania", Surname = "Aniołek" } };
-            yield return new object[] { new UpdateWorkerDto { Id = 3, Name = "Marek", Surname = "Marecki" } };
-        }
-
-        [Theory]
-        [MemberData(nameof(UpdateValidData))]
-        public async Task UpdateWithValidDataTest(UpdateWorkerDto updateWorkerDto)
-        {
-            Worker worker = await _workerRepository.UpdateWorkerAsync(updateWorkerDto);
-            Assert.Equal(new { updateWorkerDto.Id, updateWorkerDto.Name, updateWorkerDto.Surname },
-                new { worker.Id, worker.Name, worker.Surname }
-                );
-        }
-
-        #endregion
-
         #region Test Delete Action
 
         #endregion

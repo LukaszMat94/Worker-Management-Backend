@@ -54,7 +54,7 @@ namespace WorkerManagementAPI.Controllers
         [HttpPatch("assignTechnology")]
         public async Task<IActionResult> AssignTechnologyToProject([FromBody] PatchProjectTechnologyDto patchProjectTechnologyDto)
         {
-            UpdateProjectTechnologyDto updateProjectTechnologyDto = await _projectService.AssignTechnologyToProject(patchProjectTechnologyDto);
+            UpdateProjectTechnologyDto updateProjectTechnologyDto = await _projectService.AssignTechnologyToProjectAsync(patchProjectTechnologyDto);
             return Ok(updateProjectTechnologyDto);
         }
 

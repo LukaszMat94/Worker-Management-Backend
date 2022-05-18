@@ -47,18 +47,18 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             Company company = await _companyRepository.GetCompanyByIdAsync(id);
 
-            CheckIfEntityIsNull(company);
+            CheckIfCompanyEntityIsNull(company);
 
             CompanyDto companyDto = _mapper.Map<CompanyDto>(company);
 
             return companyDto;
         }
 
-        private void CheckIfEntityIsNull(Object entity)
+        private void CheckIfCompanyEntityIsNull(Company company)
         {
-            if(entity == null)
+            if(company == null)
             {
-                throw new NotFoundException($"{nameof(entity)} not found");
+                throw new NotFoundException("Company not found");
             }
         }
 
@@ -91,7 +91,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             Company companyFromDB = await _companyRepository.GetCompanyByIdAsync(companyDto.Id);
 
-            CheckIfEntityIsNull(companyFromDB);
+            CheckIfCompanyEntityIsNull(companyFromDB);
 
             await CheckIfAnotherCompanyExistAsync(companyDto);
 
@@ -123,7 +123,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             Company company = await _companyRepository.GetCompanyByIdAsync(id);
 
-            CheckIfEntityIsNull(company);
+            CheckIfCompanyEntityIsNull(company);
 
             _companyRepository.DeleteCompany(company);
 
@@ -134,11 +134,11 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             Company company = await _companyRepository.GetCompanyByIdAsync(patchCompanyWorkerDto.IdCompany);
 
-            CheckIfEntityIsNull(company);
+            CheckIfCompanyEntityIsNull(company);
 
             Worker worker = await _workerRepository.GetWorkerByIdAsync(patchCompanyWorkerDto.IdWorker);
 
-            CheckIfEntityIsNull(worker);
+            CheckIfWorkerEntityIsNull(worker);
 
             CheckIfRelationExist(company, worker);
 
@@ -149,6 +149,14 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
             CompanyDto companyDto = _mapper.Map<CompanyDto>(company);
 
             return companyDto;
+        }
+
+        private void CheckIfWorkerEntityIsNull(Worker worker)
+        {
+            if(worker == null)
+            {
+                throw new NotFoundException("Worker not found");
+            }
         }
 
         private void CheckIfRelationExist(Company company, Worker worker)
@@ -163,11 +171,11 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             Company company = await _companyRepository.GetCompanyByIdAsync(patchCompanyWorkerDto.IdCompany);
 
-            CheckIfEntityIsNull(company);
+            CheckIfCompanyEntityIsNull(company);
 
             Worker worker = await _workerRepository.GetWorkerByIdAsync(patchCompanyWorkerDto.IdWorker);
 
-            CheckIfEntityIsNull(worker);
+            CheckIfWorkerEntityIsNull(worker);
 
             CheckIfRelationNonExist(company, worker);
 

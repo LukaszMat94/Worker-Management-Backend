@@ -12,6 +12,7 @@ namespace WorkerManagementAPI.Data.Models.TechnologyDtos
 
         [Required]
         [JsonConverter(typeof(JsonStringEnumConverter))]
+        [RegularExpression("None|Basic|Medium|Advanced", ErrorMessage = "Only number from range 0-3")]
         public TechnologyLevelEnum TechnologyLevel { get; set; } = TechnologyLevelEnum.None;
     }
 }

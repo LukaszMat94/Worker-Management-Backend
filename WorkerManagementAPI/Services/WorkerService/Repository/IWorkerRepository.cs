@@ -1,5 +1,4 @@
-﻿using WorkerManagementAPI.Data.Models.WorkerDtos;
-using WorkerManagementAPI.Data.Entities;
+﻿using WorkerManagementAPI.Data.Entities;
 
 namespace WorkerManagementAPI.Services.WorkerService.Repository
 {
@@ -7,10 +6,14 @@ namespace WorkerManagementAPI.Services.WorkerService.Repository
     {
         Task<List<Worker>> GetAllWorkersAsync();
         Task<Worker> GetWorkerByIdAsync(long id);
+        Task<Worker> GetWorkerWithTechnologiesByIdAsync(long id);
         Task<Worker> CreateWorkerAsync(Worker worker);
-        Task<Worker> UpdateWorkerAsync(UpdateWorkerDto updateWorkerDto);
-        Task DeleteWorkerAsync(long id);
-        Task<Worker> AssignTechnologyToWorkerAsync(PatchWorkerTechnologyDto patchWorkerTechnologyDto);
-        Task UnassignTechnologyFromWorkerAsync(PatchWorkerTechnologyDto patchWorkerTechnologyDto);
+        void DeleteWorker(Worker worker);
+        Task SaveChangesAsync();
+        Task<bool> FindIfWorkerExistAsync(Worker worker);
+        void AssignTechnologyToWorker(Worker worker, Technology technology);
+        void UnassignTechnologyFromWorker(Worker worker, Technology technology);
+        void AssignProjectToWorker(Worker worker, Project project);
+        void UnassignProjectFromWorker(Worker worker, Project project);
     }
 }
