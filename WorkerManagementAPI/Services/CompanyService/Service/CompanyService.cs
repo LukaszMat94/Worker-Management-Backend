@@ -95,13 +95,11 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
 
             await CheckIfAnotherCompanyExistAsync(companyDto);
 
-            Company companyToUpdate = _mapper.Map<Company>(companyDto);
-
-            Company company = _companyRepository.UpdateCompany(companyToUpdate);
+            UpdateCompanyProperties(companyFromDB, companyDto);
 
             await _companyRepository.SaveChangesAsync();
 
-            ReturnCompanyDto updatedCompanyDto = _mapper.Map<ReturnCompanyDto>(company);
+            ReturnCompanyDto updatedCompanyDto = _mapper.Map<ReturnCompanyDto>(companyFromDB);
 
             return updatedCompanyDto;
         }
@@ -114,6 +112,11 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
             {
                 throw new DataDuplicateException("Update failed, Company already exist");
             }
+        }
+
+        private void UpdateCompanyProperties(Company company, UpdateCompanyDto companyDto)
+        {
+            company.Name = companyDto.Name;
         }
 
         public async Task DeleteCompanyAsync(long id)

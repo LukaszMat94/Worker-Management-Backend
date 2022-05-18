@@ -22,20 +22,12 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         public async Task<Technology> GetTechnologyByIdAsync(long id)
         {
             return await _dbContext.Technologies
-                .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<Technology> CreateTechnologyAsync(Technology technology)
         {
             await _dbContext.Technologies.AddAsync(technology);
-
-            return technology;
-        }
-
-        public Technology UpdateTechnology(Technology technology)
-        {
-            _dbContext.Entry(technology).State = EntityState.Modified;
 
             return technology;
         }

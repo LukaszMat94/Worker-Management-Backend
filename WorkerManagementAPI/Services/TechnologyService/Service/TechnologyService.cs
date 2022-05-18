@@ -63,15 +63,19 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
 
             await CheckIfAnotherTechnologyExistAsync(technologyDto);
 
-            Technology technologyToUpdate = _mapper.Map<Technology>(technologyDto);
-
-            Technology updatedTechnology = _technologyRepository.UpdateTechnology(technologyToUpdate);
+            UpdateTechnologyProperties(technologyFromDB, technologyDto);
 
             await _technologyRepository.SaveChangesAsync();
 
-            TechnologyDto updatedTechnologyDto = _mapper.Map<TechnologyDto>(updatedTechnology);
+            TechnologyDto updatedTechnologyDto = _mapper.Map<TechnologyDto>(technologyFromDB);
 
             return updatedTechnologyDto;
+        }
+
+        private void UpdateTechnologyProperties(Technology technologyFromDB, TechnologyDto technologyDto)
+        {
+            technologyFromDB.Name = technologyDto.Name;
+            technologyFromDB.TechnologyLevel = technologyDto.TechnologyLevel;
         }
 
         public async Task DeleteTechnologyAsync(long id)

@@ -23,7 +23,6 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         public async Task<Company> GetCompanyByIdAsync(long id)
         {
             Company company = await _dbContext.Companies
-                .AsNoTracking()
                 .Include(c => c.Workers)
                 .FirstOrDefaultAsync(c => c.Id.Equals(id));
 
@@ -37,13 +36,6 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
             return company;
         }
 
-        public Company UpdateCompany(Company company)
-        {
-            _dbContext.Entry(company).State = EntityState.Modified;
-
-            return company;
-        }
-
         public void DeleteCompany(Company company)
         {
             _dbContext.Companies.Remove(company);
@@ -51,13 +43,11 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
 
         public void AssignWorkerToCompany(Company company, Worker worker)
         {
-            _dbContext.Entry(company).State = EntityState.Modified;
-            worker.CompanyId = company.Id;
+            worker.Company = company;
         }
 
         public void UnassignWorkerFromCompany(Company company, Worker worker)
         {
-            _dbContext.Entry(company).State = EntityState.Modified;
             company.Workers.Remove(worker);
         }
 
