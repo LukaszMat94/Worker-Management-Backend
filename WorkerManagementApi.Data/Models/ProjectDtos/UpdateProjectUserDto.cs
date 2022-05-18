@@ -1,11 +1,11 @@
-﻿using WorkerManagementAPI.Data.Models.WorkerDtos;
+﻿using WorkerManagementAPI.Data.Models.UserDtos;
 
 namespace WorkerManagementAPI.Data.Models.ProjectDtos
 {
-    public class UpdateProjectWorkerDto
+    public class UpdateProjectUserDto
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public WorkerDto? WorkerDto { get; set; }
+        public UserDto? UserDto { get; set; }
     }
 }

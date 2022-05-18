@@ -1,26 +1,25 @@
 ﻿using AutoMapper;
-using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Services.WorkerService.Repository;
+using WorkerManagementAPI.Services.UserService.Repository;
 
 namespace WorkerManagementAPI.Services.CompanyService.Service
 {
     public class CompanyService : ICompanyService
     {
         private readonly ICompanyRepository _companyRepository;
-        private readonly IWorkerRepository _workerRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
         public CompanyService(
             ICompanyRepository companyRepository,
-            IWorkerRepository workerRepository,
+            IUserRepository userRepository,
             IMapper mapper)
         {
             _companyRepository = companyRepository;
-            _workerRepository = workerRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -130,19 +129,19 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
             await _companyRepository.SaveChangesAsync();
         }
 
-        public async Task<CompanyDto> AssignWorkerToCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        public async Task<CompanyDto> AssignUserToCompanyAsync(PatchCompanyUserDto patchCompanyUserDto)
         {
-            Company company = await _companyRepository.GetCompanyByIdAsync(patchCompanyWorkerDto.IdCompany);
+            Company company = await _companyRepository.GetCompanyByIdAsync(patchCompanyUserDto.IdCompany);
 
             CheckIfCompanyEntityIsNull(company);
 
-            Worker worker = await _workerRepository.GetWorkerByIdAsync(patchCompanyWorkerDto.IdWorker);
+            User user = await _userRepository.GetUserByIdAsync(patchCompanyUserDto.IdUser);
 
-            CheckIfWorkerEntityIsNull(worker);
+            CheckIfUserEntityIsNull(user);
 
-            CheckIfRelationExist(company, worker);
+            CheckIfRelationExist(company, user);
 
-            _companyRepository.AssignWorkerToCompany(company, worker);
+            _companyRepository.AssignUserToCompany(company, user);
 
             await _companyRepository.SaveChangesAsync();
 
@@ -151,42 +150,42 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
             return companyDto;
         }
 
-        private void CheckIfWorkerEntityIsNull(Worker worker)
+        private void CheckIfUserEntityIsNull(User user)
         {
-            if(worker == null)
+            if(user == null)
             {
-                throw new NotFoundException("Worker not found");
+                throw new NotFoundException("User not found");
             }
         }
 
-        private void CheckIfRelationExist(Company company, Worker worker)
+        private void CheckIfRelationExist(Company company, User user)
         {
-            if (worker.CompanyId.Equals(company.Id))
+            if (user.CompanyId.Equals(company.Id))
             {
-                throw new NotFoundException("Worker is assigned to this company");
+                throw new NotFoundException("User is assigned to this company");
             }
         }
 
-        public async Task UnassignWorkerFromCompanyAsync(PatchCompanyWorkerDto patchCompanyWorkerDto)
+        public async Task UnassignUserFromCompanyAsync(PatchCompanyUserDto patchCompanyUserDto)
         {
-            Company company = await _companyRepository.GetCompanyByIdAsync(patchCompanyWorkerDto.IdCompany);
+            Company company = await _companyRepository.GetCompanyByIdAsync(patchCompanyUserDto.IdCompany);
 
             CheckIfCompanyEntityIsNull(company);
 
-            Worker worker = await _workerRepository.GetWorkerByIdAsync(patchCompanyWorkerDto.IdWorker);
+            User user = await _userRepository.GetUserByIdAsync(patchCompanyUserDto.IdUser);
 
-            CheckIfWorkerEntityIsNull(worker);
+            CheckIfUserEntityIsNull(user);
 
-            CheckIfRelationNonExist(company, worker);
+            CheckIfRelationNonExist(company, user);
 
-            _companyRepository.UnassignWorkerFromCompany(company, worker);
+            _companyRepository.UnassignUserFromCompany(company, user);
 
             await _companyRepository.SaveChangesAsync();
         }
 
-        private void CheckIfRelationNonExist(Company company, Worker worker)
+        private void CheckIfRelationNonExist(Company company, User user)
         {
-            if (!worker.CompanyId.Equals(company.Id))
+            if (!user.CompanyId.Equals(company.Id))
             {
                 throw new NotFoundException("Relation not found");
             }

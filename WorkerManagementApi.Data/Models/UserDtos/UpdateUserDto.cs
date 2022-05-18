@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkerManagementAPI.Data.Models.WorkerDtos
+namespace WorkerManagementAPI.Data.Models.UserDtos
 {
-    public class UpdateWorkerDto
+    public class UpdateUserDto
     {
         public long Id { get; set; }
 

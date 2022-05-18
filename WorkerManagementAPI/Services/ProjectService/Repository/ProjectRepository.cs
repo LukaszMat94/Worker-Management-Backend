@@ -35,10 +35,10 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
             return project;
         }
 
-        public async Task<Project> GetProjectWithMembersByIdAsync(long id)
+        public async Task<Project> GetProjectWithUsersByIdAsync(long id)
         {
             Project project = await _dbContext.Projects
-                .Include(p => p.Members)
+                .Include(p => p.Users)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             return project;
@@ -71,14 +71,14 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
             project.Technologies.Remove(technology);
         }
 
-        public void AssignWorkerToProject(Project project, Worker worker)
+        public void AssignUserToProject(Project project, User user)
         {
-            project.Members.Add(worker);
+            project.Users.Add(user);
         }
 
-        public void UnassignWorkerFromProject(Project project, Worker worker)
+        public void UnassignUserFromProject(Project project, User user)
         {
-            project.Members.Remove(worker);
+            project.Users.Remove(user);
         }
     }
 }

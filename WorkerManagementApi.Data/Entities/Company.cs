@@ -4,6 +4,6 @@
     {
         public string Name { get; set; } = String.Empty;
 
-        public virtual List<Worker>? Workers { get; set; } = new List<Worker>();
+        public virtual List<User>? Users{ get; set; } = new List<User>();
     }
 }

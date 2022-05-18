@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using WorkerManagementAPI.Data.Models.ProjectDtos;
-using WorkerManagementAPI.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Data.Models.TechnologyDtos;
+using WorkerManagementAPI.Data.Models.RoleDtos;
+using WorkerManagementAPI.Data.Models.UserDtos;
 
 namespace WorkerManagementAPI.AutoMapper
 {
@@ -22,12 +23,12 @@ namespace WorkerManagementAPI.AutoMapper
 
             #region Worker
 
-            CreateMap<Worker, WorkerDto>();
-            CreateMap<CreateWorkerDto, Worker>();
-            CreateMap<UpdateWorkerDto, Worker>();
-            CreateMap<Worker, UpdateWorkerTechnologyDto>()
-                .ForMember(updateWorker => updateWorker.TechnologyLevelDto, 
-                action => action.MapFrom(worker => worker.Technologies.First()));
+            CreateMap<User, UserDto>();
+            CreateMap<RegisterUserDto, User>();
+            CreateMap<UpdateUserDto, User>();
+            CreateMap<User, UpdateUserTechnologyDto>()
+                .ForMember(updateUser => updateUser.TechnologyLevelDto, 
+                action => action.MapFrom(user => user.Technologies.First()));
 
             #endregion
 
@@ -39,9 +40,9 @@ namespace WorkerManagementAPI.AutoMapper
             CreateMap<Project, UpdateProjectTechnologyDto>()
                 .ForMember(updateProject => updateProject.Technology,
                 action => action.MapFrom(project => project.Technologies.First()));
-            CreateMap<Project, UpdateProjectWorkerDto>()
-                .ForMember(updateProject => updateProject.WorkerDto,
-                action => action.MapFrom(project => project.Members.First()));
+            CreateMap<Project, UpdateProjectUserDto>()
+                .ForMember(updateProject => updateProject.UserDto,
+                action => action.MapFrom(project => project.Users.First()));
 
             #endregion
 
@@ -50,6 +51,12 @@ namespace WorkerManagementAPI.AutoMapper
             CreateMap<Technology, TechnologyDto>();
             CreateMap<TechnologyDto, Technology>();
             CreateMap<CreateTechnologyDto, Technology>();
+
+            #endregion
+
+            #region
+
+            CreateMap<Role, RoleDto>();
 
             #endregion
         }

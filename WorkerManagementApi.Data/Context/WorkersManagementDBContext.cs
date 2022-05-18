@@ -10,13 +10,26 @@ namespace WorkerManagementAPI.Data.Context
         }
 
         public DbSet<Company> Companies => Set<Company>();
-        public DbSet<Worker> Workers => Set<Worker>();
-
+        public DbSet<User> Users => Set<User>();
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<Technology> Technologies => Set<Technology>();
+        public DbSet<Role> Roles => Set<Role>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region Role
+
+            modelBuilder.Entity<Role>()
+                .HasKey(r => r.Id);
+
+            modelBuilder.Entity<Role>()
+                .Property(r => r.RoleName)
+                .HasConversion<string>()
+                .IsRequired()
+                .HasMaxLength(30);
+
+            #endregion
+
             #region  Company
 
             modelBuilder.Entity<Company>()
@@ -27,43 +40,49 @@ namespace WorkerManagementAPI.Data.Context
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Company>()
-                .HasMany(c => c.Workers)
+                .HasMany(c => c.Users)
                 .WithOne(w => w.Company)
                 .HasForeignKey(w => w.CompanyId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             #endregion
 
-            #region Worker
+            #region User
 
-            modelBuilder.Entity<Worker>()
+            modelBuilder.Entity<User>()
                 .HasKey(w => w.Id);
 
-            modelBuilder.Entity<Worker>()
+            modelBuilder.Entity<User>()
                 .Property(c => c.Name)
                 .IsRequired()
                 .HasMaxLength(50);
 
-            modelBuilder.Entity<Worker>()
+            modelBuilder.Entity<User>()
                 .Property(c => c.Surname)
                 .IsRequired()
                 .HasMaxLength(40);
 
-            modelBuilder.Entity<Worker>()
+            modelBuilder.Entity<User>()
                 .Property(c => c.Email)
                 .IsRequired()
                 .HasMaxLength(35);
 
-            modelBuilder.Entity<Worker>()
+            modelBuilder.Entity<User>()
                 .HasIndex(c => c.Email)
                 .IsUnique();
 
-            modelBuilder.Entity<Worker>()
-                .HasCheckConstraint("CK_Worker_Email", "[Email] LIKE '%_@_%._%'");
+            modelBuilder.Entity<User>()
+                .HasCheckConstraint("CK_User_Email", "[Email] LIKE '%_@_%._%'");
 
-            modelBuilder.Entity<Worker>()
+            modelBuilder.Entity<User>()
                 .Property(c => c.Password)
                 .HasMaxLength(70);
+
+            modelBuilder.Entity<User>()
+                .HasOne(w => w.Role)
+                .WithOne()
+                .HasForeignKey<User>(w => w.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             #endregion
 

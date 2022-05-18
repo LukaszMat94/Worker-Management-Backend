@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
 using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using Xunit;
 
@@ -17,7 +15,7 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
         private readonly WorkersManagementDBContext _context;
         private readonly ICompanyRepository _companyRepository;
         private List<Company> companies = new List<Company>();
-        private List<Worker> workers = new List<Worker>();
+        private List<User> workers = new List<User>();
 
         public CompanyRepositoryTest()
         {
@@ -133,14 +131,14 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
         {
             workers = new()
             {
-                new Worker { Id = 1, Name = "Michal", Surname = "Wojcik", Company = null},
-                new Worker { Id = 2, Name = "Marian", Surname = "Kanapa", Company = null },
-                new Worker { Id = 3, Name = "Mieczyslaw", Surname = "Kolos", Company = null },
-                new Worker { Id = 4, Name = "Katarzyna", Surname = "Mieczyk", Company = null },
-                new Worker { Id = 5, Name = "Iwona", Surname = "Mikolajczyk", Company = null }
+                new User { Id = 1, Name = "Michal", Surname = "Wojcik", Company = null},
+                new User { Id = 2, Name = "Marian", Surname = "Kanapa", Company = null },
+                new User { Id = 3, Name = "Mieczyslaw", Surname = "Kolos", Company = null },
+                new User { Id = 4, Name = "Katarzyna", Surname = "Mieczyk", Company = null },
+                new User { Id = 5, Name = "Iwona", Surname = "Mikolajczyk", Company = null }
             };
 
-            _context.Workers.AddRange(workers);
+            _context.Users.AddRange(workers);
             _context.SaveChanges();
         }
 

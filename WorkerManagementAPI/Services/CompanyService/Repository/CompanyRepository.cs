@@ -17,13 +17,13 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         public async Task<List<Company>> GetAllCompaniesAsync()
         {
             return await _dbContext.Companies
-                .Include(c => c.Workers).ToListAsync();
+                .Include(c => c.Users).ToListAsync();
         }
 
         public async Task<Company> GetCompanyByIdAsync(long id)
         {
             Company company = await _dbContext.Companies
-                .Include(c => c.Workers)
+                .Include(c => c.Users)
                 .FirstOrDefaultAsync(c => c.Id.Equals(id));
 
             return company;
@@ -41,14 +41,14 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
             _dbContext.Companies.Remove(company);
         }
 
-        public void AssignWorkerToCompany(Company company, Worker worker)
+        public void AssignUserToCompany(Company company, User user)
         {
-            worker.Company = company;
+            user.Company = company;
         }
 
-        public void UnassignWorkerFromCompany(Company company, Worker worker)
+        public void UnassignUserFromCompany(Company company, User user)
         {
-            company.Workers.Remove(worker);
+            company.Users.Remove(user);
         }
 
         public async Task SaveChangesAsync()

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
 using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Service;
 
@@ -51,17 +50,17 @@ namespace WorkerManagementAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch("assignWorker")]
-        public async Task<IActionResult> AssignWorkerToCompany([FromBody] PatchCompanyWorkerDto patchCompanyWorkerDto)
+        [HttpPatch("assignUser")]
+        public async Task<IActionResult> AssignUserToCompany([FromBody] PatchCompanyUserDto patchCompanyUserDto)
         {
-            CompanyDto companyDto = await _companyService.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);
+            CompanyDto companyDto = await _companyService.AssignUserToCompanyAsync(patchCompanyUserDto);
             return Ok(companyDto);
         }
 
-        [HttpPatch("unassignWorker")]
-        public async Task<IActionResult> UnassingWorkerFromCompany([FromBody] PatchCompanyWorkerDto patchCompanyWorkerDto)
+        [HttpPatch("unassignUser")]
+        public async Task<IActionResult> UnassingUserFromCompany([FromBody] PatchCompanyUserDto patchCompanyUserDto)
         {
-            await _companyService.UnassignWorkerFromCompanyAsync(patchCompanyWorkerDto);
+            await _companyService.UnassignUserFromCompanyAsync(patchCompanyUserDto);
             return NoContent();
         }
     }

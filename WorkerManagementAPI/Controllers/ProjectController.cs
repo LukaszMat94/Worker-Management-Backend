@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WorkerManagementAPI.Data.Models.ProjectDtos;
-using WorkerManagementAPI.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Services.ProjectService.Service;
 
 namespace WorkerManagementAPI.Controllers
@@ -65,17 +64,17 @@ namespace WorkerManagementAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch("assignWorker")]
-        public async Task<IActionResult> AssignWorkerToProject([FromBody] PatchProjectWorkerDto patchProjectWorkerDto)
+        [HttpPatch("assignUser")]
+        public async Task<IActionResult> AssignUserToProject([FromBody] PatchProjectUserDto patchProjectUserDto)
         {
-            UpdateProjectWorkerDto updateProjectWorkerDto = await _projectService.AssignWorkerToProjectAsync(patchProjectWorkerDto);
-            return Ok(updateProjectWorkerDto);
+            UpdateProjectUserDto updateProjectUserDto = await _projectService.AssignUserToProjectAsync(patchProjectUserDto);
+            return Ok(updateProjectUserDto);
         }
 
-        [HttpPatch("unassignWorker")]
-        public async Task<IActionResult> UnassignWorkerFromProject([FromBody] PatchProjectWorkerDto patchProjectWorkerDto)
+        [HttpPatch("unassignUser")]
+        public async Task<IActionResult> UnassignUserFromProject([FromBody] PatchProjectUserDto patchProjectUserDto)
         {
-            await _projectService.UnassignWorkerFromProjectAsync(patchProjectWorkerDto);
+            await _projectService.UnassignUserFromProjectAsync(patchProjectUserDto);
             return NoContent();
         }
     }

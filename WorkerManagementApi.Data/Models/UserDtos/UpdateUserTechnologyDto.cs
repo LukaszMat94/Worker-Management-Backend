@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WorkerManagementAPI.Data.Models.ProjectDtos;
+using WorkerManagementAPI.Data.Models.TechnologyDtos;
 
-namespace WorkerManagementAPI.Data.Models.WorkerDtos
+namespace WorkerManagementAPI.Data.Models.UserDtos
 {
-    public class UpdateWorkerProjectDto
+    public class UpdateUserTechnologyDto
     {
         public long Id { get; set; }
 
@@ -14,6 +14,6 @@ namespace WorkerManagementAPI.Data.Models.WorkerDtos
         [Required]
         [MaxLength(40)]
         public string Surname { get; set; } = String.Empty;
-        public ProjectDto ProjectDto { get; set; } = new ProjectDto();
+        public TechnologyDto TechnologyLevelDto { get; set; } = new TechnologyDto();
     }
 }

@@ -12,7 +12,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Repository
         Task SaveChangesAsync();
         Task<bool> FindIfCompanyExistAsync(Company company);
         Task<bool> FindIfAnotherCompanyExistAsync(UpdateCompanyDto updateCompanyDto);
-        void AssignWorkerToCompany(Company company, Worker worker);
-        void UnassignWorkerFromCompany(Company company, Worker worker);
+        void AssignUserToCompany(Company company, User user);
+        void UnassignUserFromCompany(Company company, User user);
     }
 }

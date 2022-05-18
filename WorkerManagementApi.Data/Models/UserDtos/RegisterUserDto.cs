@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkerManagementAPI.Data.Models.WorkerDtos
+namespace WorkerManagementAPI.Data.Models.UserDtos
 {
-    public class CreateWorkerDto
-    { 
+    public class RegisterUserDto
+    {
         [Required]
         [MaxLength(50)]
         public string Name { get; set; } = String.Empty;
@@ -17,5 +17,6 @@ namespace WorkerManagementAPI.Data.Models.WorkerDtos
         [EmailAddress(ErrorMessage = "Invalid email")]
         public string Email { get; set; } = String.Empty;
 
+        public string? Password { get; set; }
     }
 }

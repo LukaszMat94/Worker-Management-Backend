@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using WorkerManagementAPI.Data.Models.ProjectDtos;
-using WorkerManagementAPI.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Services.ProjectService.Repository;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
-using WorkerManagementAPI.Services.WorkerService.Repository;
+using WorkerManagementAPI.Services.UserService.Repository;
 
 namespace WorkerManagementAPI.Services.ProjectService.Service
 {
@@ -13,17 +12,17 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
     {
         private readonly IProjectRepository _projectRepository;
         private readonly ITechnologyRepository _technologyRepository;
-        private readonly IWorkerRepository _workerRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
         public ProjectService(IProjectRepository projectRepository,
             ITechnologyRepository technologyRepository,
-            IWorkerRepository workerRepository,
+            IUserRepository userRepository,
             IMapper mapper)
         {
             _projectRepository = projectRepository;
             _technologyRepository = technologyRepository;
-            _workerRepository = workerRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -173,63 +172,63 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
             }
         }
 
-        public async Task<UpdateProjectWorkerDto> AssignWorkerToProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto)
+        public async Task<UpdateProjectUserDto> AssignUserToProjectAsync(PatchProjectUserDto patchProjectUserDto)
         {
-            Project project = await _projectRepository.GetProjectWithMembersByIdAsync(patchProjectWorkerDto.IdProject);
+            Project project = await _projectRepository.GetProjectWithUsersByIdAsync(patchProjectUserDto.IdProject);
 
             CheckIfProjectEntityIsNull(project);
 
-            Worker worker = await _workerRepository.GetWorkerByIdAsync(patchProjectWorkerDto.IdWorker);
+            User user = await _userRepository.GetUserByIdAsync(patchProjectUserDto.IdUser);
 
-            CheckIfWorkerEntityIsNull(worker);
+            CheckIfUserEntityIsNull(user);
 
-            CheckIfRelationProjectWorkerExist(project, worker);
+            CheckIfRelationProjectUserExist(project, user);
 
-            _projectRepository.AssignWorkerToProject(project, worker);
+            _projectRepository.AssignUserToProject(project, user);
 
             await _projectRepository.SaveChangesAsync();
 
-            UpdateProjectWorkerDto updateProjectWorkerDto = _mapper.Map<UpdateProjectWorkerDto>(project);
+            UpdateProjectUserDto updateProjectUserDto = _mapper.Map<UpdateProjectUserDto>(project);
 
-            return updateProjectWorkerDto;
+            return updateProjectUserDto;
         }
 
-        private void CheckIfWorkerEntityIsNull(Worker worker)
+        private void CheckIfUserEntityIsNull(User user)
         {
-            if(worker == null)
+            if(user == null)
             {
-                throw new NotFoundException("Worker not found");
+                throw new NotFoundException("User not found");
             }
         }
 
-        private void CheckIfRelationProjectWorkerExist(Project project, Worker worker)
+        private void CheckIfRelationProjectUserExist(Project project, User user)
         {
-            if (project.Members.Contains(worker))
+            if (project.Users.Contains(user))
             {
                 throw new DataDuplicateException("Relation already exist");
             }
         }
 
-        public async Task UnassignWorkerFromProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto)
+        public async Task UnassignUserFromProjectAsync(PatchProjectUserDto patchProjectUserDto)
         {
-            Project project = await _projectRepository.GetProjectWithMembersByIdAsync(patchProjectWorkerDto.IdProject);
+            Project project = await _projectRepository.GetProjectWithUsersByIdAsync(patchProjectUserDto.IdProject);
 
             CheckIfProjectEntityIsNull(project);
 
-            Worker worker = await _workerRepository.GetWorkerByIdAsync(patchProjectWorkerDto.IdWorker);
+            User user = await _userRepository.GetUserByIdAsync(patchProjectUserDto.IdUser);
 
-            CheckIfWorkerEntityIsNull(worker);
+            CheckIfUserEntityIsNull(user);
 
-            CheckIfRelationProjectWorkerNonExist(project, worker);
+            CheckIfRelationProjectUserNonExist(project, user);
 
-            _projectRepository.UnassignWorkerFromProject(project, worker);
+            _projectRepository.UnassignUserFromProject(project, user);
 
             await _projectRepository.SaveChangesAsync();
         }
 
-        private void CheckIfRelationProjectWorkerNonExist(Project project, Worker worker)
+        private void CheckIfRelationProjectUserNonExist(Project project, User user)
         {
-            if (!project.Members.Contains(worker))
+            if (!project.Users.Contains(user))
             {
                 throw new NotFoundException("Relation not exist");
             }

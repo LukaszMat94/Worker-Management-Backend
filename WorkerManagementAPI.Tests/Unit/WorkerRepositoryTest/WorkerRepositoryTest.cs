@@ -5,26 +5,25 @@ using System.Threading.Tasks;
 using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Data.Models.WorkerDtos;
-using WorkerManagementAPI.Services.WorkerService.Repository;
+using WorkerManagementAPI.Services.UserService.Repository;
 using Xunit;
 
-namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
+namespace WorkerManagementAPI.Tests.Unit.UserRepositoryTest
 {
-    public class WorkerRepositoryTest
+    public class UserRepositoryTest
     {
         private readonly WorkersManagementDBContext _context;
-        private readonly IWorkerRepository _workerRepository;
-        private List<Worker> workers = new List<Worker>();
+        private readonly IUserRepository _UserRepository;
+        private List<User> Users = new List<User>();
 
-        public WorkerRepositoryTest()
+        public UserRepositoryTest()
         {
             DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString());
 
             _context = new WorkersManagementDBContext(dbOptions.Options);
-            _workerRepository = new WorkerRepository(_context);
-            SeedWorkerData(_context);
+            _UserRepository = new UserRepository(_context);
+            SeedUserData(_context);
         }
 
         #region Test Get Action
@@ -35,8 +34,8 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
         [InlineData(3)]
         public async Task GetWithValidDataTest(long id)
         {
-            Worker worker = await _workerRepository.GetWorkerByIdAsync(id);
-            Assert.NotNull(worker);
+            User User = await _UserRepository.GetUserByIdAsync(id);
+            Assert.NotNull(User);
         }
 
         [Theory]
@@ -45,7 +44,7 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
         [InlineData(13)]
         public async Task GetWithNonExistDataTest(long id)
         {
-            Func<Task> action = async () => await _workerRepository.GetWorkerByIdAsync(id);
+            Func<Task> action = async () => await _UserRepository.GetUserByIdAsync(id);
             await Assert.ThrowsAsync<NotFoundException>(action);
         }
 
@@ -55,31 +54,31 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
 
         public static IEnumerable<object[]> CreateValidData()
         {
-            yield return new object[] { new Worker { Id = 15, Name = "Jan", Surname = "Jankowski", Email = "janjankowski@gmail.com", Password = "jankowski" } };
-            yield return new object[] { new Worker { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "karolinakarolin@gmail.com", Password = "karolin" } };
-            yield return new object[] { new Worker { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "mateuszmat@gmail.com", Password = "mat" } };
+            yield return new object[] { new User { Id = 15, Name = "Jan", Surname = "Jankowski", Email = "janjankowski@gmail.com", Password = "jankowski" } };
+            yield return new object[] { new User { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "karolinakarolin@gmail.com", Password = "karolin" } };
+            yield return new object[] { new User { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "mateuszmat@gmail.com", Password = "mat" } };
         }
 
         [Theory]
         [MemberData(nameof(CreateValidData))]
-        public async Task CreateWithValidDataTest(Worker worker)
+        public async Task CreateWithValidDataTest(User User)
         {
-            Worker createWorker = await _workerRepository.CreateWorkerAsync(worker);
-            Assert.Equal(worker, createWorker);
+            User createUser = await _UserRepository.RegisterUserAsync(User);
+            Assert.Equal(User, createUser);
         }
 
         public static IEnumerable<object[]> CreateDuplicateData()
         {
-            yield return new object[] { new Worker { Id = 15, Name = "Jan", Surname = "Jankowski", Email = "karolbrzoza@onet.pl", Password = "jankowski" } };
-            yield return new object[] { new Worker { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "joannaadamczyk@wp.pl", Password = "karolin" } };
-            yield return new object[] { new Worker { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "michalkowalski@gmail.com", Password = "mat" } };
+            yield return new object[] { new User { Id = 15, Name = "Jan", Surname = "Jankowski", Email = "karolbrzoza@onet.pl", Password = "jankowski" } };
+            yield return new object[] { new User { Id = 16, Name = "Karolina", Surname = "Karolin", Email = "joannaadamczyk@wp.pl", Password = "karolin" } };
+            yield return new object[] { new User { Id = 17, Name = "Mateusz", Surname = "Mat", Email = "michalkowalski@gmail.com", Password = "mat" } };
         }
 
         [Theory]
         [MemberData(nameof(CreateDuplicateData))]
-        public async Task CreateWithDuplicateDataTest(Worker worker)
+        public async Task CreateWithDuplicateDataTest(User User)
         {
-            Func<Task> action = async () => await _workerRepository.CreateWorkerAsync(worker);
+            Func<Task> action = async () => await _UserRepository.RegisterUserAsync(User);
             await Assert.ThrowsAsync<DataDuplicateException>(action);
         }
 
@@ -94,32 +93,32 @@ namespace WorkerManagementAPI.Tests.Unit.WorkerRepositoryTest
         [Fact]
         public async Task GetNonExistListDataTest()
         {
-            _context.Workers.RemoveRange(_context.Workers);
+            _context.Users.RemoveRange(_context.Users);
             _context.SaveChanges();
 
-            Func<Task> action = async () => await _workerRepository.GetAllWorkersAsync();
+            Func<Task> action = async () => await _UserRepository.GetAllUsersAsync();
             await Assert.ThrowsAsync<NotFoundException>(action);
         }
 
         [Fact]
         public async Task GetExistListDataTest()
         {
-            List<Worker> listWorkers = await _workerRepository.GetAllWorkersAsync();
-            Assert.Equal(workers, listWorkers);
+            List<User> listUsers = await _UserRepository.GetAllUsersAsync();
+            Assert.Equal(Users, listUsers);
         }
 
         #endregion
 
-        private void SeedWorkerData(WorkersManagementDBContext context)
+        private void SeedUserData(WorkersManagementDBContext context)
         {
-            workers = new()
+            Users = new()
             {
-                new Worker { Id = 1, Name = "Michał", Surname = "Kowalski", Email = "michalkowalski@gmail.com", Password = "kowalski" },
-                new Worker { Id = 2, Name = "Joanna", Surname = "Adamczyk", Email = "joannaadamczyk@wp.pl", Password = "adamczyk" },
-                new Worker { Id = 3, Name = "Karol", Surname = "Brzoza", Email = "karolbrzoza@onet.pl", Password = "brzoza" }
+                new User { Id = 1, Name = "Michał", Surname = "Kowalski", Email = "michalkowalski@gmail.com", Password = "kowalski" },
+                new User { Id = 2, Name = "Joanna", Surname = "Adamczyk", Email = "joannaadamczyk@wp.pl", Password = "adamczyk" },
+                new User { Id = 3, Name = "Karol", Surname = "Brzoza", Email = "karolbrzoza@onet.pl", Password = "brzoza" }
             };
 
-            _context.Workers.AddRange(workers);
+            _context.Users.AddRange(Users);
             _context.SaveChanges();
         }
     }
