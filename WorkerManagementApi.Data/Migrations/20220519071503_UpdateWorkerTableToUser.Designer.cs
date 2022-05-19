@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkerManagementAPI.Data.Context;
 
@@ -11,9 +12,10 @@ using WorkerManagementAPI.Data.Context;
 namespace WorkerManagementAPI.Data.Migrations
 {
     [DbContext(typeof(WorkersManagementDBContext))]
-    partial class WorkersManagementDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220519071503_UpdateWorkerTableToUser")]
+    partial class UpdateWorkerTableToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,8 +168,8 @@ namespace WorkerManagementAPI.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Password")
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
 
                     b.Property<long>("RoleId")
                         .HasColumnType("bigint");
@@ -184,7 +186,8 @@ namespace WorkerManagementAPI.Data.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .IsUnique();
 
                     b.ToTable("Users");
 

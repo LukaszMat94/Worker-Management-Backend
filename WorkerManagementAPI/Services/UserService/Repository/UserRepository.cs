@@ -15,7 +15,8 @@ namespace WorkerManagementAPI.Services.UserService.Repository
 
         public async Task<User> RegisterUserAsync(User user)
         {
-            return new User();
+            await _dbContext.Users.AddAsync(user);
+            return user;
         }
 
         public async Task<User> LoginUserAsync(User user)
@@ -25,7 +26,7 @@ namespace WorkerManagementAPI.Services.UserService.Repository
 
         public async Task SaveChangesAsync()
         {
-
+            await _dbContext.SaveChangesAsync();
         }
         public async Task<List<User>> GetAllUsersAsync()
         {

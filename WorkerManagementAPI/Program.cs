@@ -5,6 +5,7 @@ using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Middlewares;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using WorkerManagementAPI.Services.CompanyService.Service;
+using WorkerManagementAPI.Services.PasswordService.Service;
 using WorkerManagementAPI.Services.ProjectService.Repository;
 using WorkerManagementAPI.Services.ProjectService.Service;
 using WorkerManagementAPI.Services.RoleService.Repository;
@@ -46,6 +47,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITechnologyService, TechnologyService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 
 #endregion
 
@@ -67,8 +69,8 @@ void SeedData(IHost app)
             var service = scope.ServiceProvider.GetService<UserSeeder>();
             if (service != null)
             {
-                service.Seed();
                 service.SeedRoles();
+                service.Seed();
             }
         };
     }

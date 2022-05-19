@@ -87,21 +87,24 @@ namespace WorkerManagementAPI
             {
                 Name = "Sebastian",
                 Surname = "Kowalczyk",
-                Email = "kosemi1@gmail.com"
+                Email = "kosemi1@gmail.com",
+                RoleId = 8              
             };
 
             User secondBraveUser = new User
             {
                 Name = "Łukasz",
                 Surname = "Matusik",
-                Email = "matusik5@yahoo.com"
+                Email = "matusik5@yahoo.com",
+                RoleId = 9
             };
 
             User firstTeslaUser = new User
             {
                 Name = "Elon",
                 Surname = "Musk",
-                Email = "musk@tesla.com"
+                Email = "musk@tesla.com",
+                RoleId = 10
             };
 
             Project apiProject = new Project

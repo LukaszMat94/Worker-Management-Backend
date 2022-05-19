@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkerManagementAPI.Data.Context;
 
@@ -11,9 +12,10 @@ using WorkerManagementAPI.Data.Context;
 namespace WorkerManagementAPI.Data.Migrations
 {
     [DbContext(typeof(WorkersManagementDBContext))]
-    partial class WorkersManagementDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220519074025_ChangePasswordLengthTo512")]
+    partial class ChangePasswordLengthTo512
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

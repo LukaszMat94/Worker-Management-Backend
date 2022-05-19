@@ -76,13 +76,17 @@ namespace WorkerManagementAPI.Data.Context
 
             modelBuilder.Entity<User>()
                 .Property(c => c.Password)
-                .HasMaxLength(70);
+                .HasMaxLength(512);
 
             modelBuilder.Entity<User>()
                 .HasOne(w => w.Role)
                 .WithOne()
                 .HasForeignKey<User>(w => w.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.RoleId)
+                .IsUnique(false);
 
             #endregion
 

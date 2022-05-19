@@ -2,6 +2,7 @@
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Models.UserDtos;
 using WorkerManagementAPI.Exceptions;
+using WorkerManagementAPI.Services.PasswordService.Service;
 using WorkerManagementAPI.Services.RoleService.Repository;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
 using WorkerManagementAPI.Services.UserService.Repository;
@@ -13,16 +14,19 @@ namespace WorkerManagementAPI.Services.UserService.Service
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly ITechnologyRepository _technologyRepository;
+        private readonly IPasswordService _passwordService;
         private readonly IMapper _mapper;
 
         public UserService(IUserRepository userRepository, 
             IRoleRepository roleRepository,
             ITechnologyRepository technologyRepository,
+            IPasswordService passwordService,
             IMapper mapper)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _technologyRepository = technologyRepository;
+            _passwordService = passwordService;
             _mapper = mapper;
         }
 
@@ -39,6 +43,8 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             await SetDefaultRoleToUserAsync(createUser);
 
+            createUser.Password = SetTemporaryPasswordToUser();
+
             User user = await _userRepository.RegisterUserAsync(createUser);
 
             await _userRepository.SaveChangesAsync();
@@ -46,6 +52,11 @@ namespace WorkerManagementAPI.Services.UserService.Service
             UserDto userDto = _mapper.Map<UserDto>(user);
 
             return userDto;
+        }
+
+        private string? SetTemporaryPasswordToUser()
+        {
+            return _passwordService.GenerateTemporaryPassword();
         }
 
         private async Task SetDefaultRoleToUserAsync(User user)
