@@ -18,8 +18,15 @@ namespace WorkerManagementAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto registerUserDto)
         {
-            UserDto userDto = await _userService.RegisterUserAsync(registerUserDto);
-            return Ok(userDto);
+            try
+            {
+                UserDto userDto = await _userService.RegisterUserAsync(registerUserDto);
+                return Ok(userDto);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         [HttpPost("login")]

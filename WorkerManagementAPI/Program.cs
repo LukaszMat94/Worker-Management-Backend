@@ -7,9 +7,11 @@ using WorkerManagementAPI;
 using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.JwtToken;
+using WorkerManagementAPI.Data.MailConfig;
 using WorkerManagementAPI.Middlewares;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using WorkerManagementAPI.Services.CompanyService.Service;
+using WorkerManagementAPI.Services.MailService.Service;
 using WorkerManagementAPI.Services.PasswordService.Service;
 using WorkerManagementAPI.Services.ProjectService.Repository;
 using WorkerManagementAPI.Services.ProjectService.Service;
@@ -54,9 +56,13 @@ builder.Services.AddScoped<ITechnologyService, TechnologyService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 
+builder.Services.AddTransient<IMailService, MailService>();
+
 #endregion
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailConfiguration"));
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 

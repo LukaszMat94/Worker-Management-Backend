@@ -25,13 +25,12 @@ namespace WorkerManagementAPI.Services.PasswordService.Service
             _jwtAuthenticationSettings = jwtAuthenticationSettings;
         }
 
-        public void HashPassword(User user)
+        public void HashPassword(User user, String password)
         {
-            string password = GenerateTemporaryPassword();
             user.Password = _passwordHasher.HashPassword(user, password);
         }
 
-        private string GenerateTemporaryPassword()
+        public string GenerateTemporaryPassword()
         {
             StringBuilder passwordBuilder = new StringBuilder();
             Random random = new Random();

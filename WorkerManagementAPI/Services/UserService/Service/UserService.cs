@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.MailConfig;
 using WorkerManagementAPI.Data.Models.UserDtos;
 using WorkerManagementAPI.Exceptions;
+using WorkerManagementAPI.Services.MailService.Service;
 using WorkerManagementAPI.Services.PasswordService.Service;
 using WorkerManagementAPI.Services.RoleService.Repository;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
@@ -15,18 +17,21 @@ namespace WorkerManagementAPI.Services.UserService.Service
         private readonly IRoleRepository _roleRepository;
         private readonly ITechnologyRepository _technologyRepository;
         private readonly IPasswordService _passwordService;
+        private readonly IMailService _mailService;
         private readonly IMapper _mapper;
 
         public UserService(IUserRepository userRepository, 
             IRoleRepository roleRepository,
             ITechnologyRepository technologyRepository,
             IPasswordService passwordService,
+            IMailService mailService,
             IMapper mapper)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _technologyRepository = technologyRepository;
             _passwordService = passwordService;
+            _mailService = mailService;
             _mapper = mapper;
         }
 
@@ -63,7 +68,9 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             await SetDefaultRoleToUserAsync(createUser);
 
-            SetHashedTemporaryPasswordToUser(createUser);
+            string temporaryPassword = _passwordService.GenerateTemporaryPassword();
+
+            SetHashedTemporaryPasswordToUser(createUser, temporaryPassword);
 
             User user = await _userRepository.RegisterUserAsync(createUser);
 
@@ -71,12 +78,14 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             UserDto userDto = _mapper.Map<UserDto>(user);
 
+            await _mailService.SendEmailAsync(userDto.Email, temporaryPassword);
+
             return userDto;
         }
 
-        private void SetHashedTemporaryPasswordToUser(User user)
+        private void SetHashedTemporaryPasswordToUser(User user, String password)
         {
-            _passwordService.HashPassword(user);
+            _passwordService.HashPassword(user, password);
         }
 
         private async Task SetDefaultRoleToUserAsync(User user)
