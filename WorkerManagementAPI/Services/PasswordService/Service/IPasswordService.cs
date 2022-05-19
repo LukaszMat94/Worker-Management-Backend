@@ -1,7 +1,9 @@
-﻿namespace WorkerManagementAPI.Services.PasswordService.Service
+﻿using WorkerManagementAPI.Data.Entities;
+
+namespace WorkerManagementAPI.Services.PasswordService.Service
 {
     public interface IPasswordService
     {
-        string GenerateTemporaryPassword();
+        void HashPassword(User user);
     }
 }

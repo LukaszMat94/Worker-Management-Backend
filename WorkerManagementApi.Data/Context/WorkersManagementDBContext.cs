@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.Entities.Enums;
 
 namespace WorkerManagementAPI.Data.Context
 {
@@ -79,7 +80,7 @@ namespace WorkerManagementAPI.Data.Context
                 .HasMaxLength(512);
 
             modelBuilder.Entity<User>()
-                .HasOne(w => w.Role)
+                .HasOne(w => w.Role) 
                 .WithOne()
                 .HasForeignKey<User>(w => w.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -87,6 +88,13 @@ namespace WorkerManagementAPI.Data.Context
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.RoleId)
                 .IsUnique(false);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.AccountStatus)
+                .HasConversion<string>()
+                .IsRequired()
+                .HasMaxLength(20)
+                .HasDefaultValue(AccountStatusEnum.INACTIVE);
 
             #endregion
 

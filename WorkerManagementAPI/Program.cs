@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 using WorkerManagementAPI;
 using WorkerManagementAPI.Data.Context;
+using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Middlewares;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using WorkerManagementAPI.Services.CompanyService.Service;
@@ -52,6 +54,8 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 #endregion
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Host.UseNLog();
 

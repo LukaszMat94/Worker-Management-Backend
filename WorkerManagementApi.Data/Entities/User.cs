@@ -1,4 +1,6 @@
-﻿namespace WorkerManagementAPI.Data.Entities
+﻿using WorkerManagementAPI.Data.Entities.Enums;
+
+namespace WorkerManagementAPI.Data.Entities
 {
     public class User : BaseEntity
     {
@@ -12,5 +14,6 @@
         public virtual List<Project>? Projects { get; set; } = new List<Project>();
         public long RoleId { get; set; }
         public virtual Role Role { get; set; }
+        public AccountStatusEnum AccountStatus { get; set; } = AccountStatusEnum.INACTIVE;
     }
 }

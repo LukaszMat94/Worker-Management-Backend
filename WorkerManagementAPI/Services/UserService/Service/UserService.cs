@@ -43,7 +43,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             await SetDefaultRoleToUserAsync(createUser);
 
-            createUser.Password = SetTemporaryPasswordToUser();
+            SetHashedTemporaryPasswordToUser(createUser);
 
             User user = await _userRepository.RegisterUserAsync(createUser);
 
@@ -54,9 +54,9 @@ namespace WorkerManagementAPI.Services.UserService.Service
             return userDto;
         }
 
-        private string? SetTemporaryPasswordToUser()
+        private void SetHashedTemporaryPasswordToUser(User user)
         {
-            return _passwordService.GenerateTemporaryPassword();
+            _passwordService.HashPassword(user);
         }
 
         private async Task SetDefaultRoleToUserAsync(User user)
