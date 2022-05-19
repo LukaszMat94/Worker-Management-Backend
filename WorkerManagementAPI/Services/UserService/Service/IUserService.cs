@@ -5,7 +5,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
     public interface IUserService
     {
         Task<UserDto> RegisterUserAsync(RegisterUserDto registerUserDto);
-        Task LoginUserAsync(LoginUserDto loginUserDto);
+        Task<string> LoginUserAsync(LoginUserDto loginUserDto);
 
         Task<List<UserDto>> GetAllUsersAsync();
         Task<UserDto> GetUserByIdAsync(long id);

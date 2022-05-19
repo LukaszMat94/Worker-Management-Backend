@@ -10,6 +10,7 @@ namespace WorkerManagementAPI.Services.UserService.Repository
         Task<List<User>> GetAllUsersAsync();
         Task<User> GetUserByIdAsync(long id);
         Task<User> GetUserWithTechnologiesByIdAsync(long id);
+        Task<User> GetUserWithRoleByEmailAsync(string email);
         void DeleteUser(User user);
         Task<bool> FindIfUserExistAsync(User user);
         void AssignTechnologyToUser(User user, Technology technology);

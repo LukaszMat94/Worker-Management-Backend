@@ -44,6 +44,19 @@ namespace WorkerManagementAPI.Middlewares
 
                 await context.Response.WriteAsync(exceptionDetails.ToString());
             }
+            catch (BadRequestException exception)
+            {
+                _logger.LogError(exception, exception.Message);
+
+                ExceptionDetails exceptionDetails = new ExceptionDetails
+                {
+                    Message = exception.Message,
+                    Status = context.Response.StatusCode = 404,
+                    DateTime = DateTime.Now
+                };
+
+                await context.Response.WriteAsync(exceptionDetails.ToString());
+            }
             catch (Exception exception)
             {
                 _logger.LogError(exception, exception.Message);

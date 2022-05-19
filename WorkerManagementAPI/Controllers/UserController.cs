@@ -25,8 +25,8 @@ namespace WorkerManagementAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserDto loginUserDto)
         {
-            await _userService.LoginUserAsync(loginUserDto);
-            return Ok();
+            string token = await _userService.LoginUserAsync(loginUserDto);
+            return Ok(token);
         }
 
         [HttpGet]

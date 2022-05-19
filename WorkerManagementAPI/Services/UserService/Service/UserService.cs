@@ -30,9 +30,29 @@ namespace WorkerManagementAPI.Services.UserService.Service
             _mapper = mapper;
         }
 
-        public async Task LoginUserAsync(LoginUserDto loginUserDto)
+        public async Task<string> LoginUserAsync(LoginUserDto loginUserDto)
         {
-            throw new NotImplementedException();
+            User userMapped = _mapper.Map<User>(loginUserDto);
+
+            await CheckIfUserExistInDatabaseAsync(userMapped);
+
+            User user = await _userRepository.GetUserWithRoleByEmailAsync(userMapped.Email);
+
+            _passwordService.VerifyPassword(user, loginUserDto);
+
+            string token = _passwordService.GenerateJwtToken(user);
+
+            return token;
+        }
+
+        private async Task CheckIfUserExistInDatabaseAsync(User user)
+        {
+            bool existValue = await _userRepository.FindIfUserExistAsync(user);
+
+            if (!existValue)
+            {
+                throw new NotFoundException("User not exist with this email");
+            }
         }
 
         public async Task<UserDto> RegisterUserAsync(RegisterUserDto registerUserDto)

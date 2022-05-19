@@ -50,6 +50,15 @@ namespace WorkerManagementAPI.Services.UserService.Repository
             return user;
         }
 
+        public async Task<User> GetUserWithRoleByEmailAsync(string email)
+        {
+            User user = await _dbContext.Users
+                .Include(w => w.Role)
+                .FirstOrDefaultAsync(w => w.Email.Equals(email));
+
+            return user;
+        }
+
         public void DeleteUser(User user)
         {
             _dbContext.Users.Remove(user);

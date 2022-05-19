@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
+using System.Text;
 using WorkerManagementAPI;
 using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.JwtToken;
 using WorkerManagementAPI.Middlewares;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using WorkerManagementAPI.Services.CompanyService.Service;
@@ -57,6 +60,28 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
+JwtAuthenticationSettings jwtAuthenticationSettings = new JwtAuthenticationSettings();
+builder.Configuration.GetSection("Authentication").Bind(jwtAuthenticationSettings);
+
+builder.Services.AddSingleton(jwtAuthenticationSettings);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "Bearer ";
+    options.DefaultScheme = "Bearer ";
+    options.DefaultChallengeScheme = "Bearer ";
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = jwtAuthenticationSettings.JwtIssuer,
+        ValidAudience = jwtAuthenticationSettings.JwtIssuer,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthenticationSettings.JwtKey)),
+    };
+});
+
 builder.Host.UseNLog();
 
 var app = builder.Build();
@@ -88,6 +113,8 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Workers Management API");
 });
+
+app.UseAuthentication();
 
 app.UseHttpsRedirection();
 

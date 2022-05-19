@@ -24,6 +24,7 @@ namespace WorkerManagementAPI.AutoMapper
             #region Worker
 
             CreateMap<User, UserDto>();
+            CreateMap<LoginUserDto, User>();
             CreateMap<RegisterUserDto, User>();
             CreateMap<UpdateUserDto, User>();
             CreateMap<User, UpdateUserTechnologyDto>()

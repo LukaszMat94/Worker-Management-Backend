@@ -9,6 +9,8 @@ namespace WorkerManagementAPI.Data.Models.UserDtos
         [EmailAddress(ErrorMessage = "Invalid email")]
         public string Email { get; set; } = String.Empty;
 
-        public string? Password { get; set; }
+        [Required]
+        [MaxLength(30)]
+        public string Password { get; set; } = String.Empty;
     }
 }
