@@ -19,6 +19,8 @@ using WorkerManagementAPI.Services.RoleService.Repository;
 using WorkerManagementAPI.Services.RoleService.Service;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
 using WorkerManagementAPI.Services.TechnologyService.Service;
+using WorkerManagementAPI.Services.TokenService.Repository;
+using WorkerManagementAPI.Services.TokenService.Service;
 using WorkerManagementAPI.Services.UserService.Repository;
 using WorkerManagementAPI.Services.UserService.Service;
 
@@ -44,6 +46,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<ITechnologyRepository, TechnologyRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
 #endregion
 
@@ -55,6 +58,7 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITechnologyService, TechnologyService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddTransient<IMailService, MailService>();
 
@@ -73,9 +77,9 @@ builder.Services.AddSingleton(jwtAuthenticationSettings);
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = "Bearer ";
-    options.DefaultScheme = "Bearer ";
-    options.DefaultChallengeScheme = "Bearer ";
+    options.DefaultAuthenticateScheme = "Bearer";
+    options.DefaultScheme = "Bearer";
+    options.DefaultChallengeScheme = "Bearer";
 }).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
@@ -84,6 +88,7 @@ builder.Services.AddAuthentication(options =>
     {
         ValidIssuer = jwtAuthenticationSettings.JwtIssuer,
         ValidAudience = jwtAuthenticationSettings.JwtIssuer,
+        ValidateLifetime = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthenticationSettings.JwtKey)),
     };
 });

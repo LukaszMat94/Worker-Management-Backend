@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Entities.Enums;
+using WorkerManagementAPI.Data.JwtToken;
 
 namespace WorkerManagementAPI.Data.Context
 {
@@ -15,6 +16,8 @@ namespace WorkerManagementAPI.Data.Context
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<Technology> Technologies => Set<Technology>();
         public DbSet<Role> Roles => Set<Role>();
+
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -96,6 +99,13 @@ namespace WorkerManagementAPI.Data.Context
                 .HasMaxLength(20)
                 .HasDefaultValue(AccountStatusEnum.INACTIVE);
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.RefreshTokens)
+                .WithOne(t => t.User)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
             #endregion
 
             #region Technology
@@ -125,6 +135,30 @@ namespace WorkerManagementAPI.Data.Context
                 .Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            #endregion
+
+            #region
+
+            modelBuilder.Entity<RefreshToken>()
+                .HasKey(t => t.Id);
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(t => t.Token)
+                .HasMaxLength(256)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(t => t.Created)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(t => t.Expires)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(t => t.TokenStatus)
+                .HasDefaultValue(true);
 
             #endregion
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.Entities.Enums;
 
 namespace WorkerManagementAPI.Services.UserService.Repository
 {
@@ -57,6 +58,15 @@ namespace WorkerManagementAPI.Services.UserService.Repository
                 .FirstOrDefaultAsync(w => w.Email.Equals(email));
 
             return user;
+        }
+
+        public async Task<AccountStatusEnum> GetUserAccountStatus(User user)
+        {
+            AccountStatusEnum accountStatus = await _dbContext.Users.Where(u => u.Id.Equals(user.Id))
+                .Select(u => u.AccountStatus)
+                .SingleOrDefaultAsync();
+
+            return accountStatus;
         }
 
         public void DeleteUser(User user)

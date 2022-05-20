@@ -1,4 +1,5 @@
 ﻿using WorkerManagementAPI.Data.Entities.Enums;
+using WorkerManagementAPI.Data.JwtToken;
 
 namespace WorkerManagementAPI.Data.Entities
 {
@@ -15,5 +16,6 @@ namespace WorkerManagementAPI.Data.Entities
         public long RoleId { get; set; }
         public virtual Role Role { get; set; }
         public AccountStatusEnum AccountStatus { get; set; } = AccountStatusEnum.INACTIVE;
+        public virtual List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken> ();
     }
 }

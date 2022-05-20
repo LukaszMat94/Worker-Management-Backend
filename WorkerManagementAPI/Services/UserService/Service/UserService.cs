@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using WorkerManagementAPI.Data.Entities;
-using WorkerManagementAPI.Data.MailConfig;
+using WorkerManagementAPI.Data.Entities.Enums;
+using WorkerManagementAPI.Data.JwtToken;
 using WorkerManagementAPI.Data.Models.UserDtos;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Services.MailService.Service;
 using WorkerManagementAPI.Services.PasswordService.Service;
 using WorkerManagementAPI.Services.RoleService.Repository;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
+using WorkerManagementAPI.Services.TokenService.Service;
 using WorkerManagementAPI.Services.UserService.Repository;
 
 namespace WorkerManagementAPI.Services.UserService.Service
@@ -17,6 +19,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
         private readonly IRoleRepository _roleRepository;
         private readonly ITechnologyRepository _technologyRepository;
         private readonly IPasswordService _passwordService;
+        private readonly ITokenService _tokenService;
         private readonly IMailService _mailService;
         private readonly IMapper _mapper;
 
@@ -25,6 +28,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
             ITechnologyRepository technologyRepository,
             IPasswordService passwordService,
             IMailService mailService,
+            ITokenService tokenService,
             IMapper mapper)
         {
             _userRepository = userRepository;
@@ -32,10 +36,11 @@ namespace WorkerManagementAPI.Services.UserService.Service
             _technologyRepository = technologyRepository;
             _passwordService = passwordService;
             _mailService = mailService;
+            _tokenService = tokenService;
             _mapper = mapper;
         }
 
-        public async Task<string> LoginUserAsync(LoginUserDto loginUserDto)
+        public async Task<Dictionary<string, string>> LoginUserAsync(LoginUserDto loginUserDto)
         {
             User userMapped = _mapper.Map<User>(loginUserDto);
 
@@ -45,9 +50,30 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             _passwordService.VerifyPassword(user, loginUserDto);
 
-            string token = _passwordService.GenerateJwtToken(user);
+            await CheckIfAccountIsInactive(user);
 
-            return token;
+            string accessToken = _tokenService.GenerateJwtToken(user);
+            RefreshToken refreshToken = _tokenService.GenerateJwtRefreshToken(user);
+
+            await _tokenService.SaveRefreshTokenAsync(refreshToken, user);
+
+            Dictionary<string, string> tokens = new Dictionary<string, string>()
+            {
+                { "accessToken", accessToken },
+                { "refreshToken", refreshToken.Token }
+            };
+
+            return tokens;
+        }
+
+        private async Task CheckIfAccountIsInactive(User user)
+        {
+            AccountStatusEnum accountStatusEnum = await _userRepository.GetUserAccountStatus(user);
+
+            if(accountStatusEnum == AccountStatusEnum.INACTIVE)
+            {
+                //logic to return response in body to change password instead of exception
+            }
         }
 
         private async Task CheckIfUserExistInDatabaseAsync(User user)
