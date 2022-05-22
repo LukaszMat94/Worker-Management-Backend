@@ -5,7 +5,7 @@ using WorkerManagementAPI.Services.UserService.Service;
 
 namespace WorkerManagementAPI.Controllers
 {
-    [Route("api")]
+    [Route("api/user")]
     [ApiController]
     [Authorize(Roles = "ADMIN")]
     public class UserController : ControllerBase
@@ -18,6 +18,7 @@ namespace WorkerManagementAPI.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto registerUserDto)
         {
             try
@@ -32,6 +33,7 @@ namespace WorkerManagementAPI.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserDto loginUserDto)
         {
             Dictionary<string, string> tokens = await _userService.LoginUserAsync(loginUserDto);
