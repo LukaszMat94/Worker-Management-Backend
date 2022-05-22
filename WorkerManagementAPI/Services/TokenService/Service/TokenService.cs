@@ -35,7 +35,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
             return refreshToken;
         }
 
-        public string GenerateJwtToken(User user)
+        public string GenerateJwtAccessToken(User user)
         {
             List<Claim> claims = new List<Claim>()
             {
@@ -48,7 +48,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
 
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            DateTime expireDay = DateTime.Now.AddDays(_jwtAuthenticationSettings.JwtExpireDays);
+            DateTime expireDay = DateTime.UtcNow.AddDays(_jwtAuthenticationSettings.JwtExpireDays);
 
             JwtSecurityToken token = new JwtSecurityToken(_jwtAuthenticationSettings.JwtIssuer,
                 _jwtAuthenticationSettings.JwtIssuer,

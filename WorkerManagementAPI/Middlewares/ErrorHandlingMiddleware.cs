@@ -44,7 +44,7 @@ namespace WorkerManagementAPI.Middlewares
 
                 await context.Response.WriteAsync(exceptionDetails.ToString());
             }
-            catch (BadRequestException exception)
+            catch (PasswordNotMatchException exception)
             {
                 _logger.LogError(exception, exception.Message);
 

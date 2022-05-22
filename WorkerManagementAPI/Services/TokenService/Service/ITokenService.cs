@@ -8,7 +8,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
         Task<RefreshToken> GetActiveRefreshTokenAsync(User user);
         void AssignRefreshTokenToUser(RefreshToken refreshToken, User user);
         RefreshToken GenerateJwtRefreshToken(User user);
-        string GenerateJwtToken(User user);
+        string GenerateJwtAccessToken(User user);
         Task SaveRefreshTokenAsync(RefreshToken refreshToken, User user);
     }
 }

@@ -7,6 +7,5 @@ namespace WorkerManagementAPI.Services.PasswordService.Service
     {
         void HashPassword(User user, String password);
         void VerifyPassword(User user, LoginUserDto loginUserDto);
-        string GenerateTemporaryPassword();
     }
 }

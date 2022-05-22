@@ -18,9 +18,11 @@ namespace WorkerManagementAPI.Services.UserService.Service
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly ITechnologyRepository _technologyRepository;
+
         private readonly IPasswordService _passwordService;
         private readonly ITokenService _tokenService;
         private readonly IMailService _mailService;
+
         private readonly IMapper _mapper;
 
         public UserService(IUserRepository userRepository, 
@@ -52,7 +54,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             await CheckIfAccountIsInactive(user);
 
-            string accessToken = _tokenService.GenerateJwtToken(user);
+            string accessToken = _tokenService.GenerateJwtAccessToken(user);
             RefreshToken refreshToken = _tokenService.GenerateJwtRefreshToken(user);
 
             await _tokenService.SaveRefreshTokenAsync(refreshToken, user);
@@ -94,9 +96,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             await SetDefaultRoleToUserAsync(createUser);
 
-            string temporaryPassword = _passwordService.GenerateTemporaryPassword();
-
-            SetHashedTemporaryPasswordToUser(createUser, temporaryPassword);
+            HashTemporaryUserPassword(createUser, createUser.Password);
 
             User user = await _userRepository.RegisterUserAsync(createUser);
 
@@ -104,12 +104,12 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             UserDto userDto = _mapper.Map<UserDto>(user);
 
-            await _mailService.SendEmailAsync(userDto.Email, temporaryPassword);
+            await _mailService.SendEmailAsync(userDto.Email, createUser.Password);
 
             return userDto;
         }
 
-        private void SetHashedTemporaryPasswordToUser(User user, String password)
+        private void HashTemporaryUserPassword(User user, string password)
         {
             _passwordService.HashPassword(user, password);
         }

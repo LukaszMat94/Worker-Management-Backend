@@ -1,15 +1,19 @@
 ﻿using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Entities.Enums;
+using WorkerManagementAPI.Services.PasswordService.Service;
 
 namespace WorkerManagementAPI
 {
     public class UserSeeder
     {
         private readonly WorkersManagementDBContext _dbContext;
-        public UserSeeder(WorkersManagementDBContext dbContext)
+        private readonly IPasswordService _passwordService;
+        public UserSeeder(WorkersManagementDBContext dbContext,
+            IPasswordService passwordService)
         {
             _dbContext = dbContext;
+            _passwordService = passwordService;
         }
 
         public void Seed()
@@ -107,6 +111,18 @@ namespace WorkerManagementAPI
                 RoleId = 10
             };
 
+            User adminUser = new User
+            {
+                Name = "Admin",
+                Surname = "Admin",
+                Email = "admin@api.com",
+                Password = "admin",
+                AccountStatus = AccountStatusEnum.ACTIVE,
+                RoleId = 10
+            };
+
+            _passwordService.HashPassword(adminUser, adminUser.Password);
+
             Project apiProject = new Project
             {
                 Name = "Create API",
@@ -165,6 +181,7 @@ namespace WorkerManagementAPI
 
             teslaCompany.Users = new List<User>();
             teslaCompany.Users.Add(firstTeslaUser);
+            teslaCompany.Users.Add(adminUser);
 
             companies.Add(braveCompany);
             companies.Add(teslaCompany);
