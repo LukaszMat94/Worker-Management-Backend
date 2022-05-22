@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkerManagementAPI.Data.Models.ProjectDtos;
 using WorkerManagementAPI.Services.ProjectService.Service;
 
@@ -6,6 +7,7 @@ namespace WorkerManagementAPI.Controllers
 {
     [Route("api/projects")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class ProjectController : ControllerBase
     {
         private readonly IProjectService _projectService;

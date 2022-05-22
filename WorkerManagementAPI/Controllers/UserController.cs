@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkerManagementAPI.Data.Models.UserDtos;
 using WorkerManagementAPI.Services.UserService.Service;
 
@@ -6,6 +7,7 @@ namespace WorkerManagementAPI.Controllers
 {
     [Route("api")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

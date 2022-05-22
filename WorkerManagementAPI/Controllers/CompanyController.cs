@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Service;
 
@@ -6,6 +7,7 @@ namespace WorkerManagementAPI.Controllers
 {
     [Route("api/companies")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyService _companyService;

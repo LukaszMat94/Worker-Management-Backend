@@ -7,6 +7,7 @@ namespace WorkerManagementAPI.Controllers
 {
     [Route("api/roles")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleService;
@@ -17,7 +18,6 @@ namespace WorkerManagementAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> GetRoles()
         {
             List<RoleDto> roles = await _roleService.GetRolesAsync();
