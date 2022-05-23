@@ -11,6 +11,6 @@ namespace WorkerManagementAPI.Data.Models.ProjectDtos
         [MaxLength(50)]
         public string Name { get; set; } = String.Empty;
 
-        public TechnologyDto Technology { get; set; } = new TechnologyDto();
+        public List<TechnologyDto> TechnologiesDto { get; set; } = new List<TechnologyDto>();
     }
 }

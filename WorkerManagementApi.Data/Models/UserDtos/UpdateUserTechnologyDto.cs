@@ -14,6 +14,6 @@ namespace WorkerManagementAPI.Data.Models.UserDtos
         [Required]
         [MaxLength(40)]
         public string Surname { get; set; } = String.Empty;
-        public TechnologyDto TechnologyLevelDto { get; set; } = new TechnologyDto();
+        public List<TechnologyDto> TechnologiesDto { get; set; } = new List<TechnologyDto>();
     }
 }

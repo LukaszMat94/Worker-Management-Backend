@@ -6,6 +6,6 @@ namespace WorkerManagementAPI.Data.Models.ProjectDtos
     {
         public long Id { get; set; }
         public string Name { get; set; } = String.Empty;
-        public UserDto UserDto { get; set; } = new UserDto();
+        public List<UserDto> UsersDto { get; set; } = new List<UserDto>();
     }
 }
