@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using NLog.Web;
 using System.Text;
 using WorkerManagementAPI;
@@ -37,7 +38,38 @@ builder.Services.AddScoped<UserSeeder>();
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+c.SwaggerDoc("v1", new OpenApiInfo { Title = "Worker Management API", Version = "v1" });
+c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+{
+    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
+                      Enter 'Bearer ' and then your token in the text input below.
+                      \r\n\r\n Example: 'Bearer 1234adadas'",
+    Name = "Authorization",
+    In = ParameterLocation.Header,
+    Type = SecuritySchemeType.ApiKey,
+    Scheme = "Bearer"
+});
+
+c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+});
 
 #region Repositories
 
@@ -84,13 +116,16 @@ builder.Services.AddAuthentication(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
+    options.MapInboundClaims = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidIssuer = jwtAuthenticationSettings.JwtIssuer,
         ValidAudience = jwtAuthenticationSettings.JwtIssuer,
         ValidateLifetime = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthenticationSettings.JwtKey)),
+        RoleClaimType = "role"
     };
+
 });
 
 builder.Host.UseNLog();

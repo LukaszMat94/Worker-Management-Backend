@@ -39,9 +39,9 @@ namespace WorkerManagementAPI.Services.TokenService.Service
         {
             List<Claim> claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, $"{user.Name} {user.Surname}"),
-                new Claim(ClaimTypes.Role, $"{user.Role.RoleName}")
+                new Claim("nameidentifier", user.Id.ToString()),
+                new Claim("name", $"{user.Name} {user.Surname}"),
+                new Claim("role", $"{user.Role.RoleName}")
             };
 
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtAuthenticationSettings.JwtKey));

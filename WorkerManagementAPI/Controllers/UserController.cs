@@ -38,11 +38,7 @@ namespace WorkerManagementAPI.Controllers
         {
             Dictionary<string, string> tokens = await _userService.LoginUserAsync(loginUserDto);
 
-            HttpContext.Response.Headers.Add("access_token", tokens["accessToken"]);
-
-            setRefreshTokenInCookie(tokens["refreshToken"]);
-
-            return Ok();
+            return Ok(tokens);
         }
 
         [HttpGet]
@@ -85,17 +81,6 @@ namespace WorkerManagementAPI.Controllers
         {
             await _userService.UnassignTechnologyFromUserAsync(patchUserTechnologyDto);
             return NoContent();
-        }
-
-        private void setRefreshTokenInCookie(string token)
-        {
-            CookieOptions cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(7)
-            };
-
-            Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
     }
 }

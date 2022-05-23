@@ -9,6 +9,8 @@ namespace WorkerManagementAPI
     {
         private readonly WorkersManagementDBContext _dbContext;
         private readonly IPasswordService _passwordService;
+        private List<Role> roles;
+
         public UserSeeder(WorkersManagementDBContext dbContext,
             IPasswordService passwordService)
         {
@@ -46,7 +48,7 @@ namespace WorkerManagementAPI
 
         public List<Role> InitializeRoles()
         {
-            List<Role> roles = new () { 
+            roles = new () { 
                 new Role { RoleName = RoleEnum.USER },
                 new Role { RoleName = RoleEnum.MANAGER },
                 new Role { RoleName= RoleEnum.ADMIN }
@@ -92,7 +94,7 @@ namespace WorkerManagementAPI
                 Name = "Sebastian",
                 Surname = "Kowalczyk",
                 Email = "kosemi1@gmail.com",
-                RoleId = 8              
+                Role = roles[0]
             };
 
             User secondBraveUser = new User
@@ -100,7 +102,7 @@ namespace WorkerManagementAPI
                 Name = "Łukasz",
                 Surname = "Matusik",
                 Email = "matusik5@yahoo.com",
-                RoleId = 9
+                Role = roles[0]
             };
 
             User firstTeslaUser = new User
@@ -108,7 +110,7 @@ namespace WorkerManagementAPI
                 Name = "Elon",
                 Surname = "Musk",
                 Email = "musk@tesla.com",
-                RoleId = 10
+                Role = roles[1]
             };
 
             User adminUser = new User
@@ -117,8 +119,8 @@ namespace WorkerManagementAPI
                 Surname = "Admin",
                 Email = "admin@api.com",
                 Password = "admin",
-                AccountStatus = AccountStatusEnum.ACTIVE,
-                RoleId = 10
+                Role = roles[2],
+                AccountStatus = AccountStatusEnum.ACTIVE
             };
 
             _passwordService.HashPassword(adminUser, adminUser.Password);
