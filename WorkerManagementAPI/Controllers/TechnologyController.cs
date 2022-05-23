@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkerManagementAPI.Data.Models.TechnologyDtos;
 using WorkerManagementAPI.Services.TechnologyService.Service;
 
@@ -6,6 +7,7 @@ namespace WorkerManagementAPI.Controllers
 {
     [Route("api/technologies")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class TechnologyController : ControllerBase
     {
         private readonly ITechnologyService _technologyService;

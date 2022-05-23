@@ -22,49 +22,49 @@ namespace WorkerManagementAPI.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("ProjectTechnology", b =>
+            modelBuilder.Entity("TechnologiesProjects", b =>
                 {
-                    b.Property<long>("ProjectsId")
+                    b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("TechnologiesId")
+                    b.Property<long>("TechnologyId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("ProjectsId", "TechnologiesId");
+                    b.HasKey("ProjectId", "TechnologyId");
 
-                    b.HasIndex("TechnologiesId");
+                    b.HasIndex("TechnologyId");
 
-                    b.ToTable("ProjectTechnology");
+                    b.ToTable("TechnologiesProjects");
                 });
 
-            modelBuilder.Entity("ProjectWorker", b =>
+            modelBuilder.Entity("UsersProjects", b =>
                 {
-                    b.Property<long>("MembersId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ProjectsId")
+                    b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("MembersId", "ProjectsId");
+                    b.HasKey("UserId", "ProjectId");
 
-                    b.HasIndex("ProjectsId");
+                    b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectWorker");
+                    b.ToTable("UsersProjects");
                 });
 
-            modelBuilder.Entity("TechnologyWorker", b =>
+            modelBuilder.Entity("UsersTechnologies", b =>
                 {
-                    b.Property<long>("TechnologiesId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("WorkersId")
+                    b.Property<long>("TechnologyId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("TechnologiesId", "WorkersId");
+                    b.HasKey("UserId", "TechnologyId");
 
-                    b.HasIndex("WorkersId");
+                    b.HasIndex("TechnologyId");
 
-                    b.ToTable("TechnologyWorker");
+                    b.ToTable("UsersTechnologies");
                 });
 
             modelBuilder.Entity("WorkerManagementAPI.Data.Entities.Company", b =>
@@ -103,6 +103,24 @@ namespace WorkerManagementAPI.Data.Migrations
                     b.ToTable("Projects");
                 });
 
+            modelBuilder.Entity("WorkerManagementAPI.Data.Entities.Role", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("WorkerManagementAPI.Data.Entities.Technology", b =>
                 {
                     b.Property<long>("Id")
@@ -126,13 +144,20 @@ namespace WorkerManagementAPI.Data.Migrations
                     b.ToTable("Technologies");
                 });
 
-            modelBuilder.Entity("WorkerManagementAPI.Data.Entities.Worker", b =>
+            modelBuilder.Entity("WorkerManagementAPI.Data.Entities.User", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("AccountStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("INACTIVE");
 
                     b.Property<long?>("CompanyId")
                         .HasColumnType("bigint");
@@ -148,8 +173,11 @@ namespace WorkerManagementAPI.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Password")
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Surname")
                         .IsRequired()
@@ -163,69 +191,142 @@ namespace WorkerManagementAPI.Data.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Workers");
+                    b.HasIndex("RoleId");
 
-                    b.HasCheckConstraint("CK_Worker_Email", "[Email] LIKE '%_@_%._%'");
+                    b.ToTable("Users");
+
+                    b.HasCheckConstraint("CK_User_Email", "[Email] LIKE '%_@_%._%'");
                 });
 
-            modelBuilder.Entity("ProjectTechnology", b =>
+            modelBuilder.Entity("WorkerManagementAPI.Data.JwtToken.RefreshToken", b =>
                 {
-                    b.HasOne("WorkerManagementAPI.Data.Entities.Project", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                    b.HasOne("WorkerManagementAPI.Data.Entities.Technology", null)
-                        .WithMany()
-                        .HasForeignKey("TechnologiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool?>("TokenStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("ProjectWorker", b =>
+            modelBuilder.Entity("TechnologiesProjects", b =>
                 {
-                    b.HasOne("WorkerManagementAPI.Data.Entities.Worker", null)
+                    b.HasOne("WorkerManagementAPI.Data.Entities.Project", "Project")
                         .WithMany()
-                        .HasForeignKey("MembersId")
+                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WorkerManagementAPI.Data.Entities.Project", null)
+                    b.HasOne("WorkerManagementAPI.Data.Entities.Technology", "Technology")
                         .WithMany()
-                        .HasForeignKey("ProjectsId")
+                        .HasForeignKey("TechnologyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Technology");
                 });
 
-            modelBuilder.Entity("TechnologyWorker", b =>
+            modelBuilder.Entity("UsersProjects", b =>
                 {
-                    b.HasOne("WorkerManagementAPI.Data.Entities.Technology", null)
+                    b.HasOne("WorkerManagementAPI.Data.Entities.Project", "Project")
                         .WithMany()
-                        .HasForeignKey("TechnologiesId")
+                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WorkerManagementAPI.Data.Entities.Worker", null)
+                    b.HasOne("WorkerManagementAPI.Data.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("WorkersId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WorkerManagementAPI.Data.Entities.Worker", b =>
+            modelBuilder.Entity("UsersTechnologies", b =>
+                {
+                    b.HasOne("WorkerManagementAPI.Data.Entities.Technology", "Technology")
+                        .WithMany()
+                        .HasForeignKey("TechnologyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkerManagementAPI.Data.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Technology");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WorkerManagementAPI.Data.Entities.User", b =>
                 {
                     b.HasOne("WorkerManagementAPI.Data.Entities.Company", "Company")
-                        .WithMany("Workers")
+                        .WithMany("Users")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("WorkerManagementAPI.Data.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Company");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("WorkerManagementAPI.Data.JwtToken.RefreshToken", b =>
+                {
+                    b.HasOne("WorkerManagementAPI.Data.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WorkerManagementAPI.Data.Entities.Company", b =>
                 {
-                    b.Navigation("Workers");
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("WorkerManagementAPI.Data.Entities.User", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

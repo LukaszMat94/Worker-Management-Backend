@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Service;
 
@@ -7,6 +7,7 @@ namespace WorkerManagementAPI.Controllers
 {
     [Route("api/companies")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyService _companyService;
@@ -33,14 +34,14 @@ namespace WorkerManagementAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyDto createdCompanyDto)
         {
-            CompanyDto companyDto = await _companyService.CreateCompanyAsync(createdCompanyDto);
+            ReturnCompanyDto companyDto = await _companyService.CreateCompanyAsync(createdCompanyDto);
             return StatusCode(201, companyDto);
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateCompany([FromBody] UpdateCompanyDto updateCompanyDto)
         {
-            CompanyDto companyDto = await _companyService.UpdateCompanyAsync(updateCompanyDto);
+            ReturnCompanyDto companyDto = await _companyService.UpdateCompanyAsync(updateCompanyDto);
             return Ok(companyDto);
         }
 
@@ -51,17 +52,17 @@ namespace WorkerManagementAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch("assignWorker")]
-        public async Task<IActionResult> AssignWorkerToCompany([FromBody] PatchCompanyWorkerDto patchCompanyWorkerDto)
+        [HttpPatch("assignUser")]
+        public async Task<IActionResult> AssignUserToCompany([FromBody] PatchCompanyUserDto patchCompanyUserDto)
         {
-            CompanyDto companyDto = await _companyService.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);
+            CompanyDto companyDto = await _companyService.AssignUserToCompanyAsync(patchCompanyUserDto);
             return Ok(companyDto);
         }
 
-        [HttpPatch("unassignWorker")]
-        public async Task<IActionResult> UnassingWorkerFromCompany([FromBody] PatchCompanyWorkerDto patchCompanyWorkerDto)
+        [HttpPatch("unassignUser")]
+        public async Task<IActionResult> UnassingUserFromCompany([FromBody] PatchCompanyUserDto patchCompanyUserDto)
         {
-            await _companyService.UnassignWorkerFromCompanyAsync(patchCompanyWorkerDto);
+            await _companyService.UnassignUserFromCompanyAsync(patchCompanyUserDto);
             return NoContent();
         }
     }

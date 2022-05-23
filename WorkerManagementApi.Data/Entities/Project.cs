@@ -4,7 +4,7 @@
     {
         public string Name { get; set; } = String.Empty;
 
-        public virtual List<Worker>? Members { get; set; } = new List<Worker>();
-        public virtual List<Technology>? Technologies { get; set; } = new List<Technology>();
+        public virtual List<User> Users { get; set; } = new List<User>();
+        public virtual List<Technology> Technologies { get; set; } = new List<Technology>();
     }
 }

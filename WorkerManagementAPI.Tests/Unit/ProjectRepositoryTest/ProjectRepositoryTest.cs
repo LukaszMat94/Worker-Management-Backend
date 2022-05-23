@@ -70,27 +70,6 @@ namespace WorkerManagementAPI.Tests.Unit.ProjectRepositoryTest
 
         #endregion
 
-        #region Test Update Action
-
-        public static IEnumerable<object[]> UpdateValidData()
-        {
-            yield return new object[] { new ProjectDto { Id = 8, Name = "Kurs Zaawansowany C++"} };
-            yield return new object[] { new ProjectDto { Id = 9, Name = "Kurs Początkujący C++" } };
-            yield return new object[] { new ProjectDto { Id = 10, Name = "Kurs Zaawansowany Java" } };
-        }
-
-        [Theory]
-        [MemberData(nameof(UpdateValidData))]
-        public async Task UpdateWithValidDataTest(ProjectDto projectDto)
-        {
-            Project project = await _projectRepository.UpdateProjectAsync(projectDto);
-            Assert.Equal(
-                new {project.Id,  project.Name}, new { projectDto.Id, projectDto.Name}
-                );
-        }
-
-        #endregion
-
         #region Test Delete Action
 
         #endregion

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkerManagementAPI.Data.Entities;
+using WorkerManagementAPI.Data.Entities.Enums;
+using WorkerManagementAPI.Data.JwtToken;
 
 namespace WorkerManagementAPI.Data.Context
 {
@@ -10,13 +12,27 @@ namespace WorkerManagementAPI.Data.Context
         }
 
         public DbSet<Company> Companies => Set<Company>();
-        public DbSet<Worker> Workers => Set<Worker>();
-
+        public DbSet<User> Users => Set<User>();
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<Technology> Technologies => Set<Technology>();
+        public DbSet<Role> Roles => Set<Role>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region Role
+
+            modelBuilder.Entity<Role>()
+                .HasKey(r => r.Id);
+
+            modelBuilder.Entity<Role>()
+                .Property(r => r.RoleName)
+                .HasConversion<string>()
+                .IsRequired()
+                .HasMaxLength(30);
+
+            #endregion
+
             #region  Company
 
             modelBuilder.Entity<Company>()
@@ -27,61 +43,121 @@ namespace WorkerManagementAPI.Data.Context
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Company>()
-                .HasMany(c => c.Workers)
+                .HasMany(c => c.Users)
                 .WithOne(w => w.Company)
                 .HasForeignKey(w => w.CompanyId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             #endregion
 
-            #region Worker
+            #region User
 
-            modelBuilder.Entity<Worker>()
-                .HasKey(w => w.Id);
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
 
-            modelBuilder.Entity<Worker>()
-                .Property(c => c.Name)
+            modelBuilder.Entity<User>()
+                .Property(u => u.Name)
                 .IsRequired()
                 .HasMaxLength(50);
 
-            modelBuilder.Entity<Worker>()
-                .Property(c => c.Surname)
+            modelBuilder.Entity<User>()
+                .Property(u => u.Surname)
                 .IsRequired()
                 .HasMaxLength(40);
 
-            modelBuilder.Entity<Worker>()
-                .Property(c => c.Email)
+            modelBuilder.Entity<User>()
+                .Property(u => u.Email)
                 .IsRequired()
                 .HasMaxLength(35);
 
-            modelBuilder.Entity<Worker>()
-                .HasIndex(c => c.Email)
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
                 .IsUnique();
 
-            modelBuilder.Entity<Worker>()
-                .HasCheckConstraint("CK_Worker_Email", "[Email] LIKE '%_@_%._%'");
+            modelBuilder.Entity<User>()
+                .HasCheckConstraint("CK_User_Email", "[Email] LIKE '%_@_%._%'");
 
-            modelBuilder.Entity<Worker>()
-                .Property(c => c.Password)
-                .HasMaxLength(70);
+            modelBuilder.Entity<User>()
+                .Property(u => u.Password)
+                .HasMaxLength(512);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Role)
+                .WithMany()
+                .HasForeignKey(u => u.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.RoleId)
+                .IsUnique(false);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.AccountStatus)
+                .HasConversion<string>()
+                .IsRequired()
+                .HasMaxLength(20)
+                .HasDefaultValue(AccountStatusEnum.INACTIVE);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.RefreshTokens)
+                .WithOne(t => t.User)
+                .HasForeignKey(u => u.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();                 
 
             #endregion
 
             #region Technology
 
             modelBuilder.Entity<Technology>()
-                .HasKey(c => c.Id);
+                .HasKey(t => t.Id);
 
             modelBuilder.Entity<Technology>()
-                .Property(c => c.Name)
+                .Property(t => t.Name)
                 .IsRequired()
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Technology>()
-                .Property(c => c.TechnologyLevel)
+                .Property(t => t.TechnologyLevel)
                 .HasConversion<string>()
                 .IsRequired()
                 .HasMaxLength(50);
+
+            modelBuilder.Entity<Technology>()
+                .HasMany(t => t.Projects)
+                .WithMany(p => p.Technologies)
+                .UsingEntity<TechnologyProject>(
+                    "TechnologiesProjects",
+                    tp => tp
+                        .HasOne(tp => tp.Project)
+                        .WithMany()
+                        .HasForeignKey(tp => tp.ProjectId),
+                    tp => tp
+                        .HasOne(tp => tp.Technology)
+                        .WithMany()
+                        .HasForeignKey(tp => tp.TechnologyId),
+                    tp =>
+                    {
+                        tp.HasKey(tp => new { tp.ProjectId, tp.TechnologyId });
+                    });
+
+            modelBuilder.Entity<Technology>()
+                .HasMany(t => t.Users)
+                .WithMany(t => t.Technologies)
+                .UsingEntity<UserTechnology>(
+                    "UsersTechnologies",
+                    ut => ut
+                        .HasOne(ut => ut.User)
+                        .WithMany()
+                        .HasForeignKey(ut => ut.UserId),
+                    ut => ut
+                        .HasOne(ut => ut.Technology)
+                        .WithMany()
+                        .HasForeignKey(ut => ut.TechnologyId),
+                    ut =>
+                    {
+                        ut.HasKey(ut => new { ut.UserId, ut.TechnologyId });
+                    });
 
             #endregion
 
@@ -94,6 +170,49 @@ namespace WorkerManagementAPI.Data.Context
                 .Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.Users)
+                .WithMany(u => u.Projects)
+                .UsingEntity<UserProject>(
+                    "UsersProjects",
+                    up => up
+                        .HasOne(up => up.User)
+                        .WithMany()
+                        .HasForeignKey(up => up.UserId),
+                    up => up
+                        .HasOne(up => up.Project)
+                        .WithMany()
+                        .HasForeignKey(up => up.ProjectId),
+                    up =>
+                    {
+                        up.HasKey(up => new { up.UserId, up.ProjectId });
+                    });
+
+            #endregion
+
+            #region RefreshToken
+
+            modelBuilder.Entity<RefreshToken>()
+                .HasKey(t => t.Id);
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(t => t.Token)
+                .HasMaxLength(256)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(t => t.Created)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(t => t.Expires)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(t => t.TokenStatus)
+                .HasDefaultValue(true)
+                .IsRequired();
 
             #endregion
         }

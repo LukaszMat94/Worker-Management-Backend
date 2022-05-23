@@ -91,41 +91,6 @@ namespace WorkerManagementAPI.Tests.Unit.TechnologyRepositoryTest
 
         #endregion
 
-        #region Test Update Action
-
-        public static IEnumerable<object[]> UpdateValidData()
-        {
-            yield return new object[] { new TechnologyDto { Id = 1, Name = "Angielski", TechnologyLevel = TechnologyLevelEnum.Basic } };
-            yield return new object[] { new TechnologyDto { Id = 2, Name = "Niemiecki", TechnologyLevel = TechnologyLevelEnum.Medium } };
-            yield return new object[] { new TechnologyDto { Id = 3, Name = "Rosyjski", TechnologyLevel = TechnologyLevelEnum.Medium } };
-        }
-
-        [Theory]
-        [MemberData(nameof(UpdateValidData))]
-        public async Task UpdateWithValidDataTest(TechnologyDto technologyDto)
-        {
-            Technology updatedTechnology = await _technologyRepository.UpdateTechnologyAsync(technologyDto);
-
-            Assert.Equal(technologyDto.Name, updatedTechnology.Name);
-        }
-
-        public static IEnumerable<object[]> UpdateDuplicateData()
-        {
-            yield return new object[] { new TechnologyDto { Id = 8, Name = "Python", TechnologyLevel = TechnologyLevelEnum.Medium} };
-            yield return new object[] { new TechnologyDto { Id = 9, Name = "Javascript", TechnologyLevel = TechnologyLevelEnum.None } };
-            yield return new object[] { new TechnologyDto { Id = 10, Name = "React", TechnologyLevel = TechnologyLevelEnum.Basic } };
-        }
-
-        [Theory]
-        [MemberData(nameof(UpdateDuplicateData))]
-        public async Task UpdateWithDuplicateDataTest(TechnologyDto technologyDto)
-        {
-            Func<Task> action = async () => await _technologyRepository.UpdateTechnologyAsync(technologyDto);
-
-            await Assert.ThrowsAsync<DataDuplicateException>(action);
-        }
-
-        #endregion
 
         #region Test Delete Action
 

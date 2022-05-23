@@ -1,15 +1,21 @@
 ﻿using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Entities.Enums;
+using WorkerManagementAPI.Services.PasswordService.Service;
 
 namespace WorkerManagementAPI
 {
-    public class WorkerSeeder
+    public class UserSeeder
     {
         private readonly WorkersManagementDBContext _dbContext;
-        public WorkerSeeder(WorkersManagementDBContext dbContext)
+        private readonly IPasswordService _passwordService;
+        private List<Role> roles;
+
+        public UserSeeder(WorkersManagementDBContext dbContext,
+            IPasswordService passwordService)
         {
             _dbContext = dbContext;
+            _passwordService = passwordService;
         }
 
         public void Seed()
@@ -24,6 +30,31 @@ namespace WorkerManagementAPI
                     _dbContext.SaveChanges();
                 }
             }
+        }
+
+        public void SeedRoles()
+        {
+            if (_dbContext.Database.CanConnect())
+            {
+                if (_dbContext.Roles.Count() == 0)
+                {
+                    List<Role> roles = InitializeRoles();
+
+                    _dbContext.Roles.AddRange(roles);
+                    _dbContext.SaveChanges();
+                }
+            }
+        }
+
+        public List<Role> InitializeRoles()
+        {
+            roles = new () { 
+                new Role { RoleName = RoleEnum.USER },
+                new Role { RoleName = RoleEnum.MANAGER },
+                new Role { RoleName= RoleEnum.ADMIN }
+            };
+
+            return roles;
         }
 
         private List<Company> InitializeCompanies()
@@ -58,26 +89,41 @@ namespace WorkerManagementAPI
                 TechnologyLevel = TechnologyLevelEnum.Basic
             };
 
-            Worker firstBraveWorker = new Worker
+            User firstBraveUser = new User
             {
                 Name = "Sebastian",
                 Surname = "Kowalczyk",
-                Email = "kosemi1@gmail.com"
+                Email = "kosemi1@gmail.com",
+                Role = roles[0]
             };
 
-            Worker secondBraveWorker = new Worker
+            User secondBraveUser = new User
             {
                 Name = "Łukasz",
                 Surname = "Matusik",
-                Email = "matusik5@yahoo.com"
+                Email = "matusik5@yahoo.com",
+                Role = roles[0]
             };
 
-            Worker firstTeslaWorker = new Worker
+            User firstTeslaUser = new User
             {
                 Name = "Elon",
                 Surname = "Musk",
-                Email = "musk@tesla.com"
+                Email = "musk@tesla.com",
+                Role = roles[1]
             };
+
+            User adminUser = new User
+            {
+                Name = "Admin",
+                Surname = "Admin",
+                Email = "admin@api.com",
+                Password = "admin",
+                Role = roles[2],
+                AccountStatus = AccountStatusEnum.ACTIVE
+            };
+
+            _passwordService.HashPassword(adminUser, adminUser.Password);
 
             Project apiProject = new Project
             {
@@ -104,39 +150,40 @@ namespace WorkerManagementAPI
             serviceProject.Technologies = new List<Technology>();
             serviceProject.Technologies.Add(javaTechnology);
 
-            #region Workers
-            firstBraveWorker.Technologies = new List<Technology>();
-            firstBraveWorker.Technologies.Add(reactTechnology);
-            firstBraveWorker.Technologies.Add(javaTechnology);
+            #region Users
+            firstBraveUser.Technologies = new List<Technology>();
+            firstBraveUser.Technologies.Add(reactTechnology);
+            firstBraveUser.Technologies.Add(javaTechnology);
 
-            firstBraveWorker.Projects = new List<Project>();
-            firstBraveWorker.Projects.Add(apiProject);
-            firstBraveWorker.Projects.Add(serviceProject);
+            firstBraveUser.Projects = new List<Project>();
+            firstBraveUser.Projects.Add(apiProject);
+            firstBraveUser.Projects.Add(serviceProject);
 
-            secondBraveWorker.Technologies = new List<Technology>();
-            secondBraveWorker.Technologies.Add(csharpTechnology);
+            secondBraveUser.Technologies = new List<Technology>();
+            secondBraveUser.Technologies.Add(csharpTechnology);
 
-            secondBraveWorker.Projects = new List<Project>();
-            secondBraveWorker.Projects.Add(apiProject);
+            secondBraveUser.Projects = new List<Project>();
+            secondBraveUser.Projects.Add(apiProject);
 
-            firstTeslaWorker.Technologies = new List<Technology>();
-            firstTeslaWorker.Technologies.Add(javaTechnology);
-            firstTeslaWorker.Technologies.Add(csharpTechnology);
-            firstTeslaWorker.Technologies.Add(reactTechnology);
+            firstTeslaUser.Technologies = new List<Technology>();
+            firstTeslaUser.Technologies.Add(javaTechnology);
+            firstTeslaUser.Technologies.Add(csharpTechnology);
+            firstTeslaUser.Technologies.Add(reactTechnology);
 
-            firstTeslaWorker.Projects = new List<Project>();
-            firstTeslaWorker.Projects.Add(serviceProject);
-            firstTeslaWorker.Projects.Add(apiProject);
-            firstTeslaWorker.Projects.Add(webPageProject);
+            firstTeslaUser.Projects = new List<Project>();
+            firstTeslaUser.Projects.Add(serviceProject);
+            firstTeslaUser.Projects.Add(apiProject);
+            firstTeslaUser.Projects.Add(webPageProject);
 
             #endregion
 
-            braveCompany.Workers = new List<Worker>();
-            braveCompany.Workers.Add(firstBraveWorker);
-            braveCompany.Workers.Add(secondBraveWorker);
+            braveCompany.Users = new List<User>();
+            braveCompany.Users.Add(firstBraveUser);
+            braveCompany.Users.Add(secondBraveUser);
 
-            teslaCompany.Workers = new List<Worker>();
-            teslaCompany.Workers.Add(firstTeslaWorker);
+            teslaCompany.Users = new List<User>();
+            teslaCompany.Users.Add(firstTeslaUser);
+            teslaCompany.Users.Add(adminUser);
 
             companies.Add(braveCompany);
             companies.Add(teslaCompany);

@@ -1,6 +1,4 @@
-﻿using WorkerManagementAPI.Data.Models.ProjectDtos;
-using WorkerManagementAPI.Data.Models.WorkerDtos;
-using WorkerManagementAPI.Data.Entities;
+﻿using WorkerManagementAPI.Data.Entities;
 
 namespace WorkerManagementAPI.Services.ProjectService.Repository
 {
@@ -8,12 +6,14 @@ namespace WorkerManagementAPI.Services.ProjectService.Repository
     {
         Task<List<Project>> GetAllProjectsAsync();
         Task<Project> GetProjectByIdAsync(long id);
+        Task<Project> GetProjectWithTechnologiesByIdAsync(long id);
+        Task<Project> GetProjectWithUsersByIdAsync(long id);
         Task<Project> CreateProjectAsync(Project project);
-        Task<Project> UpdateProjectAsync(ProjectDto project);
-        Task DeleteProjectAsync(long id);
-        Task<Project> AssignTechnologyToProject(PatchProjectTechnologyDto patchProjectTechnologyDto);
-        Task UnassignTechnologyFromProjectAsync(PatchProjectTechnologyDto patchProjectTechnologyDto);
-        Task<Project> AssignWorkerToProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto);
-        Task UnassignWorkerFromProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto);
+        void DeleteProject(Project project);
+        Task SaveChangesAsync();
+        void AssignTechnologyToProject(Project project, Technology technology);
+        void UnassignTechnologyFromProject(Project project, Technology technology);
+        void AssignUserToProject(Project project, User user);
+        void UnassignUserFromProject(Project project, User user);
     }
 }

@@ -2,7 +2,7 @@
 {
     public class DataDuplicateException : Exception
     {
-        public DataDuplicateException(String message) : base(message)
+        public DataDuplicateException(string message) : base(message)
         {
         }
     }

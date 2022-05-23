@@ -1,4 +1,4 @@
-﻿using WorkerManagementAPI.Data.Models.WorkerDtos;
+﻿using WorkerManagementAPI.Data.Models.UserDtos;
 
 namespace WorkerManagementAPI.Data.Models.CompanyDtos
 {
@@ -6,6 +6,6 @@ namespace WorkerManagementAPI.Data.Models.CompanyDtos
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public List<WorkerDto> Workers { get; set; } = new List<WorkerDto>();
+        public List<UserDto> Users { get; set; } = new List<UserDto>();
     }
 }

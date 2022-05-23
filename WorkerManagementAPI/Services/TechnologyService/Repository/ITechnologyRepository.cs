@@ -8,7 +8,9 @@ namespace WorkerManagementAPI.Services.TechnologyService.Repository
         Task<List<Technology>> GetAllTechnologiesAsync();
         Task<Technology> GetTechnologyByIdAsync(long id);
         Task<Technology> CreateTechnologyAsync(Technology technology);
-        Task<Technology> UpdateTechnologyAsync(TechnologyDto technologyDto);
-        Task DeleteTechnologyAsync(long id);
+        void DeleteTechnology(Technology technology);
+        Task<bool> FindIfTechnologyExistAsync(Technology technology);
+        Task<bool> FindIfTechnologyExistWithOtherIdAsync(TechnologyDto technologyDto);
+        Task SaveChangesAsync();
     }
 }

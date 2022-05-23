@@ -1,20 +1,28 @@
 ﻿using AutoMapper;
 using WorkerManagementAPI.Data.Models.ProjectDtos;
-using WorkerManagementAPI.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Services.ProjectService.Repository;
+using WorkerManagementAPI.Exceptions;
+using WorkerManagementAPI.Services.TechnologyService.Repository;
+using WorkerManagementAPI.Services.UserService.Repository;
 
 namespace WorkerManagementAPI.Services.ProjectService.Service
 {
     public class ProjectService : IProjectService
     {
         private readonly IProjectRepository _projectRepository;
+        private readonly ITechnologyRepository _technologyRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
         public ProjectService(IProjectRepository projectRepository,
+            ITechnologyRepository technologyRepository,
+            IUserRepository userRepository,
             IMapper mapper)
         {
             _projectRepository = projectRepository;
+            _technologyRepository = technologyRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -22,18 +30,38 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         {
             List<Project> projects = await _projectRepository.GetAllProjectsAsync();
 
+            CheckIfListIsNull(projects);
+
             List<ProjectDto> projectsDto = _mapper.Map<List<ProjectDto>>(projects);
 
             return projectsDto;
+        }
+
+        private void CheckIfListIsNull(List<Project> projects)
+        {
+            if(projects == null)
+            {
+                throw new NotFoundException("List is empty");
+            }         
         }
 
         public async Task<ProjectDto> GetProjectByIdAsync(long id)
         {
             Project project = await _projectRepository.GetProjectByIdAsync(id);
 
+            CheckIfProjectEntityIsNull(project);
+
             ProjectDto projectDto = _mapper.Map<ProjectDto>(project);
 
             return projectDto;
+        }
+
+        private void CheckIfProjectEntityIsNull(Project project)
+        {
+            if(project == null)
+            {
+                throw new NotFoundException("Project not found");
+            }
         }
 
         public async Task<ProjectDto> CreateProjectAsync(CreateProjectDto createProjectDto)
@@ -42,51 +70,168 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
 
             Project createdProject = await _projectRepository.CreateProjectAsync(project);
 
-            ProjectDto createdProjectDto = _mapper.Map<ProjectDto>(createdProject);
+            await _projectRepository.SaveChangesAsync();
 
-            return createdProjectDto;
+            ProjectDto addedProjectDto = _mapper.Map<ProjectDto>(createdProject);
+
+            return addedProjectDto;
         }
 
         public async Task<ProjectDto> UpdateProjectAsync(ProjectDto projectDto)
         {
-            Project project = await _projectRepository.UpdateProjectAsync(projectDto);
+            Project project = await _projectRepository.GetProjectByIdAsync(projectDto.Id);
+
+            CheckIfProjectEntityIsNull(project);
+
+            UpdateProjectProperties(project, projectDto);
+
+            await _projectRepository.SaveChangesAsync();
 
             ProjectDto updatedProjectDto = _mapper.Map<ProjectDto>(project);
 
             return updatedProjectDto;
         }
 
-        public async Task DeleteProjectAsync(long id)
+        private void UpdateProjectProperties(Project project, ProjectDto projectDto)
         {
-            await _projectRepository.DeleteProjectAsync(id);
+            project.Name = projectDto.Name;
         }
 
-        public async Task<UpdateProjectTechnologyDto> AssignTechnologyToProject(PatchProjectTechnologyDto patchProjectTechnologyDto)
+        public async Task DeleteProjectAsync(long id)
         {
-            Project project = await _projectRepository.AssignTechnologyToProject(patchProjectTechnologyDto);
+            Project project = await _projectRepository.GetProjectByIdAsync(id);
+
+            CheckIfProjectEntityIsNull(project);
+
+            _projectRepository.DeleteProject(project);
+
+            await _projectRepository.SaveChangesAsync();
+        }
+
+        public async Task<UpdateProjectTechnologyDto> AssignTechnologyToProjectAsync(PatchProjectTechnologyDto patchProjectTechnologyDto)
+        {
+            Project project = await _projectRepository.GetProjectWithTechnologiesByIdAsync(patchProjectTechnologyDto.IdProject);
+
+            CheckIfProjectEntityIsNull(project);
+
+            Technology technology = await _technologyRepository.GetTechnologyByIdAsync(patchProjectTechnologyDto.IdTechnology);
+
+            CheckIfTechnologyEntityIsNull(technology);
+
+            CheckIfRelationProjectTechnologyExist(project, technology);
+
+            _projectRepository.AssignTechnologyToProject(project, technology);
+
+            await _projectRepository.SaveChangesAsync();
 
             UpdateProjectTechnologyDto updateProjectTechnologyDto = _mapper.Map<UpdateProjectTechnologyDto>(project);
 
             return updateProjectTechnologyDto;
         }
 
+        private void CheckIfTechnologyEntityIsNull(Technology technology)
+        {
+            if(technology == null)
+            {
+                throw new NotFoundException("Technology not found");
+            }
+        }
+
+        private void CheckIfRelationProjectTechnologyExist(Project project, Technology technology)
+        {
+            List<Technology> technology1 = project.Technologies;
+
+            if (project.Technologies.Contains(technology))
+            {
+                throw new DataDuplicateException("Relation already exist");
+            }
+        }
+
         public async Task UnassignTechnologyFromProjectAsync(PatchProjectTechnologyDto patchProjectTechnologyDto)
         {
-            await _projectRepository.UnassignTechnologyFromProjectAsync(patchProjectTechnologyDto);
+            Project project = await _projectRepository.GetProjectWithTechnologiesByIdAsync(patchProjectTechnologyDto.IdProject);
+
+            CheckIfProjectEntityIsNull(project);
+
+            Technology technology = await _technologyRepository.GetTechnologyByIdAsync(patchProjectTechnologyDto.IdTechnology);
+
+            CheckIfTechnologyEntityIsNull(technology);
+
+            CheckIfRelationProjectTechnologyNonExist(project, technology);
+
+            _projectRepository.UnassignTechnologyFromProject(project, technology);
+
+            await _projectRepository.SaveChangesAsync();
         }
 
-        public async Task<UpdateProjectWorkerDto> AssignWorkerToProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto)
+        private void CheckIfRelationProjectTechnologyNonExist(Project project, Technology technology)
         {
-            Project project = await _projectRepository.AssignWorkerToProjectAsync(patchProjectWorkerDto);
-
-            UpdateProjectWorkerDto updateProjectWorkerDto = _mapper.Map<UpdateProjectWorkerDto>(project);
-
-            return updateProjectWorkerDto;
+            if (!project.Technologies.Contains(technology))
+            {
+                throw new NotFoundException("Relation not exist");
+            }
         }
 
-        public async Task UnassignWorkerFromProjectAsync(PatchProjectWorkerDto patchProjectWorkerDto)
+        public async Task<UpdateProjectUserDto> AssignUserToProjectAsync(PatchProjectUserDto patchProjectUserDto)
         {
-            await _projectRepository.UnassignWorkerFromProjectAsync(patchProjectWorkerDto);
+            Project project = await _projectRepository.GetProjectWithUsersByIdAsync(patchProjectUserDto.IdProject);
+
+            CheckIfProjectEntityIsNull(project);
+
+            User user = await _userRepository.GetUserByIdAsync(patchProjectUserDto.IdUser);
+
+            CheckIfUserEntityIsNull(user);
+
+            CheckIfRelationProjectUserExist(project, user);
+
+            _projectRepository.AssignUserToProject(project, user);
+
+            await _projectRepository.SaveChangesAsync();
+
+            UpdateProjectUserDto updateProjectUserDto = _mapper.Map<UpdateProjectUserDto>(project);
+
+            return updateProjectUserDto;
+        }
+
+        private void CheckIfUserEntityIsNull(User user)
+        {
+            if(user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+        }
+
+        private void CheckIfRelationProjectUserExist(Project project, User user)
+        {
+            if (project.Users.Contains(user))
+            {
+                throw new DataDuplicateException("Relation already exist");
+            }
+        }
+
+        public async Task UnassignUserFromProjectAsync(PatchProjectUserDto patchProjectUserDto)
+        {
+            Project project = await _projectRepository.GetProjectWithUsersByIdAsync(patchProjectUserDto.IdProject);
+
+            CheckIfProjectEntityIsNull(project);
+
+            User user = await _userRepository.GetUserByIdAsync(patchProjectUserDto.IdUser);
+
+            CheckIfUserEntityIsNull(user);
+
+            CheckIfRelationProjectUserNonExist(project, user);
+
+            _projectRepository.UnassignUserFromProject(project, user);
+
+            await _projectRepository.SaveChangesAsync();
+        }
+
+        private void CheckIfRelationProjectUserNonExist(Project project, User user)
+        {
+            if (!project.Users.Contains(user))
+            {
+                throw new NotFoundException("Relation not exist");
+            }
         }
     }
 }

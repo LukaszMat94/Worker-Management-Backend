@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WorkerManagementAPI.Data.Models.CompanyWorkerDtos;
 using WorkerManagementAPI.Data.Context;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Exceptions;
-using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using Xunit;
 
@@ -17,7 +15,7 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
         private readonly WorkersManagementDBContext _context;
         private readonly ICompanyRepository _companyRepository;
         private List<Company> companies = new List<Company>();
-        private List<Worker> workers = new List<Worker>();
+        private List<User> workers = new List<User>();
 
         public CompanyRepositoryTest()
         {
@@ -89,40 +87,6 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
 
         #endregion
 
-        #region Test Update Action
-
-        public static IEnumerable<object[]> UpdateValidData()
-        {
-            yield return new object[] { new UpdateCompanyDto { Id = 1, Name = "Mazda" } };
-            yield return new object[] { new UpdateCompanyDto { Id = 2, Name = "Maybach" } };
-            yield return new object[] { new UpdateCompanyDto { Id = 4, Name = "Rexona" } };
-        }
-
-        [Theory]
-        [MemberData(nameof(UpdateValidData))]
-        public async Task UpdateWithValidDataTest(UpdateCompanyDto updateCompanyDto)
-        {
-            Company company = await _companyRepository.UpdateCompanyAsync(updateCompanyDto);
-            Assert.Equal(updateCompanyDto.Name, company.Name);
-        }
-
-        public static IEnumerable<object[]> UpdateDuplicateData()
-        {
-            yield return new object[] { new UpdateCompanyDto { Id = 1, Name = "Samsung" } };
-            yield return new object[] { new UpdateCompanyDto { Id = 2, Name = "T-Mobile" } };
-            yield return new object[] { new UpdateCompanyDto { Id = 5, Name = "Tesla" } };
-        }
-
-        [Theory]
-        [MemberData(nameof(UpdateDuplicateData))]
-        public async Task UpdateWithDuplicateDataTest(UpdateCompanyDto updateCompanyDto)
-        {
-            Func<Task> action = async () => await _companyRepository.UpdateCompanyAsync(updateCompanyDto);
-            await Assert.ThrowsAsync<DataDuplicateException>(action);
-        }
-
-        #endregion
-
         #region Test Delete Action
 
         #endregion
@@ -148,25 +112,6 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
 
         #endregion
 
-        #region Test Patch Worker To Company Action
-
-        public static IEnumerable<object[]> PatchWorkerToCompanyData()
-        {
-            yield return new object[] { new PatchCompanyWorkerDto { IdCompany = 1, IdWorker = 5 } };
-            yield return new object[] { new PatchCompanyWorkerDto { IdCompany = 2, IdWorker = 2 } };
-            yield return new object[] { new PatchCompanyWorkerDto { IdCompany = 5, IdWorker = 1 } };
-        }
-
-        [Theory]
-        [MemberData(nameof(PatchWorkerToCompanyData))]
-        public async Task PatchWorkerToCompanyValidTest(PatchCompanyWorkerDto patchCompanyWorkerDto)
-        {
-            Company company = await _companyRepository.AssignWorkerToCompanyAsync(patchCompanyWorkerDto);
-            Assert.Equal(workers.Find(w => w.Id == patchCompanyWorkerDto.IdWorker).Name, company.Workers.Find(w => w.Id == patchCompanyWorkerDto.IdWorker).Name);
-        }
-
-        #endregion
-
         private void SeedCompaniesData(WorkersManagementDBContext context)
         {
             companies = new()
@@ -186,14 +131,14 @@ namespace WorkerManagementAPI.Tests.Unit.CompanyRepositoryTest
         {
             workers = new()
             {
-                new Worker { Id = 1, Name = "Michal", Surname = "Wojcik", Company = null},
-                new Worker { Id = 2, Name = "Marian", Surname = "Kanapa", Company = null },
-                new Worker { Id = 3, Name = "Mieczyslaw", Surname = "Kolos", Company = null },
-                new Worker { Id = 4, Name = "Katarzyna", Surname = "Mieczyk", Company = null },
-                new Worker { Id = 5, Name = "Iwona", Surname = "Mikolajczyk", Company = null }
+                new User { Id = 1, Name = "Michal", Surname = "Wojcik", Company = null},
+                new User { Id = 2, Name = "Marian", Surname = "Kanapa", Company = null },
+                new User { Id = 3, Name = "Mieczyslaw", Surname = "Kolos", Company = null },
+                new User { Id = 4, Name = "Katarzyna", Surname = "Mieczyk", Company = null },
+                new User { Id = 5, Name = "Iwona", Surname = "Mikolajczyk", Company = null }
             };
 
-            _context.Workers.AddRange(workers);
+            _context.Users.AddRange(workers);
             _context.SaveChanges();
         }
 

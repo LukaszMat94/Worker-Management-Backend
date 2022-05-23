@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkerManagementAPI.Data.Models.ProjectDtos;
-using WorkerManagementAPI.Data.Models.WorkerDtos;
 using WorkerManagementAPI.Services.ProjectService.Service;
 
 namespace WorkerManagementAPI.Controllers
 {
     [Route("api/projects")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class ProjectController : ControllerBase
     {
         private readonly IProjectService _projectService;
@@ -54,7 +55,7 @@ namespace WorkerManagementAPI.Controllers
         [HttpPatch("assignTechnology")]
         public async Task<IActionResult> AssignTechnologyToProject([FromBody] PatchProjectTechnologyDto patchProjectTechnologyDto)
         {
-            UpdateProjectTechnologyDto updateProjectTechnologyDto = await _projectService.AssignTechnologyToProject(patchProjectTechnologyDto);
+            UpdateProjectTechnologyDto updateProjectTechnologyDto = await _projectService.AssignTechnologyToProjectAsync(patchProjectTechnologyDto);
             return Ok(updateProjectTechnologyDto);
         }
 
@@ -65,17 +66,17 @@ namespace WorkerManagementAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch("assignWorker")]
-        public async Task<IActionResult> AssignWorkerToProject([FromBody] PatchProjectWorkerDto patchProjectWorkerDto)
+        [HttpPatch("assignUser")]
+        public async Task<IActionResult> AssignUserToProject([FromBody] PatchProjectUserDto patchProjectUserDto)
         {
-            UpdateProjectWorkerDto updateProjectWorkerDto = await _projectService.AssignWorkerToProjectAsync(patchProjectWorkerDto);
-            return Ok(updateProjectWorkerDto);
+            UpdateProjectUserDto updateProjectUserDto = await _projectService.AssignUserToProjectAsync(patchProjectUserDto);
+            return Ok(updateProjectUserDto);
         }
 
-        [HttpPatch("unassignWorker")]
-        public async Task<IActionResult> UnassignWorkerFromProject([FromBody] PatchProjectWorkerDto patchProjectWorkerDto)
+        [HttpPatch("unassignUser")]
+        public async Task<IActionResult> UnassignUserFromProject([FromBody] PatchProjectUserDto patchProjectUserDto)
         {
-            await _projectService.UnassignWorkerFromProjectAsync(patchProjectWorkerDto);
+            await _projectService.UnassignUserFromProjectAsync(patchProjectUserDto);
             return NoContent();
         }
     }
