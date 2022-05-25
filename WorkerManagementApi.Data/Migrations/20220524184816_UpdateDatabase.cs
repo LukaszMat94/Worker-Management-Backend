@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkerManagementAPI.Data.Migrations
 {
-    public partial class InitialDatabase : Migration
+    public partial class UpdateDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,6 +20,7 @@ namespace WorkerManagementAPI.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Companies", x => x.Id);
+                    table.CheckConstraint("CK_Company_Name", "(LEN([Name]) > 2)");
                 });
 
             migrationBuilder.CreateTable(
@@ -33,6 +34,7 @@ namespace WorkerManagementAPI.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Projects", x => x.Id);
+                    table.CheckConstraint("CK_Project_Name", "(LEN([Name]) > 0)");
                 });
 
             migrationBuilder.CreateTable(
@@ -60,6 +62,7 @@ namespace WorkerManagementAPI.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Technologies", x => x.Id);
+                    table.CheckConstraint("CK_Technology_Name", "(LEN([Name]) > 0)");
                 });
 
             migrationBuilder.CreateTable(
@@ -80,6 +83,7 @@ namespace WorkerManagementAPI.Data.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.CheckConstraint("CK_User_Email", "[Email] LIKE '%_@_%._%'");
+                    table.CheckConstraint("CK_User_Name", "(LEN([Name]) > 3)");
                     table.ForeignKey(
                         name: "FK_Users_Companies_CompanyId",
                         column: x => x.CompanyId,
@@ -192,7 +196,8 @@ namespace WorkerManagementAPI.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
                 table: "RefreshTokens",
-                column: "UserId");
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TechnologiesProjects_TechnologyId",

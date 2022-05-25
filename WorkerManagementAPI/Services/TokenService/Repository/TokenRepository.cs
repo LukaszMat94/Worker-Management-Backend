@@ -24,7 +24,7 @@ namespace WorkerManagementAPI.Services.TokenService.Repository
 
         public void AssignRefreshTokenToUser(RefreshToken refreshToken, User user)
         {
-            user.RefreshTokens.Add(refreshToken);
+            user.RefreshToken = refreshToken;
         }
 
         public async Task SaveRefreshTokenAsync(RefreshToken refreshToken)
@@ -35,6 +35,18 @@ namespace WorkerManagementAPI.Services.TokenService.Repository
         public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
+        }
+
+        public void RemoveRefreshToken(RefreshToken refreshToken)
+        {
+            _dbContext.Remove(refreshToken);
+        }
+
+        public async Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string userRefreshToken)
+        {
+            RefreshToken refreshToken = await _dbContext.RefreshTokens.Where(t => t.UserId == userId && t.Token == userRefreshToken).FirstOrDefaultAsync();
+
+            return refreshToken;
         }
     }
 }

@@ -9,5 +9,7 @@ namespace WorkerManagementAPI.Services.TokenService.Repository
         void AssignRefreshTokenToUser(RefreshToken refreshToken, User user);
         Task SaveRefreshTokenAsync(RefreshToken refreshToken);
         Task SaveChangesAsync();
+        void RemoveRefreshToken(RefreshToken refreshToken);
+        Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string userRefreshToken);
     }
 }

@@ -6,7 +6,6 @@ namespace WorkerManagementAPI.Services.UserService.Repository
     public interface IUserRepository
     {
         Task<User> RegisterUserAsync(User user);
-        Task<User> LoginUserAsync(User user);
         Task SaveChangesAsync();
         Task<List<User>> GetAllUsersAsync();
         Task<User> GetUserByIdAsync(long id);

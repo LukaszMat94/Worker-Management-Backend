@@ -20,11 +20,6 @@ namespace WorkerManagementAPI.Services.UserService.Repository
             return user;
         }
 
-        public async Task<User> LoginUserAsync(User user)
-        {
-            return new User();
-        }
-
         public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();

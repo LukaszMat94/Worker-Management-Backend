@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.JwtToken;
+using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Services.TokenService.Repository;
 
 namespace WorkerManagementAPI.Services.TokenService.Service
@@ -30,14 +31,14 @@ namespace WorkerManagementAPI.Services.TokenService.Service
         {
             RefreshToken refreshToken = await _tokenRepository.GetActiveRefreshTokenAsync(user);
 
-            CheckIfRefreshTokenNonExpired(refreshToken);
+            await CheckIfRefreshTokenNonExpiredAsync(refreshToken);
 
             return refreshToken;
         }
 
         public string GenerateJwtAccessToken(User user)
         {
-            List<Claim> claims = new List<Claim>()
+            List<Claim> claims = new()
             {
                 new Claim("nameidentifier", user.Id.ToString()),
                 new Claim("name", $"{user.Name} {user.Surname}"),
@@ -63,7 +64,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
 
         public RefreshToken GenerateJwtRefreshToken(User user)
         {
-            RefreshToken refreshToken = new RefreshToken
+            RefreshToken refreshToken = new()
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
                 UserId = user.Id,
@@ -74,14 +75,14 @@ namespace WorkerManagementAPI.Services.TokenService.Service
             return refreshToken;
         }
 
-        private async void CheckIfRefreshTokenNonExpired(RefreshToken refreshToken)
+        public async Task CheckIfRefreshTokenNonExpiredAsync(RefreshToken refreshToken)
         {
             if (refreshToken.IsExpired)
             {
                 refreshToken.TokenStatus = false;
                 await _tokenRepository.SaveChangesAsync();
 
-                throw new SecurityTokenExpiredException("Refresh token expired!");
+                throw new TokenExpiredException("Refresh token expired!");
             }
         }
 
@@ -91,5 +92,48 @@ namespace WorkerManagementAPI.Services.TokenService.Service
 
             await _tokenRepository.SaveChangesAsync();
         }
+
+        public async Task<Dictionary<String, String>> RefreshTokensAsync(User user, RefreshToken refreshToken)
+        {
+            await CheckIfRefreshTokenNonExpiredAsync(refreshToken);
+
+            string newAccessToken = GenerateJwtAccessToken(user);
+            RefreshToken newRefreshToken = GenerateJwtRefreshToken(user);
+
+            Dictionary<string, string> tokens = new()
+            {
+                { "accessToken", newAccessToken },
+                { "refreshToken", newRefreshToken.Token }
+            };
+
+            RemoveOldRefreshToken(refreshToken);
+
+            await SaveRefreshTokenAsync(newRefreshToken, user);
+
+            return tokens;
+        }
+
+        private void RemoveOldRefreshToken(RefreshToken refreshToken)
+        {
+            _tokenRepository.RemoveRefreshToken(refreshToken);
+        }
+
+        public async Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string refreshToken)
+        {
+            RefreshToken refreshTokenFromDB = await _tokenRepository.GetRefreshTokenByTokenAndUserIdAsync(userId, refreshToken);
+
+            CheckIfTokenFromDBIsNull(refreshTokenFromDB);
+
+            return refreshTokenFromDB;
+        }
+
+        private void CheckIfTokenFromDBIsNull(RefreshToken refreshTokenFromDB)
+        {
+            if(refreshTokenFromDB == null)
+            {
+                throw new NotFoundException("Token not found");
+            }
+        }
+
     }
 }

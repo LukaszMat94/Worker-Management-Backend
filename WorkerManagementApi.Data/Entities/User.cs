@@ -17,7 +17,7 @@ namespace WorkerManagementAPI.Data.Entities
         public long RoleId { get; set; }
         public virtual Role Role { get; set; } = new Role() { RoleName = RoleEnum.USER };
         public AccountStatusEnum AccountStatus { get; set; } = AccountStatusEnum.INACTIVE;
-        public virtual List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken> ();
+        public virtual RefreshToken? RefreshToken { get; set; }
 
         public User()
         {

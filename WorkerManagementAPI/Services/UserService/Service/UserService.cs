@@ -2,6 +2,7 @@
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Entities.Enums;
 using WorkerManagementAPI.Data.JwtToken;
+using WorkerManagementAPI.Data.Models.RefreshTokenDtos;
 using WorkerManagementAPI.Data.Models.UserDtos;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Services.MailService.Service;
@@ -42,7 +43,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
             _mapper = mapper;
         }
 
-        public async Task<Dictionary<string, string>> LoginUserAsync(LoginUserDto loginUserDto)
+        public async Task<Dictionary<String, String>> LoginUserAsync(LoginUserDto loginUserDto)
         {
             User userMapped = _mapper.Map<User>(loginUserDto);
 
@@ -259,6 +260,19 @@ namespace WorkerManagementAPI.Services.UserService.Service
             {
                 throw new NotFoundException("Relation not exist");
             }
+        }
+
+        public async Task<Dictionary<string, string>> GetRefreshedTokensAsync(RefreshTokenDto refreshTokenDto)
+        {
+            RefreshToken refreshTokenFromDB = await _tokenService.GetRefreshTokenByTokenAndUserIdAsync(refreshTokenDto.UserId, refreshTokenDto.Token);
+
+            User user = await _userRepository.GetUserByIdAsync(refreshTokenDto.UserId);
+
+            CheckIfUserEntityIsNull(user);
+
+            Dictionary<string, string> tokens = await _tokenService.RefreshTokensAsync(user, refreshTokenFromDB);
+
+            return tokens;
         }
     }
 }

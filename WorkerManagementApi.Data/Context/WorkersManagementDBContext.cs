@@ -39,6 +39,7 @@ namespace WorkerManagementAPI.Data.Context
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Company>()
+                .HasCheckConstraint("CK_Company_Name", "(LEN([Name]) > 2)")
                 .Property(c => c.Name)
                 .HasMaxLength(50);
 
@@ -56,6 +57,7 @@ namespace WorkerManagementAPI.Data.Context
                 .HasKey(u => u.Id);
 
             modelBuilder.Entity<User>()
+                .HasCheckConstraint("CK_User_Name", "(LEN([Name]) > 3)")
                 .Property(u => u.Name)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -99,11 +101,10 @@ namespace WorkerManagementAPI.Data.Context
                 .HasDefaultValue(AccountStatusEnum.INACTIVE);
 
             modelBuilder.Entity<User>()
-                .HasMany(u => u.RefreshTokens)
-                .WithOne(t => t.User)
-                .HasForeignKey(u => u.UserId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired();                 
+                .HasOne(u => u.RefreshToken)
+                .WithOne(r => r.User)
+                .HasForeignKey<RefreshToken>(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             #endregion
 
@@ -113,6 +114,7 @@ namespace WorkerManagementAPI.Data.Context
                 .HasKey(t => t.Id);
 
             modelBuilder.Entity<Technology>()
+                .HasCheckConstraint("CK_Technology_Name", "(LEN([Name]) > 0)")
                 .Property(t => t.Name)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -167,6 +169,7 @@ namespace WorkerManagementAPI.Data.Context
                 .HasKey(p => p.Id);
 
             modelBuilder.Entity<Project>()
+                .HasCheckConstraint("CK_Project_Name", "(LEN([Name]) > 0)")
                 .Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(50);

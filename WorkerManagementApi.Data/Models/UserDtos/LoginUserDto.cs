@@ -6,7 +6,7 @@ namespace WorkerManagementAPI.Data.Models.UserDtos
     {
         [Required]
         [MaxLength(35)]
-        [EmailAddress(ErrorMessage = "Invalid email")]
+        [RegularExpression("^([\\w\\.\\-]+)@([\\w\\-]+)((\\.(\\w){2,3})+)$", ErrorMessage = "Invalid email pattern")]
         public string Email { get; set; } = String.Empty;
 
         [Required]

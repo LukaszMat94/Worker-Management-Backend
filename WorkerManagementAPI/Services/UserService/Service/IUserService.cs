@@ -1,4 +1,6 @@
-﻿using WorkerManagementAPI.Data.Models.UserDtos;
+﻿using WorkerManagementAPI.Data.JwtToken;
+using WorkerManagementAPI.Data.Models.RefreshTokenDtos;
+using WorkerManagementAPI.Data.Models.UserDtos;
 
 namespace WorkerManagementAPI.Services.UserService.Service
 {
@@ -13,5 +15,6 @@ namespace WorkerManagementAPI.Services.UserService.Service
         Task DeleteUserAsync(long id);
         Task<UpdateUserTechnologyDto> AssignTechnologyToUserAsync(PatchUserTechnologyDto patchUserTechnologyDto);
         Task UnassignTechnologyFromUserAsync(PatchUserTechnologyDto patchUserTechnologyDto);
+        Task<Dictionary<string, string>> GetRefreshedTokensAsync(RefreshTokenDto refreshTokenDto);
     }
 }

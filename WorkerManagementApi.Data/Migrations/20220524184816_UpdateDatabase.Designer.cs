@@ -12,8 +12,8 @@ using WorkerManagementAPI.Data.Context;
 namespace WorkerManagementAPI.Data.Migrations
 {
     [DbContext(typeof(WorkersManagementDBContext))]
-    [Migration("20220523094121_InitialDatabase")]
-    partial class InitialDatabase
+    [Migration("20220524184816_UpdateDatabase")]
+    partial class UpdateDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -85,6 +85,8 @@ namespace WorkerManagementAPI.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
+
+                    b.HasCheckConstraint("CK_Company_Name", "(LEN([Name]) > 2)");
                 });
 
             modelBuilder.Entity("WorkerManagementAPI.Data.Entities.Project", b =>
@@ -103,6 +105,8 @@ namespace WorkerManagementAPI.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Projects");
+
+                    b.HasCheckConstraint("CK_Project_Name", "(LEN([Name]) > 0)");
                 });
 
             modelBuilder.Entity("WorkerManagementAPI.Data.Entities.Role", b =>
@@ -144,6 +148,8 @@ namespace WorkerManagementAPI.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Technologies");
+
+                    b.HasCheckConstraint("CK_Technology_Name", "(LEN([Name]) > 0)");
                 });
 
             modelBuilder.Entity("WorkerManagementAPI.Data.Entities.User", b =>
@@ -198,6 +204,8 @@ namespace WorkerManagementAPI.Data.Migrations
                     b.ToTable("Users");
 
                     b.HasCheckConstraint("CK_User_Email", "[Email] LIKE '%_@_%._%'");
+
+                    b.HasCheckConstraint("CK_User_Name", "(LEN([Name]) > 3)");
                 });
 
             modelBuilder.Entity("WorkerManagementAPI.Data.JwtToken.RefreshToken", b =>
@@ -230,7 +238,8 @@ namespace WorkerManagementAPI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("RefreshTokens");
                 });
@@ -313,8 +322,8 @@ namespace WorkerManagementAPI.Data.Migrations
             modelBuilder.Entity("WorkerManagementAPI.Data.JwtToken.RefreshToken", b =>
                 {
                     b.HasOne("WorkerManagementAPI.Data.Entities.User", "User")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId")
+                        .WithOne("RefreshToken")
+                        .HasForeignKey("WorkerManagementAPI.Data.JwtToken.RefreshToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -328,7 +337,7 @@ namespace WorkerManagementAPI.Data.Migrations
 
             modelBuilder.Entity("WorkerManagementAPI.Data.Entities.User", b =>
                 {
-                    b.Navigation("RefreshTokens");
+                    b.Navigation("RefreshToken");
                 });
 #pragma warning restore 612, 618
         }

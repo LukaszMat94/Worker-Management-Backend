@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WorkerManagementAPI.Data.JwtToken;
+using WorkerManagementAPI.Data.Models.RefreshTokenDtos;
 using WorkerManagementAPI.Data.Models.UserDtos;
 using WorkerManagementAPI.Services.UserService.Service;
 
@@ -37,6 +39,15 @@ namespace WorkerManagementAPI.Controllers
         public async Task<IActionResult> LoginUser([FromBody] LoginUserDto loginUserDto)
         {
             Dictionary<string, string> tokens = await _userService.LoginUserAsync(loginUserDto);
+
+            return Ok(tokens);
+        }
+
+        [HttpPost("refreshTokens")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshTokens([FromBody] RefreshTokenDto refreshTokenDto)
+        {
+            Dictionary<string, string> tokens = await _userService.GetRefreshedTokensAsync(refreshTokenDto);
 
             return Ok(tokens);
         }

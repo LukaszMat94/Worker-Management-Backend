@@ -10,5 +10,8 @@ namespace WorkerManagementAPI.Services.TokenService.Service
         RefreshToken GenerateJwtRefreshToken(User user);
         string GenerateJwtAccessToken(User user);
         Task SaveRefreshTokenAsync(RefreshToken refreshToken, User user);
+        Task<Dictionary<String, String>> RefreshTokensAsync(User user, RefreshToken refreshToken);
+        Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string refreshToken);
+        Task CheckIfRefreshTokenNonExpiredAsync(RefreshToken refreshToken);
     }
 }

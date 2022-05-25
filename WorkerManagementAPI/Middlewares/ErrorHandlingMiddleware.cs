@@ -57,6 +57,19 @@ namespace WorkerManagementAPI.Middlewares
 
                 await context.Response.WriteAsync(exceptionDetails.ToString());
             }
+            catch(TokenExpiredException exception)
+            {
+                _logger.LogError(exception, exception.Message);
+
+                ExceptionDetails exceptionDetails = new ExceptionDetails
+                {
+                    Message = exception.Message,
+                    Status = context.Response.StatusCode = 401,
+                    DateTime = DateTime.Now
+                };
+
+                await context.Response.WriteAsync(exceptionDetails.ToString());
+            }
             catch (Exception exception)
             {
                 _logger.LogError(exception, exception.Message);
