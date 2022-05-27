@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WorkerManagementAPI.Data.JwtToken;
 using WorkerManagementAPI.Data.Models.RefreshTokenDtos;
 using WorkerManagementAPI.Data.Models.UserDtos;
 using WorkerManagementAPI.Services.UserService.Service;
@@ -17,30 +16,6 @@ namespace WorkerManagementAPI.Controllers
         public UserController(IUserService userService)
         {
             _userService =userService;
-        }
-
-        [HttpPost("register")]
-        [AllowAnonymous]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto registerUserDto)
-        {
-            try
-            {
-                UserDto userDto = await _userService.RegisterUserAsync(registerUserDto);
-                return Ok(userDto);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        [HttpPost("login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> LoginUser([FromBody] LoginUserDto loginUserDto)
-        {
-            Dictionary<string, string> tokens = await _userService.LoginUserAsync(loginUserDto);
-
-            return Ok(tokens);
         }
 
         [HttpPost("refreshTokens")]
@@ -91,6 +66,38 @@ namespace WorkerManagementAPI.Controllers
         public async Task<IActionResult> UnassignTechnologyFromUser([FromBody] PatchUserTechnologyDto patchUserTechnologyDto)
         {
             await _userService.UnassignTechnologyFromUserAsync(patchUserTechnologyDto);
+            return NoContent();
+        }
+
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto registerUserDto)
+        {
+            try
+            {
+                UserDto userDto = await _userService.RegisterUserAsync(registerUserDto);
+                return Ok(userDto);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginUser([FromBody] LoginUserDto loginUserDto)
+        {
+            Dictionary<string, string> tokens = await _userService.LoginUserAsync(loginUserDto);
+
+            return Ok(tokens);
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _userService.LogoutUserAsync();
+
             return NoContent();
         }
     }

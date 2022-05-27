@@ -15,13 +15,19 @@ namespace WorkerManagementAPI.Services.TokenService.Service
     {
         private readonly ITokenRepository _tokenRepository;
         private readonly JwtAuthenticationSettings _jwtAuthenticationSettings;
+        private readonly IDistributedCache _cache;
+        private readonly IHttpContextAccessor _contextAccessor;
 
 
         public TokenService(ITokenRepository tokenRepository, 
-            JwtAuthenticationSettings jwtAuthenticationSettings)
+            JwtAuthenticationSettings jwtAuthenticationSettings,
+            IDistributedCache cache,
+            IHttpContextAccessor contextAccessor)
         {
             _tokenRepository = tokenRepository;
             _jwtAuthenticationSettings = jwtAuthenticationSettings;
+            _cache = cache;
+            _contextAccessor = contextAccessor;
         }
 
         public void AssignRefreshTokenToUser(RefreshToken refreshToken, User user)
@@ -135,6 +141,68 @@ namespace WorkerManagementAPI.Services.TokenService.Service
             {
                 throw new NotFoundException("Token not found");
             }
+        }
+
+        public async Task DeactivateCurrentAccessTokenAsync()
+        {
+            string accessToken = GetCurrentAccessToken();
+
+            await DeactivateAccessTokenAsync(accessToken);
+        }
+
+        public string GetCurrentAccessToken()
+        {
+            string authorization = _contextAccessor.HttpContext.Request.Headers.Authorization;
+
+            string token = GetTokenFromAuthorization(authorization);
+
+            return token;
+        }
+
+        private string GetTokenFromAuthorization(string authorization)
+        {
+            if (authorization == null)
+            {
+                return String.Empty;
+            }
+
+            return authorization.Split(" ").Last();
+        }
+
+        private async Task DeactivateAccessTokenAsync(string token)
+        {
+            await _cache.SetStringAsync(token, "deactivated tokens", new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_jwtAuthenticationSettings.JwtAccessExpireMinutes)
+            });
+        }
+
+        public async Task<bool> IsCurrentAccessTokenActiveAsync()
+        {
+            string accessToken = GetCurrentAccessToken();
+
+            bool statusAccessToken = await IsAccessTokenActiveAsync(accessToken);
+
+            return statusAccessToken;
+        }
+
+        public async Task<bool> IsAccessTokenActiveAsync(string token)
+        {
+            string cachedToken = await _cache.GetStringAsync(token);
+
+            bool isAccessTokenActive = CheckIfCachedTokenExist(cachedToken);
+
+            return isAccessTokenActive;
+        }
+
+        private bool CheckIfCachedTokenExist(string cachedToken)
+        {
+            if (cachedToken == null)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

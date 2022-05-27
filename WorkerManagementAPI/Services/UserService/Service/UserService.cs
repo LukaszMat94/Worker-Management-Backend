@@ -274,5 +274,10 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             return tokens;
         }
+
+        public async Task LogoutUserAsync()
+        {
+            await _tokenService.DeactivateCurrentAccessTokenAsync();
+        }
     }
 }

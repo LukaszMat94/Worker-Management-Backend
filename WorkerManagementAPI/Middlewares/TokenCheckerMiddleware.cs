@@ -1,19 +1,19 @@
 ﻿using System.Net;
-using WorkerManagementAPI.Services.TokenService.Repository;
+using WorkerManagementAPI.Services.TokenService.Service;
 
 namespace WorkerManagementAPI.Middlewares
 {
     public class TokenCheckerMiddleware : IMiddleware
     {
-        private readonly ITokenManager _tokenManager;
-        public TokenCheckerMiddleware(ITokenManager tokenManager)
+        private readonly ITokenService _tokenService;
+        public TokenCheckerMiddleware(ITokenService tokenService)
         {
-            _tokenManager = tokenManager;
+            _tokenService = tokenService;
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            bool isTokenActive = await _tokenManager.IsCurrentAccessTokenActiveAsync();
+            bool isTokenActive = await _tokenService.IsCurrentAccessTokenActiveAsync();
 
             if (isTokenActive)
             {

@@ -4,7 +4,6 @@
     {
         public PasswordNotMatchException(string message) : base(message)
         {
-
         }
     }
 }

@@ -38,8 +38,14 @@ builder.Services.AddDbContext<WorkersManagementDBContext>(options =>
 
 builder.Services.AddScoped<UserSeeder>();
 
+#region Middleware
+
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddTransient<TokenCheckerMiddleware>();
+
+#endregion
+
+#region SwaggerConfig
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -74,6 +80,8 @@ c.AddSecurityRequirement(new OpenApiSecurityRequirement()
     });
 });
 
+#endregion
+
 #region Repositories
 
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
@@ -95,7 +103,6 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-builder.Services.AddTransient<ITokenManager, TokenManager>();
 builder.Services.AddTransient<IMailService, MailService>();
 
 #endregion
@@ -104,17 +111,27 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailConfiguration"));
 
-builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+#region Configure + Bind Authentication settings
 
 JwtAuthenticationSettings jwtAuthenticationSettings = new JwtAuthenticationSettings();
 builder.Configuration.GetSection("Authentication").Bind(jwtAuthenticationSettings);
 
 builder.Services.AddSingleton(jwtAuthenticationSettings);
 
+#endregion
+
+#region Redis config
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
+
+#endregion
+
+#region Authentication config
+
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -136,6 +153,8 @@ builder.Services.AddAuthentication(options =>
     };
 
 });
+
+#endregion
 
 builder.Host.UseNLog();
 

@@ -13,5 +13,9 @@ namespace WorkerManagementAPI.Services.TokenService.Service
         Task<Dictionary<string, string>> RefreshTokensAsync(User user, RefreshToken refreshToken);
         Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string refreshToken);
         Task CheckIfRefreshTokenNonExpiredAsync(RefreshToken refreshToken);
+        string GetCurrentAccessToken();
+        Task<bool> IsCurrentAccessTokenActiveAsync();
+        Task<bool> IsAccessTokenActiveAsync(string token);
+        Task DeactivateCurrentAccessTokenAsync();
     }
 }
