@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -14,6 +15,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
     {
         private readonly ITokenRepository _tokenRepository;
         private readonly JwtAuthenticationSettings _jwtAuthenticationSettings;
+
 
         public TokenService(ITokenRepository tokenRepository, 
             JwtAuthenticationSettings jwtAuthenticationSettings)
@@ -49,12 +51,12 @@ namespace WorkerManagementAPI.Services.TokenService.Service
 
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            DateTime expireDay = DateTime.UtcNow.AddDays(_jwtAuthenticationSettings.JwtExpireDays);
+            DateTime expireMinutes = DateTime.UtcNow.AddMinutes(_jwtAuthenticationSettings.JwtAccessExpireMinutes);
 
             JwtSecurityToken token = new JwtSecurityToken(_jwtAuthenticationSettings.JwtIssuer,
                 _jwtAuthenticationSettings.JwtIssuer,
                 claims,
-                expires: expireDay,
+                expires: expireMinutes,
                 signingCredentials: credentials);
 
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
@@ -93,7 +95,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
             await _tokenRepository.SaveChangesAsync();
         }
 
-        public async Task<Dictionary<String, String>> RefreshTokensAsync(User user, RefreshToken refreshToken)
+        public async Task<Dictionary<string, string>> RefreshTokensAsync(User user, RefreshToken refreshToken)
         {
             await CheckIfRefreshTokenNonExpiredAsync(refreshToken);
 
@@ -134,6 +136,5 @@ namespace WorkerManagementAPI.Services.TokenService.Service
                 throw new NotFoundException("Token not found");
             }
         }
-
     }
 }

@@ -31,12 +31,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 builder.Services.AddDbContext<WorkersManagementDBContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDatabase")));
 
 builder.Services.AddScoped<UserSeeder>();
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Services.AddTransient<TokenCheckerMiddleware>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -92,6 +95,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+builder.Services.AddTransient<ITokenManager, TokenManager>();
 builder.Services.AddTransient<IMailService, MailService>();
 
 #endregion
@@ -106,6 +110,11 @@ JwtAuthenticationSettings jwtAuthenticationSettings = new JwtAuthenticationSetti
 builder.Configuration.GetSection("Authentication").Bind(jwtAuthenticationSettings);
 
 builder.Services.AddSingleton(jwtAuthenticationSettings);
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+});
 
 builder.Services.AddAuthentication(options =>
 {
@@ -161,6 +170,8 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseAuthentication();
+
+app.UseMiddleware<TokenCheckerMiddleware>();
 
 app.UseHttpsRedirection();
 

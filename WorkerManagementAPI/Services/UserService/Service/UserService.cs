@@ -43,7 +43,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
             _mapper = mapper;
         }
 
-        public async Task<Dictionary<String, String>> LoginUserAsync(LoginUserDto loginUserDto)
+        public async Task<Dictionary<string, string>> LoginUserAsync(LoginUserDto loginUserDto)
         {
             User userMapped = _mapper.Map<User>(loginUserDto);
 
@@ -60,7 +60,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             await _tokenService.SaveRefreshTokenAsync(refreshToken, user);
 
-            Dictionary<string, string> tokens = new Dictionary<string, string>()
+            Dictionary<string, string> tokens = new()
             {
                 { "accessToken", accessToken },
                 { "refreshToken", refreshToken.Token }
@@ -197,7 +197,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             _userRepository.DeleteUser(user);
 
-            _userRepository.SaveChangesAsync();
+            await _userRepository.SaveChangesAsync();
         }
 
         public async Task<UpdateUserTechnologyDto> AssignTechnologyToUserAsync(PatchUserTechnologyDto patchUserTechnologyDto)
