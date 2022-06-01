@@ -3,6 +3,7 @@ using System.Text;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Models.UserDtos;
 using WorkerManagementAPI.Exceptions;
+using WorkerManagementAPI.ExceptionsTemplate;
 
 namespace WorkerManagementAPI.Services.PasswordService.Service
 {
@@ -26,7 +27,7 @@ namespace WorkerManagementAPI.Services.PasswordService.Service
 
             if(verificationResult == PasswordVerificationResult.Failed)
             {
-                throw new PasswordNotMatchException("Password dont match to this account");
+                throw new PasswordNotMatchException(ExceptionCodeTemplate.BCKND_PASSWORD_NOT_MATCH_NOTFOUND);
             }
         }
     }

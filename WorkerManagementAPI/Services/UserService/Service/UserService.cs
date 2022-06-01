@@ -5,6 +5,7 @@ using WorkerManagementAPI.Data.JwtToken;
 using WorkerManagementAPI.Data.Models.RefreshTokenDtos;
 using WorkerManagementAPI.Data.Models.UserDtos;
 using WorkerManagementAPI.Exceptions;
+using WorkerManagementAPI.ExceptionsTemplate;
 using WorkerManagementAPI.Services.MailService.Service;
 using WorkerManagementAPI.Services.PasswordService.Service;
 using WorkerManagementAPI.Services.RoleService.Repository;
@@ -85,7 +86,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             if (!existValue)
             {
-                throw new NotFoundException("User not exist with this email");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_USER_NOTFOUND);
             }
         }
 
@@ -127,7 +128,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             if (existValue)
             {
-                throw new DataDuplicateException("User already exist");
+                throw new DataDuplicateException(ExceptionCodeTemplate.BCKND_USER_CONFLICT);
             }
         }
 
@@ -146,7 +147,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
         {
             if (users == null)
             {
-                throw new NotFoundException("List is empty");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_USER_LIST_NOTFOUND);
             }
         }
 
@@ -165,7 +166,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
         {
             if (user == null)
             {
-                throw new NotFoundException("User not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_USER_NOTFOUND);
             }
         }
         public async Task<UserDto> UpdateUserAsync(UpdateUserDto updateUserDto)
@@ -225,7 +226,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
         {
             if (technology == null)
             {
-                throw new NotFoundException("Technology not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_TECHNOLOGY_NOTFOUND);
             }
         }
 
@@ -233,7 +234,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
         {
             if (user.Technologies.Contains(technology))
             {
-                throw new DataDuplicateException("Relation already exist");
+                throw new DataDuplicateException(ExceptionCodeTemplate.BCKND_RELATION_CONFLICT);
             }
         }
 
@@ -258,7 +259,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
         {
             if (!user.Technologies.Contains(technology))
             {
-                throw new NotFoundException("Relation not exist");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_RELATION_NOTFOUND);
             }
         }
 

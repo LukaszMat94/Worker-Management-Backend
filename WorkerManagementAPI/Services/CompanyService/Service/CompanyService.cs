@@ -4,6 +4,7 @@ using WorkerManagementAPI.Data.Models.CompanyDtos;
 using WorkerManagementAPI.Services.CompanyService.Repository;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Services.UserService.Repository;
+using WorkerManagementAPI.ExceptionsTemplate;
 
 namespace WorkerManagementAPI.Services.CompanyService.Service
 {
@@ -38,7 +39,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             if(companies == null)
             {
-                throw new NotFoundException("List is empty");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_COMPANY_LIST_NOTFOUND);
             }
         }
 
@@ -57,7 +58,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             if(company == null)
             {
-                throw new NotFoundException("Company not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_COMPANY_NOTFOUND);
             }
         }
 
@@ -82,7 +83,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
 
             if (existValue)
             {
-                throw new DataDuplicateException("Company already exist");
+                throw new DataDuplicateException(ExceptionCodeTemplate.BCKND_COMPANY_CONFLICT);
             }
         }
 
@@ -109,7 +110,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
 
             if (existValue)
             {
-                throw new DataDuplicateException("Update failed, Company already exist");
+                throw new DataDuplicateException(ExceptionCodeTemplate.BCKND_COMPANY_CONFLICT);
             }
         }
 
@@ -154,7 +155,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             if(user == null)
             {
-                throw new NotFoundException("User not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_USER_NOTFOUND);
             }
         }
 
@@ -162,7 +163,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             if (user.CompanyId.Equals(company.Id))
             {
-                throw new NotFoundException("User is assigned to this company");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_RELATION_CONFLICT);
             }
         }
 
@@ -187,7 +188,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
         {
             if (!user.CompanyId.Equals(company.Id))
             {
-                throw new NotFoundException("Relation not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_RELATION_NOTFOUND);
             }
         }
     }

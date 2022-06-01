@@ -2,6 +2,7 @@
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Models.RoleDtos;
 using WorkerManagementAPI.Exceptions;
+using WorkerManagementAPI.ExceptionsTemplate;
 using WorkerManagementAPI.Services.RoleService.Repository;
 
 namespace WorkerManagementAPI.Services.RoleService.Service
@@ -33,7 +34,7 @@ namespace WorkerManagementAPI.Services.RoleService.Service
         {
             if(role == null)
             {
-                throw new NotFoundException("Role not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_ROLE_NOTFOUND);
             }
         }
 
@@ -52,7 +53,7 @@ namespace WorkerManagementAPI.Services.RoleService.Service
         {
             if(roles.Count == 0)
             {
-                throw new NotFoundException("List is empty");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_ROLE_LIST_NOTFOUND);
             }
         }
     }

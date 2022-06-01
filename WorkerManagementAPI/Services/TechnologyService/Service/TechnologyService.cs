@@ -2,6 +2,7 @@
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Models.TechnologyDtos;
 using WorkerManagementAPI.Exceptions;
+using WorkerManagementAPI.ExceptionsTemplate;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
 
 namespace WorkerManagementAPI.Services.TechnologyService.Service
@@ -93,7 +94,7 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
         {
             if (technologies.Count == 0)
             {
-                throw new NotFoundException("List technologies is empty");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_TECHNOLOGY_LIST_NOTFOUND);
             }
         }
 
@@ -101,7 +102,7 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
         {
             if (technology == null)
             {
-                throw new NotFoundException("Technology not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_TECHNOLOGY_NOTFOUND);
             }
         }
 
@@ -111,7 +112,7 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
 
             if (existValue)
             {
-                throw new DataDuplicateException("Technology already exist");
+                throw new DataDuplicateException(ExceptionCodeTemplate.BCKND_TECHNOLOGY_CONFLICT);
             }
         }
 
@@ -121,7 +122,7 @@ namespace WorkerManagementAPI.Services.TechnologyService.Service
 
             if (existValue)
             {
-                throw new DataDuplicateException("Update failed, technology with name and level already registered");
+                throw new DataDuplicateException(ExceptionCodeTemplate.BCKND_TECHNOLOGY_CONFLICT);
             }
         }
     }

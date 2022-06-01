@@ -7,6 +7,7 @@ using System.Text;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.JwtToken;
 using WorkerManagementAPI.Exceptions;
+using WorkerManagementAPI.ExceptionsTemplate;
 using WorkerManagementAPI.Services.TokenService.Repository;
 
 namespace WorkerManagementAPI.Services.TokenService.Service
@@ -17,7 +18,6 @@ namespace WorkerManagementAPI.Services.TokenService.Service
         private readonly JwtAuthenticationSettings _jwtAuthenticationSettings;
         private readonly IDistributedCache _cache;
         private readonly IHttpContextAccessor _contextAccessor;
-
 
         public TokenService(ITokenRepository tokenRepository, 
             JwtAuthenticationSettings jwtAuthenticationSettings,
@@ -90,7 +90,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
                 refreshToken.TokenStatus = false;
                 await _tokenRepository.SaveChangesAsync();
 
-                throw new TokenExpiredException("Refresh token expired!");
+                throw new TokenExpiredException(ExceptionCodeTemplate.BCKND_TOKEN_EXPIRED_UNAUTHORIZED);
             }
         }
 
@@ -139,7 +139,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
         {
             if(refreshTokenFromDB == null)
             {
-                throw new NotFoundException("Token not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_TOKEN_NOTFOUND);
             }
         }
 

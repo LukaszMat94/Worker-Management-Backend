@@ -5,6 +5,7 @@ using WorkerManagementAPI.Services.ProjectService.Repository;
 using WorkerManagementAPI.Exceptions;
 using WorkerManagementAPI.Services.TechnologyService.Repository;
 using WorkerManagementAPI.Services.UserService.Repository;
+using WorkerManagementAPI.ExceptionsTemplate;
 
 namespace WorkerManagementAPI.Services.ProjectService.Service
 {
@@ -41,7 +42,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         {
             if(projects == null)
             {
-                throw new NotFoundException("List is empty");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_PROJECT_LIST_NOTFOUND);
             }         
         }
 
@@ -60,7 +61,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         {
             if(project == null)
             {
-                throw new NotFoundException("Project not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_PROJECT_NOTFOUND);
             }
         }
 
@@ -133,7 +134,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         {
             if(technology == null)
             {
-                throw new NotFoundException("Technology not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_TECHNOLOGY_NOTFOUND);
             }
         }
 
@@ -143,7 +144,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
 
             if (project.Technologies.Contains(technology))
             {
-                throw new DataDuplicateException("Relation already exist");
+                throw new DataDuplicateException(ExceptionCodeTemplate.BCKND_RELATION_CONFLICT);
             }
         }
 
@@ -168,7 +169,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         {
             if (!project.Technologies.Contains(technology))
             {
-                throw new NotFoundException("Relation not exist");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_RELATION_NOTFOUND);
             }
         }
 
@@ -197,7 +198,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         {
             if(user == null)
             {
-                throw new NotFoundException("User not found");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_USER_NOTFOUND);
             }
         }
 
@@ -205,7 +206,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         {
             if (project.Users.Contains(user))
             {
-                throw new DataDuplicateException("Relation already exist");
+                throw new DataDuplicateException(ExceptionCodeTemplate.BCKND_RELATION_CONFLICT);
             }
         }
 
@@ -230,7 +231,7 @@ namespace WorkerManagementAPI.Services.ProjectService.Service
         {
             if (!project.Users.Contains(user))
             {
-                throw new NotFoundException("Relation not exist");
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_RELATION_NOTFOUND);
             }
         }
     }
