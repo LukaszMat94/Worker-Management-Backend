@@ -15,7 +15,7 @@ namespace WorkerManagementAPI.Services.MailService.Service
             _mailSettings = mailSettings.Value;
         }
 
-        public async Task SendEmailAsync(string emailUser, string password)
+        public async Task SendEmailAsync(string emailUser, string? password)
         {
             MimeMessage emailMessage = SetEmailMessage(emailUser, password);
 
@@ -30,7 +30,7 @@ namespace WorkerManagementAPI.Services.MailService.Service
             smtpClient.Disconnect(true);
         }
 
-        private MimeMessage SetEmailMessage(string emailUser, string password)
+        private MimeMessage SetEmailMessage(string emailUser, string? password)
         {
             MimeMessage email = new MimeMessage();
 

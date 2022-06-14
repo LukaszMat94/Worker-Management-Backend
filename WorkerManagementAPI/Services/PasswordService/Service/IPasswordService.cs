@@ -5,7 +5,7 @@ namespace WorkerManagementAPI.Services.PasswordService.Service
 {
     public interface IPasswordService
     {
-        void HashPassword(User user, String password);
+        void HashPassword(User user, String? password);
         void VerifyPassword(User user, LoginUserDto loginUserDto);
     }
 }

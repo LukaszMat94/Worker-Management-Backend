@@ -16,7 +16,7 @@ namespace WorkerManagementAPI.Services.PasswordService.Service
             _passwordHasher = passwordHasher;
         }
 
-        public void HashPassword(User user, String password)
+        public void HashPassword(User user, String? password)
         {
             user.Password = _passwordHasher.HashPassword(user, password);
         }

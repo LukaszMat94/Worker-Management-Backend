@@ -111,7 +111,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
             return userDto;
         }
 
-        private void HashTemporaryUserPassword(User user, string password)
+        private void HashTemporaryUserPassword(User user, string? password)
         {
             _passwordService.HashPassword(user, password);
         }
