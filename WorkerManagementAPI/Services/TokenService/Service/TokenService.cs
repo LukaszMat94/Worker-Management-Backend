@@ -145,9 +145,9 @@ namespace WorkerManagementAPI.Services.TokenService.Service
 
         public async Task DeactivateCurrentAccessTokenAsync()
         {
-            string accessToken = GetCurrentAccessToken();
+            //string accessToken = GetCurrentAccessToken();
 
-            await DeactivateAccessTokenAsync(accessToken);
+            //await DeactivateAccessTokenAsync(accessToken);
         }
 
         public string GetCurrentAccessToken()

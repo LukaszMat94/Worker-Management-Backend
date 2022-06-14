@@ -59,7 +59,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
             string accessToken = _tokenService.GenerateJwtAccessToken(user);
             RefreshToken refreshToken = _tokenService.GenerateJwtRefreshToken(user);
 
-            await _tokenService.SaveRefreshTokenAsync(refreshToken, user);
+            //await _tokenService.SaveRefreshTokenAsync(refreshToken, user);
 
             Dictionary<string, string> tokens = new()
             {

@@ -41,7 +41,7 @@ builder.Services.AddScoped<UserSeeder>();
 #region Middleware
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
-builder.Services.AddTransient<TokenCheckerMiddleware>();
+//builder.Services.AddTransient<TokenCheckerMiddleware>();
 
 #endregion
 
@@ -190,7 +190,7 @@ app.UseSwaggerUI(c =>
 
 app.UseAuthentication();
 
-app.UseMiddleware<TokenCheckerMiddleware>();
+//app.UseMiddleware<TokenCheckerMiddleware>();
 
 app.UseHttpsRedirection();
 
