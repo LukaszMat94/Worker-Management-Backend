@@ -11,6 +11,7 @@ namespace WorkerManagementAPI.Services.UserService.Repository
         Task<User> GetUserByIdAsync(long id);
         Task<User> GetUserWithTechnologiesByIdAsync(long id);
         Task<User> GetUserWithRoleByEmailAsync(string email);
+        Task<User> GetUserWithRoleById(long id);
         Task<AccountStatusEnum> GetUserAccountStatus(User user);
         void DeleteUser(User user);
         Task<bool> FindIfUserExistAsync(User user);

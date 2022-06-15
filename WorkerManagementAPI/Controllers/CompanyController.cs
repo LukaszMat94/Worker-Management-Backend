@@ -34,7 +34,7 @@ namespace WorkerManagementAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyDto createdCompanyDto)
         {
-            ReturnCompanyDto companyDto = await _companyService.CreateCompanyAsync(createdCompanyDto);
+            CompanyDto companyDto = await _companyService.CreateCompanyAsync(createdCompanyDto);
             return StatusCode(201, companyDto);
         }
 

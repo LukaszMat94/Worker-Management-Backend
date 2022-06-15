@@ -93,10 +93,10 @@ namespace WorkerManagementAPI.Controllers
             return Ok(tokens);
         }
 
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        [HttpPost("logout/{userId}")]
+        public async Task<IActionResult> Logout([FromRoute] long userId)
         {
-            await _userService.LogoutUserAsync();
+            await _userService.LogoutUserAsync(userId);
 
             return NoContent();
         }

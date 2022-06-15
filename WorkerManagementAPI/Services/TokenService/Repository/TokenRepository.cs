@@ -15,7 +15,7 @@ namespace WorkerManagementAPI.Services.TokenService.Repository
         }
 
         public async Task<RefreshToken> GetActiveRefreshTokenAsync(User user)
-        {
+        { 
             RefreshToken token = await _dbContext.RefreshTokens
                 .FirstOrDefaultAsync(t => t.UserId == user.Id && t.TokenStatus == true);
 
@@ -40,6 +40,11 @@ namespace WorkerManagementAPI.Services.TokenService.Repository
         public void RemoveRefreshToken(RefreshToken refreshToken)
         {
             _dbContext.Remove(refreshToken);
+        }
+
+        public void RemoveRefreshTokenByUserId(long userId)
+        {
+            _dbContext.RefreshTokens.RemoveRange(_dbContext.RefreshTokens.Where(token => token.UserId == userId));
         }
 
         public async Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string userRefreshToken)

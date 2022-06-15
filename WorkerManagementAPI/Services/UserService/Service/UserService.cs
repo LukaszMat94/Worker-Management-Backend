@@ -56,10 +56,12 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             await CheckIfAccountIsInactive(user);
 
+            await _tokenService.RemoveRefreshTokenFromUserByIdAsync(user.Id);
+
             string accessToken = _tokenService.GenerateJwtAccessToken(user);
             RefreshToken refreshToken = _tokenService.GenerateJwtRefreshToken(user);
 
-            //await _tokenService.SaveRefreshTokenAsync(refreshToken, user);
+            await _tokenService.SaveRefreshTokenAsync(refreshToken, user);
 
             Dictionary<string, string> tokens = new()
             {
@@ -94,6 +96,8 @@ namespace WorkerManagementAPI.Services.UserService.Service
         {
             User createUser = _mapper.Map<User>(registerUserDto);
 
+            string? userPassword = createUser.Password;
+
             await CheckIfUserExistAsync(createUser);
 
             await SetDefaultRoleToUserAsync(createUser);
@@ -106,7 +110,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
             UserDto userDto = _mapper.Map<UserDto>(user);
 
-            await _mailService.SendEmailAsync(userDto.Email, createUser.Password);
+            await _mailService.SendEmailAsync(userDto.Email, userPassword);
 
             return userDto;
         }
@@ -267,7 +271,7 @@ namespace WorkerManagementAPI.Services.UserService.Service
         {
             RefreshToken refreshTokenFromDB = await _tokenService.GetRefreshTokenByTokenAndUserIdAsync(refreshTokenDto.UserId, refreshTokenDto.Token);
 
-            User user = await _userRepository.GetUserByIdAsync(refreshTokenDto.UserId);
+            User user = await _userRepository.GetUserWithRoleById(refreshTokenDto.UserId);
 
             CheckIfUserEntityIsNull(user);
 
@@ -276,8 +280,10 @@ namespace WorkerManagementAPI.Services.UserService.Service
             return tokens;
         }
 
-        public async Task LogoutUserAsync()
+        public async Task LogoutUserAsync(long userId)
         {
+            await _tokenService.RemoveRefreshTokenFromUserByIdAsync(userId);
+
             await _tokenService.DeactivateCurrentAccessTokenAsync();
         }
     }

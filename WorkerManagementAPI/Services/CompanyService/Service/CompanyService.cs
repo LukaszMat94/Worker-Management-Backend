@@ -62,7 +62,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
             }
         }
 
-        public async Task<ReturnCompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto)
+        public async Task<CompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto)
         {
             Company createCompany = _mapper.Map<Company>(companyDto);
 
@@ -72,7 +72,7 @@ namespace WorkerManagementAPI.Services.CompanyService.Service
 
             await _companyRepository.SaveChangesAsync();
 
-            ReturnCompanyDto addedCompanyDto = _mapper.Map<ReturnCompanyDto>(addedCompany);
+            CompanyDto addedCompanyDto = _mapper.Map<CompanyDto>(addedCompany);
 
             return addedCompanyDto;
         }

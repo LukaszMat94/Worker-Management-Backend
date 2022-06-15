@@ -114,16 +114,23 @@ namespace WorkerManagementAPI.Services.TokenService.Service
                 { "refreshToken", newRefreshToken.Token }
             };
 
-            RemoveOldRefreshToken(refreshToken);
+            RemoveRefreshToken(refreshToken);
 
             await SaveRefreshTokenAsync(newRefreshToken, user);
 
             return tokens;
         }
 
-        private void RemoveOldRefreshToken(RefreshToken refreshToken)
+        private void RemoveRefreshToken(RefreshToken refreshToken)
         {
             _tokenRepository.RemoveRefreshToken(refreshToken);
+        }
+
+        public async Task RemoveRefreshTokenFromUserByIdAsync(long userId)
+        {
+            _tokenRepository.RemoveRefreshTokenByUserId(userId);
+
+            await _tokenRepository.SaveChangesAsync();
         }
 
         public async Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string refreshToken)

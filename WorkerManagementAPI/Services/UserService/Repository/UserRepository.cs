@@ -55,6 +55,15 @@ namespace WorkerManagementAPI.Services.UserService.Repository
             return user;
         }
 
+        public async Task<User> GetUserWithRoleById(long id)
+        {
+            User user = await _dbContext.Users
+                .Include(w => w.Role)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            return user;
+        }
+
         public async Task<AccountStatusEnum> GetUserAccountStatus(User user)
         {
             AccountStatusEnum accountStatus = await _dbContext.Users.Where(u => u.Id.Equals(user.Id))

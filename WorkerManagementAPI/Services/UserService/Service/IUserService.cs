@@ -8,7 +8,6 @@ namespace WorkerManagementAPI.Services.UserService.Service
     {
         Task<UserDto> RegisterUserAsync(RegisterUserDto registerUserDto);
         Task<Dictionary<string, string>> LoginUserAsync(LoginUserDto loginUserDto);
-
         Task<List<UserDto>> GetAllUsersAsync();
         Task<UserDto> GetUserByIdAsync(long id);
         Task<UserDto> UpdateUserAsync(UpdateUserDto updateUserDto);
@@ -16,6 +15,6 @@ namespace WorkerManagementAPI.Services.UserService.Service
         Task<UpdateUserTechnologyDto> AssignTechnologyToUserAsync(PatchUserTechnologyDto patchUserTechnologyDto);
         Task UnassignTechnologyFromUserAsync(PatchUserTechnologyDto patchUserTechnologyDto);
         Task<Dictionary<string, string>> GetRefreshedTokensAsync(RefreshTokenDto refreshTokenDto);
-        Task LogoutUserAsync();
+        Task LogoutUserAsync(long userId);
     }
 }
