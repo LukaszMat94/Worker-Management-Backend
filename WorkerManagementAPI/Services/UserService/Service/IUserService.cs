@@ -15,6 +15,6 @@ namespace WorkerManagementAPI.Services.UserService.Service
         Task<UpdateUserTechnologyDto> AssignTechnologyToUserAsync(PatchUserTechnologyDto patchUserTechnologyDto);
         Task UnassignTechnologyFromUserAsync(PatchUserTechnologyDto patchUserTechnologyDto);
         Task<Dictionary<string, string>> GetRefreshedTokensAsync(RefreshTokenDto refreshTokenDto);
-        Task LogoutUserAsync(long userId);
+        Task LogoutUserAsync();
     }
 }

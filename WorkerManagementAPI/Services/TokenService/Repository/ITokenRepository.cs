@@ -11,6 +11,6 @@ namespace WorkerManagementAPI.Services.TokenService.Repository
         Task SaveChangesAsync();
         void RemoveRefreshToken(RefreshToken refreshToken);
         void RemoveRefreshTokenByUserId(long userId);
-        Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string userRefreshToken);
+        Task<RefreshToken> GetRefreshTokenByUserIdAsync(long userId);
     }
 }

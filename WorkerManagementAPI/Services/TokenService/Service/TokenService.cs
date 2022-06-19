@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.JwtToken;
@@ -18,16 +18,19 @@ namespace WorkerManagementAPI.Services.TokenService.Service
         private readonly JwtAuthenticationSettings _jwtAuthenticationSettings;
         private readonly IDistributedCache _cache;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public TokenService(ITokenRepository tokenRepository, 
+        public TokenService(ITokenRepository tokenRepository,
             JwtAuthenticationSettings jwtAuthenticationSettings,
             IDistributedCache cache,
-            IHttpContextAccessor contextAccessor)
+            IHttpContextAccessor contextAccessor,
+            IPasswordHasher<User> passwordHasher)
         {
             _tokenRepository = tokenRepository;
             _jwtAuthenticationSettings = jwtAuthenticationSettings;
             _cache = cache;
             _contextAccessor = contextAccessor;
+            _passwordHasher = passwordHasher;
         }
 
         public void AssignRefreshTokenToUser(RefreshToken refreshToken, User user)
@@ -72,15 +75,42 @@ namespace WorkerManagementAPI.Services.TokenService.Service
 
         public RefreshToken GenerateJwtRefreshToken(User user)
         {
-            RefreshToken refreshToken = new()
+            List<Claim> claims = new()
             {
-                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                new Claim("nameidentifier", user.Id.ToString()),
+                new Claim("name", $"{user.Name} {user.Surname}"),
+            };
+
+            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtAuthenticationSettings.JwtKey));
+
+            SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            DateTime expireMinutes = DateTime.UtcNow.AddMinutes(_jwtAuthenticationSettings.JwtAccessExpireMinutes);
+
+            JwtSecurityToken token = new JwtSecurityToken(_jwtAuthenticationSettings.JwtIssuer,
+                _jwtAuthenticationSettings.JwtIssuer,
+                claims,
+                expires: expireMinutes,
+                signingCredentials: credentials);
+
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+
+            RefreshToken refreshToken = new RefreshToken()
+            {
+                Token = tokenHandler.WriteToken(token),
                 UserId = user.Id,
                 Expires = DateTime.UtcNow.AddDays(_jwtAuthenticationSettings.JwtRefreshExpireDays),
                 Created = DateTime.UtcNow
             };
 
             return refreshToken;
+        }
+
+        public string HashRefreshToken(User user, string refreshToken)
+        {
+            string hashedPassword = _passwordHasher.HashPassword(user, refreshToken);
+
+            return hashedPassword;
         }
 
         public async Task CheckIfRefreshTokenNonExpiredAsync(RefreshToken refreshToken)
@@ -114,6 +144,8 @@ namespace WorkerManagementAPI.Services.TokenService.Service
                 { "refreshToken", newRefreshToken.Token }
             };
 
+            newRefreshToken.Token = HashRefreshToken(user, newRefreshToken.Token);
+
             RemoveRefreshToken(refreshToken);
 
             await SaveRefreshTokenAsync(newRefreshToken, user);
@@ -133,18 +165,41 @@ namespace WorkerManagementAPI.Services.TokenService.Service
             await _tokenRepository.SaveChangesAsync();
         }
 
-        public async Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string refreshToken)
+        public async Task RemoveRefreshTokenAsync()
         {
-            RefreshToken refreshTokenFromDB = await _tokenRepository.GetRefreshTokenByTokenAndUserIdAsync(userId, refreshToken);
+            string authorization = _contextAccessor.HttpContext.Request.Headers.Authorization;
+
+            string token = GetTokenFromAuthorization(authorization);
+
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            JwtSecurityToken jwtSecurityToken = handler.ReadJwtToken(token);
+
+            string nameidentifier = jwtSecurityToken.Claims.First(claim => claim.Type == "nameidentifier").Value;
+
+            _tokenRepository.RemoveRefreshTokenByUserId(int.Parse(nameidentifier));
+
+            await _tokenRepository.SaveChangesAsync();
+        }
+
+        public async Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(User user, string refreshToken)
+        {
+            RefreshToken refreshTokenFromDB = await _tokenRepository.GetRefreshTokenByUserIdAsync(user.Id);
 
             CheckIfTokenFromDBIsNull(refreshTokenFromDB);
+
+            PasswordVerificationResult verificationResult = _passwordHasher.VerifyHashedPassword(user, refreshTokenFromDB.Token, refreshToken);
+
+            if (verificationResult == PasswordVerificationResult.Failed)
+            {
+                throw new NotFoundException(ExceptionCodeTemplate.BCKND_TOKEN_NOTFOUND);
+            }
 
             return refreshTokenFromDB;
         }
 
         private void CheckIfTokenFromDBIsNull(RefreshToken refreshTokenFromDB)
         {
-            if(refreshTokenFromDB == null)
+            if (refreshTokenFromDB == null)
             {
                 throw new NotFoundException(ExceptionCodeTemplate.BCKND_TOKEN_NOTFOUND);
             }

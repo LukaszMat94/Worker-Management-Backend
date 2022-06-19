@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.IdentityModel.Tokens.Jwt;
 using WorkerManagementAPI.Data.Entities;
 using WorkerManagementAPI.Data.Entities.Enums;
 using WorkerManagementAPI.Data.JwtToken;
@@ -61,13 +62,15 @@ namespace WorkerManagementAPI.Services.UserService.Service
             string accessToken = _tokenService.GenerateJwtAccessToken(user);
             RefreshToken refreshToken = _tokenService.GenerateJwtRefreshToken(user);
 
-            await _tokenService.SaveRefreshTokenAsync(refreshToken, user);
-
             Dictionary<string, string> tokens = new()
             {
                 { "accessToken", accessToken },
                 { "refreshToken", refreshToken.Token }
             };
+
+            refreshToken.Token = _tokenService.HashRefreshToken(user, refreshToken.Token);
+
+            await _tokenService.SaveRefreshTokenAsync(refreshToken, user);
 
             return tokens;
         }
@@ -269,20 +272,25 @@ namespace WorkerManagementAPI.Services.UserService.Service
 
         public async Task<Dictionary<string, string>> GetRefreshedTokensAsync(RefreshTokenDto refreshTokenDto)
         {
-            RefreshToken refreshTokenFromDB = await _tokenService.GetRefreshTokenByTokenAndUserIdAsync(refreshTokenDto.UserId, refreshTokenDto.Token);
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            JwtSecurityToken jwtSecurityToken = handler.ReadJwtToken(refreshTokenDto.Token);
 
-            User user = await _userRepository.GetUserWithRoleById(refreshTokenDto.UserId);
+            long userId = int.Parse(jwtSecurityToken.Claims.First(claim => claim.Type == "nameidentifier").Value);
+
+            User user = await _userRepository.GetUserWithRoleById(userId);
 
             CheckIfUserEntityIsNull(user);
+
+            RefreshToken refreshTokenFromDB = await _tokenService.GetRefreshTokenByTokenAndUserIdAsync(user, refreshTokenDto.Token);
 
             Dictionary<string, string> tokens = await _tokenService.RefreshTokensAsync(user, refreshTokenFromDB);
 
             return tokens;
         }
 
-        public async Task LogoutUserAsync(long userId)
+        public async Task LogoutUserAsync()
         {
-            await _tokenService.RemoveRefreshTokenFromUserByIdAsync(userId);
+            await _tokenService.RemoveRefreshTokenAsync();
 
             await _tokenService.DeactivateCurrentAccessTokenAsync();
         }

@@ -47,9 +47,9 @@ namespace WorkerManagementAPI.Services.TokenService.Repository
             _dbContext.RefreshTokens.RemoveRange(_dbContext.RefreshTokens.Where(token => token.UserId == userId));
         }
 
-        public async Task<RefreshToken> GetRefreshTokenByTokenAndUserIdAsync(long userId, string userRefreshToken)
+        public async Task<RefreshToken> GetRefreshTokenByUserIdAsync(long userId)
         {
-            RefreshToken refreshToken = await _dbContext.RefreshTokens.Where(t => t.UserId == userId && t.Token == userRefreshToken).FirstOrDefaultAsync();
+            RefreshToken refreshToken = await _dbContext.RefreshTokens.Where(t => t.UserId == userId).FirstOrDefaultAsync();
 
             return refreshToken;
         }
