@@ -53,7 +53,8 @@ namespace WorkerManagementAPI.Services.TokenService.Service
             {
                 new Claim("nameidentifier", user.Id.ToString()),
                 new Claim("name", $"{user.Name} {user.Surname}"),
-                new Claim("role", $"{user.Role.RoleName}")
+                new Claim("role", $"{user.Role.RoleName}"),
+                new Claim("iat", $"{DateTime.UtcNow}")
             };
 
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtAuthenticationSettings.JwtKey));
@@ -79,13 +80,14 @@ namespace WorkerManagementAPI.Services.TokenService.Service
             {
                 new Claim("nameidentifier", user.Id.ToString()),
                 new Claim("name", $"{user.Name} {user.Surname}"),
+                new Claim("iat", $"{DateTime.UtcNow}")
             };
 
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtAuthenticationSettings.JwtKey));
 
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            DateTime expireMinutes = DateTime.UtcNow.AddMinutes(_jwtAuthenticationSettings.JwtAccessExpireMinutes);
+            DateTime expireMinutes = DateTime.UtcNow.AddDays(_jwtAuthenticationSettings.JwtRefreshExpireDays);
 
             JwtSecurityToken token = new JwtSecurityToken(_jwtAuthenticationSettings.JwtIssuer,
                 _jwtAuthenticationSettings.JwtIssuer,
