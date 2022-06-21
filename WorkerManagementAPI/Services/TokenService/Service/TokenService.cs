@@ -54,7 +54,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
                 new Claim("nameidentifier", user.Id.ToString()),
                 new Claim("name", $"{user.Name} {user.Surname}"),
                 new Claim("role", $"{user.Role.RoleName}"),
-                new Claim("iat", $"{DateTime.UtcNow}")
+                new Claim("iat", $"{((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds()}")
             };
 
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtAuthenticationSettings.JwtKey));
@@ -80,7 +80,7 @@ namespace WorkerManagementAPI.Services.TokenService.Service
             {
                 new Claim("nameidentifier", user.Id.ToString()),
                 new Claim("name", $"{user.Name} {user.Surname}"),
-                new Claim("iat", $"{DateTime.UtcNow}")
+                new Claim("iat", $"{((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds()}")
             };
 
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtAuthenticationSettings.JwtKey));
